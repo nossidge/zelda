@@ -215,10 +215,6 @@ module Zelda
 
     ############################################################################
 
-    def self.options
-      @@options
-    end
-
     def self.options_default
       @@options = {}
       @@options[:seed]            = Random.rand(9999999)
@@ -230,9 +226,18 @@ module Zelda
       @@options[:verbose_grammar] = false
     end
 
+    def self.options_exist?
+      !@@optparse.getopts.empty?
+    end
+
+    def self.options
+      @@options
+    end
+
     def self.command
       @@command
     end
+
     def self.command=(input)
       @@command = input
     end
@@ -318,7 +323,15 @@ module Zelda
         puts e
         exit 1
       end
+
+      # Set options.
       Zelda::Config.seed = @@options[:seed]
+
+      # Usually, if no command is specified default to 'menu', but if there
+      #   are options specified, then default to 'dungeon'.
+      @@command = 'dungeon' if options_exist?
+
+      # Return the argv itself.
       argv
     end
 
