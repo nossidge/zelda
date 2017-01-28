@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'></meta>
+  <title>Zelda Dungeons</title>
+  <script src='lib/ext/pixi.min.js'></script>
+  <script src='lib/file_list.js'></script>
+  <script src='lib/globals.js'></script>
+  <script src='lib/map_patterns.js'></script>
+  <script src='lib/rooms.js'></script>
+  <script src='lib/minimap.js'></script>
+  <style type='text/css'>
+    a:link, a:visited { color: #DCDCDC; }
+    a:hover, a:active { color: #cccccc; }
+    body {
+      background-color: #202020;
+      font-family: 'Lucida Console', Monaco, monospace;
+      text-align: center;
+      color: #DCDCDC;
+      font-size: 175%
+    }
+    p {
+      margin: 0;
+      padding: 0;
+    }
+    td {
+      padding: 0px 16px;
+    }
+    div.contents {
+      width: 1080px;
+      float: center;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    div.header, div.main, div.footer {
+      background-color: #555555;
+      border: 2px solid #DCDCDC;
+      padding: 30px;
+      margin: 50px 20px 50px 20px;
+      word-wrap: break-word;
+    }
+    div.header {
+      padding: 10px 50px 40px 50px;
+    }
+    div.main {
+      padding: 30px 30px 20px 30px;
+    }
+    div.footer {
+      font-size: 60%;
+    }
+    table {
+      margin: 0px auto;
+      font-size: 60%;
+      padding: 14px 0px;
+    }
+    tr.paddingTop > td {
+      padding-top: 20px;
+    }
+    canvas {
+      margin: 0px;
+      padding: 0px;
+      position: relative;
+      z-index: 20;
+      background-image: url('img/minimap_x2.png');
+    }
+  </style>
+<script type='text/javascript'>
+PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
+
+
+// Grab data from all the JSON files.
+// Push them all to one array.
+function getAllJSON() {
+  var allJSON = [];
+
+  // Split up 'fileList' into chunks of size 4.
+  // Select the most recent first, by reversing the array.
+  fileListSplice = [];
+  fileList.reverse();
+  while (fileList.length > 0) fileListSplice.push(fileList.splice(0, 4));
+
+  // Remove any arrays that have fewer than 4 elements.
+  function isArrayLen4(arr) { return arr.length == 4; }
+  fileListSplice = fileListSplice.filter(isArrayLen4);
+
+  // Only select the last 2 elements, to give 8 maps.
+  // The PIXI stuff gets overwhelmed by more than 8 simultaneous sessions.
+  fileListSplice = fileListSplice.slice(0,2);
+  [].concat.apply([], fileListSplice).forEach( function(fileName) {
+    var xReq = new XMLHttpRequest();
+    xReq.open('GET', 'data/' + fileName + '.json', true);
+    xReq.responseType = 'json';
+    xReq.onload = function() {
+      objJSON = xReq.response;
+      ModRooms.transform('data/' + fileName + '.json', objJSON, false);
+      allJSON.push(objJSON);
+    };
+    xReq.send(null);
+  });
+  return allJSON;
+}
+var allDungeonsJSON = getAllJSON();
+
+
+// This'll be run when the DOM and xReqs have been completed.
+document.addEventListener('DOMContentLoaded', function() {
+  images = [
+    'img/chest_contents.json',
+    'img/room.json',
+    'img/font_minimap.json',
+    'img/minimap_outline.png',
+    'img/minimap_items.png',
+    'img/minimap_x1.png',
+    'img/minimap_x2.png'
+  ]
+  PIXI.loader
+    .add(images)
+    .load( function() {
+      generateHtmlTable();
+      writeToAllCanvasses();
+      for (var i = 0; i < (fileListSplice.length * 4); i++) {
+        displayMinimap(allCanvasInfo[i]);
+      }
+    }
+  );
+}, false);
+
+
+// Generate the HTML table with IDs that we can use later.
+function generateHtmlTable() {
+  var rowHTML = [
+    "\n  <td><a id='canvas_#NUM#_a_canvas'><canvas id='canvas_#NUM#' width='192' height='472'></canvas></a></td>",
+    "\n  <td><a id='canvas_#NUM#_a_dungeon'>dungeon</a></td>",
+    "\n  <td><a id='canvas_#NUM#_a_mission'>mission</a></td>",
+    "\n  <td><a id='canvas_#NUM#_a_json'>json</a></td>"
+  ]
+  var table = '<table>'
+  var counter = 0;
+  for (var i = 0; i < fileListSplice.length; i++) {
+    for (var j = 0; j < fileListSplice[i].length; j++) {
+      if (i != 0 && j == 0) {
+        table += "<tr class='paddingTop'>"
+      } else {
+        table += '<tr>'
+      }
+      for (var k = counter; k < (counter+4); k++) {
+        table += rowHTML[j].replace(/#NUM#/g, k);
+      }
+      table += '\n</tr>'
+    }
+    counter += 4;
+  }
+  table += '</table>'
+  document.getElementById('table').innerHTML = table;
+}
+
+
+var allStages = [];
+var allCanvasInfo = [];
+function writeToAllCanvasses() {
+  for (var i = 0; i < (fileListSplice.length * 4); i++) {
+    var canvasInfo = new Object();
+    canvasInfo.canvasID = 'canvas_' + i;
+    canvasInfo.objJSON  = allDungeonsJSON[i];
+    canvasInfo.objJSON.dungeon_number = (i + 1);
+    canvasInfo.renderer = PIXI.autoDetectRenderer(192, 472, {
+      view: document.getElementById(canvasInfo.canvasID)
+    });
+    canvasInfo.stage = new PIXI.Container();
+    canvasInfo.renderer.render(canvasInfo.stage);
+    canvasInfo.a_canvas  = canvasInfo.canvasID + '_a_canvas';
+    canvasInfo.a_dungeon = canvasInfo.canvasID + '_a_dungeon';
+    canvasInfo.a_mission = canvasInfo.canvasID + '_a_mission';
+    canvasInfo.a_json    = canvasInfo.canvasID + '_a_json';
+    allStages.push(canvasInfo.stage);
+    allCanvasInfo.push(canvasInfo);
+  }
+}
+
+
+// Display the minimap in the canvas element, and alter the anchor hrefs.
+function displayMinimap(canvasInfo) {
+  var minimapInstance = new Minimap(canvasInfo.objJSON, canvasInfo.stage);
+  minimapInstance.display(false);
+  canvasInfo.renderer.render(canvasInfo.stage);
+  a_canvas  = document.getElementById(canvasInfo.a_canvas);
+  a_dungeon = document.getElementById(canvasInfo.a_dungeon);
+  a_mission = document.getElementById(canvasInfo.a_mission);
+  a_json    = document.getElementById(canvasInfo.a_json);
+  a_canvas.href  = 'dungeon.html?file=' + canvasInfo.objJSON.file_name;
+  a_dungeon.href = 'dungeon.html?file=' + canvasInfo.objJSON.file_name;
+  a_mission.href = 'mission.html?file=' + canvasInfo.objJSON.file_name;
+  a_json.href    = 'data/' + canvasInfo.objJSON.file_name + '.json';
+}
+</script>
+</head>
+<body>
+  <div class='contents'>
+    <div class='header'>
+      <h1>Game Boy Zelda Dungeons</h1>
+      <p>Each of the below is a procedurally generated dungeon, following the aesthetics and mechanics of the Game Boy Zelda titles. The layout and critical path for each is predetermined, but room features, items, and optional chest contents will change with each page refresh.</p>
+      <br>
+      <p>All were generated by randomly applying <a href='grammar_rules.html'>these</a> grammar rules to form a mission tree, and mapping that tree to 2D space. Full code and explanation on <a href='https://github.com/nossidge/zelda'>GitHub</a>.</p>
+    </div>
+    <div class='main'>
+      <div id='table'></div>
+    </div>
+    <div class='footer'>
+      <p>This website is not affiliated with Nintendo Co., Ltd or any of its subsidiaries.</p>
+      <p>All trademarks are property of their respective owners.</p>
+    </div>
+  </div>
+</body>
+</html>

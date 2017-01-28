@@ -1,0 +1,51 @@
+body { font-size: 120%; }
+
+.left  { float: left; }
+.right { float: right; }
+
+table, td {
+  border-collapse: collapse;
+  border: 1px solid black;
+  padding: 15px;
+}
+
+.wallN { border-top:    thick double #ff0000; }
+.wallE { border-right:  thick double #ff0000; }
+.wallS { border-bottom: thick double #ff0000; }
+.wallW { border-left:   thick double #ff0000; }
+
+.lockN, .lock_puzzleN, .bosslockN, .multilockN, .weak_wallN { border-top:    solid #0000ff; }
+.lockE, .lock_puzzleE, .bosslockE, .multilockE, .weak_wallE { border-right:  solid #0000ff; }
+.lockS, .lock_puzzleS, .bosslockS, .multilockS, .weak_wallS { border-bottom: solid #0000ff; }
+.lockW, .lock_puzzleW, .bosslockW, .multilockW, .weak_wallW { border-left:   solid #0000ff; }
+
+.onewayN { border-top:    solid #3DA970; }
+.onewayE { border-right:  solid #3DA970; }
+.onewayS { border-bottom: solid #3DA970; }
+.onewayW { border-left:   solid #3DA970; }
+
+.observatoryN { border-top:    dotted #ff3030; }
+.observatoryE { border-right:  dotted #ff3030; }
+.observatoryS { border-bottom: dotted #ff3030; }
+.observatoryW { border-left:   dotted #ff3030; }
+
+.entrance { border-bottom: thick double #0000ff; }
+
+.zone01 { background-color:rgba(255, 0, 0, 0.09) }
+.zone02 { background-color:rgba(255, 0, 0, 0.18) }
+.zone03 { background-color:rgba(255, 0, 0, 0.27) }
+.zone04 { background-color:rgba(255, 0, 0, 0.36) }
+.zone05 { background-color:rgba(255, 0, 0, 0.45) }
+.zone06 { background-color:rgba(255, 0, 0, 0.54) }
+.zone07 { background-color:rgba(255, 0, 0, 0.63) }
+.zone08 { background-color:rgba(255, 0, 0, 0.72) }
+.zone09 { background-color:rgba(255, 0, 0, 0.81) }
+.zone10 { background-color:rgba(255, 0, 0, 0.90) }
+
+.highlight {
+  transition: all 0.18s;
+  box-shadow: inset 0 0 0 6px rgba(100,100,100,0.8);
+}
+.highlight.l, .highlight.lm, .highlight.lf {
+  box-shadow: inset 0 0 0 6px rgba(60,60,60,0.8);
+}

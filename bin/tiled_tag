@@ -1,0 +1,183 @@
+#!/usr/bin/env ruby
+# Encoding: UTF-8
+
+################################################################################
+# Development script to alter custom .tmx file tags en masse.
+# Only handles map properties, not the properties of individual layers.
+# These are stored in the file in the form:
+#   <properties>
+#    <property name="fromE" value="nesw"/>
+#    <property name="fromN" value="nesw"/>
+#    <property name="fromS" value="ew"/>
+#    <property name="fromW" value="nesw"/>
+#    <property name="letter" value="n"/>
+#   </properties>
+# This file should be used in the form:
+#   tiled_tag -a tag_name tag_value file1.tmx [file2.tmx ...]
+#   tiled_tag -r old_tag_name new_tag_name file1.tmx [file2.tmx ...]
+#   tiled_tag -d tag_name file1.tmx [file2.tmx ...]
+# File globs work as normal; uses Ruby's Dir class.
+# Automatically filters out any files that do not end in '.tmx'
+# Doesn't use nokogiri or a clever xml gem, just stupid line by line rubbish.
+################################################################################
+
+require 'optparse'
+
+################################################################################
+
+# Add a <property> tag to the list of <properties>.
+# If the tag already exists, replace that tag's value.
+def add_tag(filename, tag_name, tag_value)
+
+  # Read in all the lines from the original file.
+  # Delete the tag if it already exists. (We'll be adding it back later.)
+  lines = IO.readlines(filename).reject do |i|
+    i.start_with?(%[  <property name="#{tag_name}" ])
+  end
+
+  # Does the .tmx file already contain any tag properties at all?
+  tags_exist = !lines.select{ |i| i.start_with?(' <properties>') }.empty?
+
+  # If there are no properties, then we need to add a <properties> section.
+  # If it does exist, then append the new tag to the bottom of the section.
+  xml_tag = %[  <property name="#{tag_name}" value="#{tag_value}"/>]
+  if not tags_exist
+    str_find = ' <tileset '
+    str_replace = " <properties>\n#{xml_tag}\n </properties>\n#{str_find}"
+  else
+    str_find = ' </properties>'
+    str_replace = "#{xml_tag}\n#{str_find}"
+  end
+
+  # Write lines as string, and replace the first occurrence.
+  lines = lines.join('').sub(str_find, str_replace)
+
+  # Write the lines back to the file.
+  File.open(filename, 'w') { |f| f.puts lines }
+end
+
+########################################
+
+# Rename an existing <property> 'name' tag, keeping the value the same.
+def rename_tag(filename, old_tag_name, new_tag_name)
+
+  # Read in all the lines from the original file.
+  lines = IO.readlines(filename)
+
+  # Write lines as string, and replace the first occurrence.
+  regexp_find = /^  <property name="#{old_tag_name}" /
+  str_replace = %[  <property name="#{new_tag_name}" ]
+  lines = lines.join('').sub(regexp_find, str_replace)
+
+  # Write the lines back to the file.
+  File.open(filename, 'w') { |f| f.puts lines }
+end
+
+########################################
+
+# Delete a <property> tag.
+def delete_tag(filename, tag_name)
+
+  # Read in all the lines from the original file.
+  # Delete the tag if it already exists.
+  lines = IO.readlines(filename).reject do |i|
+    i.start_with?(%[  <property name="#{tag_name}" ])
+  end
+
+  # Write the lines back to the file.
+  File.open(filename, 'w') { |f| f.puts lines }
+end
+
+################################################################################
+
+# This will take the value of the first --option in the optargs.
+# If no options are specified, it will default to 'add'.
+tag_mode = nil
+
+# Get all of the command-line options.
+optparse = OptionParser.new do |opts|
+
+  # Set a banner, displayed at the top of the help screen.
+  opts.banner = %{Usage:
+    tiled_tag -a tag_name tag_value file1.tmx [file2.tmx ...]
+    tiled_tag -r old_tag_name new_tag_name file1.tmx [file2.tmx ...]
+    tiled_tag -d tag_name file1.tmx [file2.tmx ...]
+  }.gsub('    ','  ')
+
+  # All options are simple Booleans.
+  opts.on('-a', '--add',
+          "Add a tag to a .tmx file, or replace an existing tag's value") do
+    tag_mode ||= 'add'
+  end
+  opts.on('-r', '--rename',
+          'Rename an existing .tmx file tag, keeping the value') do
+    tag_mode ||= 'rename'
+  end
+  opts.on('-d', '--delete', 'Delete an existing .tmx file tag') do
+    tag_mode ||= 'delete'
+  end
+
+  # Help output.
+  opts.on('-h', '--help', 'Display this help screen' ) do
+    puts opts
+    exit 0
+  end
+end
+
+# Parse the options and show errors on failure.
+begin
+  optparse.parse!(ARGV)
+rescue OptionParser::ParseError => e
+  puts e
+  exit 1
+end
+
+########################################
+
+# Default to add mode.
+tag_mode ||= 'add'
+
+# Get the tag values from the arguments.
+invalid = false
+case tag_mode
+when 'add'
+  tag_name = ARGV.shift
+  tag_value = ARGV.shift
+  invalid = ( tag_name.nil? or tag_value.nil? )
+when 'rename'
+  old_tag_name = ARGV.shift
+  new_tag_name = ARGV.shift
+  invalid = ( old_tag_name.nil? or new_tag_name.nil? )
+when 'delete'
+  tag_name = ARGV.shift
+  invalid = ( tag_name.nil? )
+end
+
+# Error if any of the arguments are missing.
+if invalid or ARGV.empty?
+  puts 'One or more of the inputs are invalid.'
+  exit 1
+end
+
+########################################
+
+# Get the filepaths from the remainder of the argument vector.
+files = ARGV.map do |i|
+  Dir[i]
+end.flatten.select do |i|
+  i.end_with?('.tmx')
+end
+
+# For each file, run the chosen method.
+files.each do |filename|
+  case tag_mode
+  when 'add'
+    add_tag(filename, tag_name, tag_value)
+  when 'rename'
+    rename_tag(filename, old_tag_name, new_tag_name)
+  when 'delete'
+    delete_tag(filename, tag_name)
+  end
+end
+
+################################################################################

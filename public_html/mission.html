@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>Zelda Mission Graph</title>
+  <script src='lib/ext/viz.js'></script>
+  <script src='lib/file_list.js'></script>
+  <script src='lib/globals.js'></script>
+  <script src='lib/rooms.js'></script>
+  <link type='text/css' rel='stylesheet' href='mission.css'>
+  <script type='text/javascript'>
+
+    // Read file name from URL arg.
+    // Default to the last file in 'fileList'.
+    var filename = fileList[fileList.length-1];
+    if ( getURLParameter('file') != null ) {
+      filename = getURLParameter('file');
+    }
+
+    // Grab data from the DOT file.
+    var xReqDOT = new XMLHttpRequest();
+    xReqDOT.open('GET', 'data/' + filename + '.dot', true);
+    xReqDOT.responseType = 'text';
+    xReqDOT.onload = function() {
+      document.getElementById('graph').innerHTML = Viz(xReqDOT.response);
+    };
+    xReqDOT.send(null);
+
+    // Grab data from the JSON file.
+    var xReqJSON = new XMLHttpRequest();
+    var objJSON = {};
+    xReqJSON.open('GET', 'data/' + filename + '.json', true);
+    xReqJSON.responseType = 'json';
+    xReqJSON.onload = function() {
+      objJSON = xReqJSON.response;
+      ModRooms.transform('data/' + filename + '.json', objJSON, false);
+      writeTable();
+    };
+    xReqJSON.send(null);
+
+    // Return a property if it exists, else return an empty string.
+    function getStringIfWeCan(objBase, property) {
+      if (objBase.hasOwnProperty(property)) {
+        return objBase[property];
+      } else {
+        return '';
+      }
+    }
+
+    // Use the JSON to build a table.
+    function writeTable() {
+
+      // Create the HTML table.
+      var html = '';
+      for (var y = objJSON.min.y; y <= objJSON.max.y; y++) {
+        var html_row = '  <tr>';
+        for (var x = objJSON.min.x; x <= objJSON.max.x; x++) {
+          var r = objJSON.room_by_coords[x+','+y];
+          if (typeof r == 'undefined') {
+            row = "\n    <td><br></td>";
+          } else {
+            walls   = getStringIfWeCan(r,'walls').split('');
+            oneways = getStringIfWeCan(r,'exits_one_way_orig').split('');
+
+            // Add all the CSS class identifiers.
+            klass  = r.letter;
+            klass += ' zone'+String('00'+Math.floor(r.zone)).slice(-2);
+            klass += ' '+walls.map( function(i){ return 'wall'+i }).join(' ');
+            klass += ' '+oneways.map( function(i){ return 'oneway'+i }).join(' ');
+            klass += " lock" + getStringIfWeCan(r,'lock_orig');
+            klass += " lock" + getStringIfWeCan(r,'lock_dest');
+            klass += " lock_puzzle" + getStringIfWeCan(r,'lock_puzzle_orig');
+            klass += " lock_puzzle" + getStringIfWeCan(r,'lock_puzzle_dest');
+            klass += " multilock" + getStringIfWeCan(r,'multi_lock_orig');
+            klass += " multilock" + getStringIfWeCan(r,'multi_lock_dest');
+            klass += " bosslock" + getStringIfWeCan(r,'boss_lock_orig');
+            klass += " bosslock" + getStringIfWeCan(r,'boss_lock_dest');
+            klass += " weak_wall" + getStringIfWeCan(r,'weak_walls_orig');
+            klass += " weak_wall" + getStringIfWeCan(r,'weak_walls_dest');
+            klass += " observatory" + getStringIfWeCan(r,'observatory_orig');
+            klass += " observatory" + getStringIfWeCan(r,'observatory_dest');
+            if (r.letter == 'e') klass += ' entrance';
+
+            text   = r.id+' = '+r.letter+'<br>'+r.entrance+'<br>'+r.zone;
+            row    = "\n    <td class='"+klass+"'>"+text+"</td>";
+          }
+          html_row += row;
+        }
+        html_row += "\n  </tr>";
+        html = html + "\n" + html_row;
+      }
+      html = "<table>\n" + html + "</table>"
+      document.getElementById('table').innerHTML = html;
+    }
+
+    // Add and remove classes for multiple elements on hover.
+    // http://stackoverflow.com/a/12786869/139299
+    window.addEventListener('load', function() {
+      function classAdd(elems) {
+        for(var i = 0; i < elems.length; i ++) {
+          elems[i].classList.add('highlight');
+        }
+      }
+      function classRemove(elems) {
+        for(var i = 0; i < elems.length; i ++) {
+          elems[i].classList.remove('highlight');
+        }
+      }
+      function addHoverEvents(classes) {
+        var es = document.querySelectorAll(classes);
+        for(var i = 0; i < es.length; i ++) {
+          es[i].onmouseover = function() {
+            classAdd(es);
+          };
+          es[i].onmouseout = function() {
+            classRemove(es);
+          };
+        }
+      }
+      addHoverEvents('.k, .l');
+      addHoverEvents('.km, .lm');
+      addHoverEvents('.kf, .lf');
+      addHoverEvents('.kp, .lp');
+      addHoverEvents('.ts, .ti');
+      addHoverEvents('.n, .t');
+      addHoverEvents('.ib');
+      addHoverEvents('.bm, .bl');
+      addHoverEvents('.g, .e, .iq');
+    });
+  </script>
+</head>
+<body>
+  <div id='graph' class='right'></div>
+  <div id='table' class='left'></div>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>Zelda Dungeon Map</title>
+  <script src='lib/ext/pixi.min.js'></script>
+  <script src='lib/ext/pixi-tiledmap.min.js'></script>
+  <script src='lib/file_list.js'></script>
+  <script src='lib/globals.js'></script>
+  <script src='lib/map_files.js'></script>
+  <script src='lib/map_patterns.js'></script>
+  <script src='lib/rooms.js'></script>
+  <script src='lib/maps.js'></script>
+  <script src='lib/minimap.js'></script>
+  <style>
+    body { background-color: #E0B0FF; }
+    body { background-color: #DCDCDC; }
+    * { padding: 0; margin: 0 }
+    /*  This just sits in front of the Pixi stage, and lets you use
+        the middle-button to scroll around the screen, like normal.
+        There's probably a way to do this in Pixi, but this is a
+        reasonable workaround in the meantime. */
+    #enable_scroll {
+      background-color: #DCDCDC;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+    #loading {
+      text-align: center;
+      padding: 300px;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+<div id='enable_scroll'><div id='loading'><img src='img/loading.gif'></div></div>
+<script type='text/javascript'>
+
+//##############################################################################
+
+// Reset the floating div.
+function resizeStage(dimX, dimY) {
+  renderer.resize(dimX, dimY);
+  var divElem = document.getElementById('enable_scroll');
+  var cssClass = divElem.style;
+  cssClass.width  = dimX + 'px';
+  cssClass.height = dimY + 'px';
+  cssClass.top  = '0px';
+  cssClass.left = '0px';
+  cssClass.backgroundColor = 'transparent';
+  divElem.innerHTML = '';
+}
+
+//##############################################################################
+
+// http://javascript.info/tutorial/keyboard-events
+function getChar(event) {
+  if (event.which == null) {
+    return String.fromCharCode(event.keyCode) // IE
+  } else if (event.which!=0 && event.charCode!=0) {
+    return String.fromCharCode(event.which)   // the rest
+  } else {
+    return null // special key
+  }
+}
+
+var chestsColour = true;
+document.onkeypress = function(event) {
+  var char = getChar(event || window.event);
+  if (char) {
+    switch( char.toUpperCase() ) {
+      case 'C': toggleChests(); break;
+      case 'X': toggleColour(); break;
+      default: break;
+    }
+  }
+}
+
+function toggleChests() {
+  minimapInstance.minimapChests.visible = !minimapInstance.minimapChests.visible;
+  renderChests();
+}
+function toggleColour() {
+  chestsColour = !chestsColour;
+  renderChests();
+}
+function renderChests() {
+  if (chestsColour) {
+    tilemapChests.visible = false;
+    tilemapChestsColour.visible = !tilemapChestsColour.visible;
+  } else {
+    tilemapChests.visible = !tilemapChests.visible;
+    tilemapChestsColour.visible = false;
+  }
+  renderer.render(stage);
+}
+
+
+//##############################################################################
+
+// Make this a global, as it has chests that are toggleable via keypress.
+var minimapInstance;
+
+// Set pixelZoom to the URL arg if it exists.
+var pixelZoom = 1;
+if ( getURLParameter('zoom') != null ) {
+  pixelZoom = parseFloat(getURLParameter('zoom'));
+  if (isNaN(pixelZoom) || pixelZoom <= 0) pixelZoom = 1;
+  if (pixelZoom > 4) pixelZoom = 4;
+}
+
+// Set dungeonFile to the URL arg if it exists.
+// Default to the last file in 'fileList'.
+var dungeonFile = 'data/' + fileList[fileList.length-1] + '.json';
+if ( getURLParameter('file') != null ) {
+  dungeonFile = getURLParameter('file');
+  dungeonFile = 'data/' + dungeonFile + '.json';
+}
+
+
+// Set up the PIXI renderer.
+var renderer = PIXI.autoDetectRenderer( 64*15, 64*11 );
+var stage = new PIXI.Container();
+
+// Resize the canvas to view-port.
+renderer.view.style.position = 'absolute';
+renderer.view.style.display = 'block';
+renderer.autoResize = true;
+//renderer.backgroundColor = 0xE0B0FF;
+renderer.backgroundColor = 0xDCDCDC;
+document.body.appendChild(renderer.view);
+
+// For pixel art.
+PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
+stage.scale.x = pixelZoom;
+stage.scale.y = pixelZoom;
+
+// Grab data from the JSON file.
+var xReq = new XMLHttpRequest();
+//xReq.open('GET', 'data/example.json', true);
+//xReq.open('GET', 'data/example20161214020153550.json', true);
+//xReq.open('GET', 'data/example20161214170808264.json', true);
+//xReq.open('GET', 'data/example20161214172155587.json', true);
+xReq.open('GET', dungeonFile, true);
+xReq.responseType = 'json';
+xReq.onload = function() {
+  getFromJSON(dungeonFile, xReq);
+};
+xReq.send(null);
+
+// Globals...
+mapTilesWidth  = 15;
+mapTilesHeight = 11;
+mapPixelsWidth  = mapTilesWidth  * 16 * pixelZoom;
+mapPixelsHeight = mapTilesHeight * 16 * pixelZoom;
+minimapOriginX = 0;
+minimapOriginY = 0;
+
+// Call this when the JSON object has been loaded.
+function getFromJSON(dungeonFile, xReq) {
+  var objJSON = xReq.response;
+
+  // List of the filenames for the screens that are to be read in.
+  sprites = [
+    'img/chest_contents.json',
+    'img/chest_contents_colour.json',
+    'img/room.json',
+    'img/font_minimap.json',
+    'img/minimap_x1.png'
+  ];
+  var allToLoad = sprites.concat(tilemapFilesMaps);
+  allToLoad = allToLoad.concat(tilemapFilesPatterns);
+
+  PIXI.loader
+    .add( allToLoad )
+    .load( function() {
+      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+      ModMaps.catagoriseTilemaps();
+      ModRooms.transform(dungeonFile, objJSON);
+      console.log(objJSON);
+      makeDungeon(objJSON);
+      displayMinimap(objJSON);
+    }
+  );
+}
+
+
+
+
+// https://github.com/riebel/pixi-tiledmap
+tilemapChests = new PIXI.Container();
+tilemapChestsColour = new PIXI.Container();
+function makeDungeon(objJSON) {
+
+  // Array of sprites that need to be drawn to the screen.
+  // Keep them in arrays and draw at the end of the process.
+  var spritesTilemap = new PIXI.Container();
+  stage.addChild(spritesTilemap);
+
+  // Make the browser's size match the stage.
+  resizeStage(
+    (objJSON.max.x + 1) * mapPixelsWidth,
+    (objJSON.max.y + 1) * mapPixelsHeight
+  );
+
+  // This is it, the big main loop.
+  // Loop through each room in the JSON and add to the stage.
+  objJSON.rooms.forEach( function(room) {
+
+    var pixiTileMap = new PIXI.extras.TiledMap( room.tiled_file );
+
+
+    // Position of the room.
+    // The JSON data is from origin bottom-left, so need
+    //   to use this to make the map from origin top.
+    pixiTileMap.x = mapTilesWidth  * 16 * room.x;
+    pixiTileMap.y = mapTilesHeight * 16 * (objJSON.max.y - room.y_orig);
+
+
+    // Does the room contain a chest?
+    if (room.chest) {
+
+      // Draw the 'Chest' layer. (Error if it doesn't exist)
+      if (typeof pixiTileMap.layers['Chest'] !== 'undefined') {
+        pixiTileMap.layers['Chest'].visible = true;
+      } else {
+        logif(1==1, 'No chest!  room.tiled_file = ' + room.tiled_file);
+        logif(1==1, room);
+      }
+
+      // Add a sprite for the contents of the chest.
+      var sprite = new PIXI.Sprite(
+        PIXI.loader.resources['img/chest_contents.json'].textures[room.chest_contents]
+      );
+
+      // Find the x and y coords of where the sprite should be displayed.
+      // This is based off the position of the 'chest' layer.
+      // The tile with '.gid == 7' is the chest.
+      var tiles = pixiTileMap.layers['Chest'].tiles;
+      for (var i = 0; i < tiles.length; i++) {
+        if ( tiles[i].gid == 7 ) {
+          var x = tiles[i]._x;
+          var y = tiles[i]._y -1;
+        }
+      }
+
+      var itemSpriteZoom = 2;
+      var spriteDim = 16;
+      sprite.width  = spriteDim * itemSpriteZoom;
+      sprite.height = spriteDim * itemSpriteZoom;
+
+      var offsetX = -(itemSpriteZoom-1)*(spriteDim/2);
+      var offsetY = -(itemSpriteZoom-1)*(spriteDim);
+      sprite.x = pixiTileMap.x + spriteDim * x + offsetX;
+      sprite.y = pixiTileMap.y + spriteDim * y + offsetY;
+
+      // Add the sprite to the list to be added after the main map.
+      tilemapChests.addChild(sprite);
+
+      // Do the same for the colour sprite.
+      var spriteColour = new PIXI.Sprite(
+        PIXI.loader.resources['img/chest_contents_colour.json'].textures[room.chest_contents]
+      );
+      spriteColour.x = sprite.x;
+      spriteColour.y = sprite.y;
+      spriteColour.width  = sprite.width;
+      spriteColour.height = sprite.height;
+      tilemapChestsColour.addChild(spriteColour);
+
+      // Don't display the chest if the room is a 'g'
+      if (room.letter == 'g') {
+        pixiTileMap.layers['Chest'].visible = false;
+      }
+
+      if (room.tiled_file != 'img/tilemaps/basic_room_001.tmx') {
+//        console.log(room.tiled_file);
+//        console.log(pixiTileMap);
+      }
+    }
+
+    // Draw the thresholds from the direction strings.
+    displayLayersFromDirString(pixiTileMap, room.exits, 'Exit');
+    displayLayersFromDirString(pixiTileMap, room.walls, 'Wall');
+    displayLayersFromDirString(pixiTileMap, room.walls, 'WallDecoration');
+    displayLayersFromDirString(pixiTileMap, room.lock_orig, 'Lock');
+    displayLayersFromDirString(pixiTileMap, room.lock_dest, 'NoEntry');
+    displayLayersFromDirString(pixiTileMap, room.lock_puzzle_orig, 'LockPuzzle');
+    displayLayersFromDirString(pixiTileMap, room.lock_puzzle_dest, 'NoEntry');
+    displayLayersFromDirString(pixiTileMap, room.multi_lock_orig, 'Lock');
+    displayLayersFromDirString(pixiTileMap, room.multi_lock_dest, 'NoEntry');
+    displayLayersFromDirString(pixiTileMap, room.boss_lock_orig, 'BossLock');
+    displayLayersFromDirString(pixiTileMap, room.boss_lock_dest, 'NoEntry');
+    displayLayersFromDirString(pixiTileMap, room.exits_one_way_orig, 'OneWay');
+    displayLayersFromDirString(pixiTileMap, room.exits_one_way_dest, 'NoEntry');
+    displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'WallBomb');
+    displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBomb');
+    displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBombVisible');
+    displayLayersFromDirString(pixiTileMap, room.observatory_dest, 'Observatory');
+
+    // If there's a
+    if (room.weak_walls_orig != null && room.weak_walls_hidden == null) {
+      displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'WallBombVisible');
+    }
+
+    // Multi-key rooms should display the correct fire-pit.
+    if (['km','lm'].indexOf(room.letter) != -1 && room.lock_group.multi_type == 'monsters') {
+      if (typeof pixiTileMap.layers['LockNo' + room.lock_group.num] !== 'undefined') {
+        pixiTileMap.layers['LockNo' + room.lock_group.num].visible = true;
+      }
+    }
+
+
+    // Dev stuff: Display the room letter as text.
+    if ( ['km','lm'].indexOf(room.letter) != -1 ) {
+      var sprite = new PIXI.Text( room.letter, {
+          fontFamily: 'Arial', fontSize: 24, fill: 0xFFB531, align: 'center'
+        }
+      );
+      sprite.x = pixiTileMap.x + 12;
+      sprite.y = pixiTileMap.y + 5;
+      var rect = new PIXI.Graphics();
+      rect.beginFill(0xDE0000);
+      rect.lineStyle(3, 0xFFB531);
+      rect.drawRect(sprite.x - 6, sprite.y, sprite.width + 12, sprite.height);
+      spritesTilemap.addChild(rect);
+      spritesTilemap.addChild(sprite);
+    }
+
+    // Draw the obstacles, if necessary.
+    if (room.exits_quest_item != null) {
+      for (var i = 0; i < room.exits_quest_item.length; i++) {
+        var qiDirection = room.exits_quest_item[i];
+
+        // If it's an observatory, don't need to have an obstacle.
+        if (room.observatory_dest != qiDirection) {
+          var pitName = 'ObstaclePit' + qiDirection;
+          if (typeof pixiTileMap.layers[pitName] !== 'undefined') {
+            pixiTileMap.layers[pitName].visible = true;
+          } else {
+            logif(1==1, 'No obstacle pit!');
+            logif(1==1, 'pitName = [' + pitName + ']');
+            logif(1==1, 'room.tiled_file = ' + room.tiled_file);
+          }
+        }
+      }
+    }
+
+    spritesTilemap.addChild(pixiTileMap);
+  });
+
+//  console.log(getMethods(stage));
+//  console.log(stage);
+
+  stage.addChild(tilemapChests);
+  stage.addChild(tilemapChestsColour);
+  renderer.render(stage);
+}
+
+
+
+// Display the layers specified in the string, for all directions.
+function displayLayersFromDirString(pixiTileMap, dirString, layerPrefix) {
+  if (dirString != null) {
+    for (var i = 0; i < dirString.length; i++) {
+      var layerName = layerPrefix + dirString[i];
+      if (typeof pixiTileMap.layers[layerName] !== 'undefined') {
+        pixiTileMap.layers[layerName].visible = true;
+      }
+    }
+  }
+}
+
+
+function displayMinimap(objJSON, minimapZoom = 2) {
+  minimapInstance = new Minimap(objJSON, stage);
+  minimapInstance.display();
+  renderer.render(stage);
+}
+
+</script>
+</body>
+</html>
