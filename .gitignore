@@ -37,7 +37,19 @@ Gemfile.lock
 # OS junk
 desktop.ini
 
-# Testing files:
+################################################################################
+# App specific files
+
+# Testing files
 work*.rb
 /~/
 /data/tiled/
+/public_html/data/test/
+/public_html/img/tilemaps/*/
+/public_html/img/tilemaps/*.png
+
+# Generated files
+/public_html/data/
+/public_html/img/rules/
+/public_html/lib/file_list.js
+/public_html/grammar_rules.html
