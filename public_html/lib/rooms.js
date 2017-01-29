@@ -96,7 +96,17 @@ var ModRooms = (function () {
     // Loop through all 'lm' groups. Try to not repeat multiLockTypes.
     objJSON.lock_groups.forEach( function(lock_group) {
       if (lock_group.type == 'lm') {
-        if (objJSON.dodgy_lock_groups.indexOf(lock_group.id) != -1) {
+
+        // Determine if 'dodgy_lock_groups'
+        var isDodgy = false;
+        if (typeof objJSON.dodgy_lock_groups != 'undefined') {
+          if (objJSON.dodgy_lock_groups.indexOf(lock_group.id) != -1) {
+            isDodgy = true;
+          }
+        }
+
+        // If it's dodgy use the dodgy list. If not then the normal list.
+        if (isDodgy) {
           var value = multiLockTypes.dodgy.shift();
           var index = multiLockTypes.normal.indexOf(value);
           if (index != -1) multiLockTypes.normal.splice(index, 1);
@@ -120,7 +130,7 @@ var ModRooms = (function () {
       if (typeof room.lock_group != 'undefined') {
         if (room.lock_group.type == 'lm') {
           room.lock_group.multi_type = lookup[room.lock_group.id].multi_type;
-          if (room.letter == 'km') {
+          if (room.letters.includes('km')) {
             if (room.lock_group.multi_type == 'slates') {
               room.chest = true;
               room.chest_contents = 'slate.png';
@@ -145,7 +155,7 @@ var ModRooms = (function () {
     // Add all 'ib' ids to an object, keyed by zone.
     ibRoomsZone = new Object();
     objJSON.rooms.forEach( function(room) {
-      if (room.letter == 'ib') {
+      if (room.letters.includes('ib')) {
         if (typeof ibRoomsZone[room.zone] == 'undefined') {
           ibRoomsZone[room.zone] = [];
         }
@@ -171,9 +181,11 @@ var ModRooms = (function () {
     ];
 
     // Add the chest contents to the rooms.
+    // There may in future be some issues with multi-letter rooms.
+    // But for now, there is still only one chest to a room.
     objJSON.rooms.forEach( function(room) {
       if (typeof room.chest == 'undefined') {
-        room.chest = ( ['ib','iq','kf','k','g'].indexOf(room.letter) != -1 );
+        room.chest = findOne(room.letters, ['ib','iq','kf','k','g'])
       }
       if (room.id == ibRooms[0]) {
         room.chest_contents = 'dungeon_compass.png';
@@ -181,13 +193,13 @@ var ModRooms = (function () {
         room.chest_contents = 'dungeon_map.png';
       } else if (ibRooms.indexOf(room.id) != -1) {
         room.chest_contents = sample(normalChestItems);
-      } else if (room.letter == 'k') {
+      } else if (room.letters.includes('k')) {
         room.chest_contents = 'dungeon_key2.png';
-      } else if (room.letter == 'kf') {
+      } else if (room.letters.includes('kf')) {
         room.chest_contents = 'dungeon_boss_key.png';
-      } else if (room.letter == 'iq') {
+      } else if (room.letters.includes('iq')) {
         room.chest_contents = 'roc1.png';
-      } else if (room.letter == 'g') {
+      } else if (room.letters.includes('g')) {
         room.chest_contents =
           'goal_item_' + randBetween(1,3) + '_' + randBetween(1,8) + '.png';
       }
@@ -325,7 +337,7 @@ var ModRooms = (function () {
         }
 
         // If the room is a multi-room, then make sure we use the correct type.
-        if (['km','lm'].includes(room.letter)) {
+        if (findOne(room.letters, ['km','lm'])) {
           if (objTileMap.tags.hasOwnProperty('multiRoomType')) {
             if (objTileMap.tags['multiRoomType'] != room.lock_group.multi_type) {
               logif(logReason, '6 room.id = ' + room.id);

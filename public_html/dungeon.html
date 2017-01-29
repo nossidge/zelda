@@ -273,7 +273,7 @@ function makeDungeon(objJSON) {
       tilemapChestsColour.addChild(spriteColour);
 
       // Don't display the chest if the room is a 'g'
-      if (room.letter == 'g') {
+      if (room.letters.includes('g')) {
         pixiTileMap.layers['Chest'].visible = false;
       }
 
@@ -308,27 +308,10 @@ function makeDungeon(objJSON) {
     }
 
     // Multi-key rooms should display the correct fire-pit.
-    if (['km','lm'].indexOf(room.letter) != -1 && room.lock_group.multi_type == 'monsters') {
+    if (findOne(room.letters, ['km','lm']) && room.lock_group.multi_type == 'monsters') {
       if (typeof pixiTileMap.layers['LockNo' + room.lock_group.num] !== 'undefined') {
         pixiTileMap.layers['LockNo' + room.lock_group.num].visible = true;
       }
-    }
-
-
-    // Dev stuff: Display the room letter as text.
-    if ( ['km','lm'].indexOf(room.letter) != -1 ) {
-      var sprite = new PIXI.Text( room.letter, {
-          fontFamily: 'Arial', fontSize: 24, fill: 0xFFB531, align: 'center'
-        }
-      );
-      sprite.x = pixiTileMap.x + 12;
-      sprite.y = pixiTileMap.y + 5;
-      var rect = new PIXI.Graphics();
-      rect.beginFill(0xDE0000);
-      rect.lineStyle(3, 0xFFB531);
-      rect.drawRect(sprite.x - 6, sprite.y, sprite.width + 12, sprite.height);
-      spritesTilemap.addChild(rect);
-      spritesTilemap.addChild(sprite);
     }
 
     // Draw the obstacles, if necessary.
@@ -350,7 +333,25 @@ function makeDungeon(objJSON) {
       }
     }
 
+    // Add the room map to the sprite collection.
     spritesTilemap.addChild(pixiTileMap);
+
+    // Dev stuff: Display the room letter as text.
+    if (findOne(room.letters, ['km','lm'])) {
+      var sprite = new PIXI.Text( room.letters, {
+          fontFamily: 'Arial', fontSize: 24, fill: 0xFFB531, align: 'center'
+        }
+      );
+      sprite.x = pixiTileMap.x + 12;
+      sprite.y = pixiTileMap.y + 5;
+      var rect = new PIXI.Graphics();
+      console.log('rectrectrectrectrectrect' );
+      rect.beginFill(0xDE0000);
+      rect.lineStyle(3, 0xFFB531);
+      rect.drawRect(sprite.x - 6, sprite.y, sprite.width + 12, sprite.height);
+      spritesTilemap.addChild(rect);
+      spritesTilemap.addChild(sprite);
+    }
   });
 
 //  console.log(getMethods(stage));
