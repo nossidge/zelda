@@ -54,6 +54,12 @@ map_patterns = [
         },
         "absolute": {
           "letter": "k"
+        },
+        "prop_alter": {
+          "chest": false
+        },
+        "prop_remove": {
+          "letters": "k"
         }
       },
       {
@@ -69,6 +75,12 @@ map_patterns = [
         "absolute": {
           "letter": "l",
           "entrance": "S"
+        },
+        "prop_alter": {
+          "chest": true
+        },
+        "prop_append": {
+          "letters": "k"
         }
       }
     ]

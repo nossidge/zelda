@@ -9,6 +9,16 @@ var ModRooms = (function () {
 
   //############################################################################
 
+  // Convert 'l,k' to ['l','k']
+  var addLettersArray = function(objJSON) {
+    objJSON.rooms.forEach( function(room) {
+      room.letters = room.letter.split(',');
+    });
+    return objJSON;
+  };
+
+  //############################################################################
+
   // The JSON data is from origin bottom-left, so need to subtract
   //   from highest Y to make the map from origin top.
   var calculateTopLeftYCoords = function(objJSON) {
@@ -544,6 +554,7 @@ var ModRooms = (function () {
     transform: function(fileName, objJSON, largeMap = true) {
 
       objJSON.file_name = strip_extension(basename(fileName));
+      objJSON = addLettersArray(objJSON);
       objJSON = calculateTopLeftYCoords(objJSON);
       objJSON = hashByCoords(objJSON);
       if (typeof objJSON.dungeon_name == 'undefined') {
