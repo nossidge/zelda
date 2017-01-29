@@ -97,3 +97,14 @@ var findOne = function (haystack, arr) {
     return haystack.indexOf(v) >= 0;
   });
 };
+
+
+// Remove all chosen values from array.
+// http://stackoverflow.com/a/18165553
+function remove(arr, item) {
+  for(var i = arr.length; i--;) {
+    if(arr[i] === item) {
+      arr.splice(i, 1);
+    }
+  }
+}

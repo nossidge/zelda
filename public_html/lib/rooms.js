@@ -10,6 +10,10 @@ var ModRooms = (function () {
   //############################################################################
 
   // Convert 'l,k' to ['l','k']
+  // 'room.letter' is the original Ruby-generated string.
+  // 'room.letters' is the amended array.
+  // Currently, this is only amended if the room is part of a layout pattern,
+  //   so any regular single rooms will be able to treat it as single element.
   var addLettersArray = function(objJSON) {
     objJSON.rooms.forEach( function(room) {
       room.letters = room.letter.split(',');
@@ -187,21 +191,23 @@ var ModRooms = (function () {
       if (typeof room.chest == 'undefined') {
         room.chest = findOne(room.letters, ['ib','iq','kf','k','g'])
       }
-      if (room.id == ibRooms[0]) {
-        room.chest_contents = 'dungeon_compass.png';
-      } else if (room.id == ibRooms[1]) {
-        room.chest_contents = 'dungeon_map.png';
-      } else if (ibRooms.indexOf(room.id) != -1) {
-        room.chest_contents = sample(normalChestItems);
-      } else if (room.letters.includes('k')) {
-        room.chest_contents = 'dungeon_key2.png';
-      } else if (room.letters.includes('kf')) {
-        room.chest_contents = 'dungeon_boss_key.png';
-      } else if (room.letters.includes('iq')) {
-        room.chest_contents = 'roc1.png';
-      } else if (room.letters.includes('g')) {
-        room.chest_contents =
-          'goal_item_' + randBetween(1,3) + '_' + randBetween(1,8) + '.png';
+      if (room.chest) {
+        if (room.id == ibRooms[0]) {
+          room.chest_contents = 'dungeon_compass.png';
+        } else if (room.id == ibRooms[1]) {
+          room.chest_contents = 'dungeon_map.png';
+        } else if (ibRooms.indexOf(room.id) != -1) {
+          room.chest_contents = sample(normalChestItems);
+        } else if (room.letters.includes('k')) {
+          room.chest_contents = 'dungeon_key2.png';
+        } else if (room.letters.includes('kf')) {
+          room.chest_contents = 'dungeon_boss_key.png';
+        } else if (room.letters.includes('iq')) {
+          room.chest_contents = 'roc1.png';
+        } else if (room.letters.includes('g')) {
+          room.chest_contents =
+            'goal_item_' + randBetween(1,3) + '_' + randBetween(1,8) + '.png';
+        }
       }
     });
 
@@ -504,16 +510,58 @@ var ModRooms = (function () {
     if (duplicateRoomIDs.length == 0) {
 
       // Find each room, and alter the 'tiled_file' property.
-      // We can use the first element of 'patterns_possible',
-      //   now that we have made sure there is only one.
       for (var roomID in objJSON.patterns_possible) {
         if (objJSON.patterns_possible.hasOwnProperty(roomID)) {
           var room = objJSON.rooms[roomID - 1];
           if (room.patterns_possible.length > 0) {
-            var name = room.patterns_possible[0].name;
-            var id   = room.patterns_possible[0].room.relative.id;
+
+            // We can use the first element of 'patterns_possible',
+            //   now that we have made sure there is only one.
+            var pattern = room.patterns_possible[0];
+            var name = pattern.name;
+            var id   = pattern.room.relative.id;
             room.pattern_in_use = true;
             room.tiled_file = 'img/tilemaps/pattern_' + name + '_' + id + '.tmx';
+
+            // Property change: Alter a property value.
+            if (typeof pattern.room.prop_alter != 'undefined') {
+              for (var key in pattern.room.prop_alter) {
+                if (pattern.room.prop_alter.hasOwnProperty(key)) {
+                  room[key] = pattern.room.prop_alter[key];
+                }
+              }
+            }
+
+            // Property change: Remove a property completely.
+            if (typeof pattern.room.prop_remove != 'undefined') {
+              for (var i = 0; i < pattern.room.prop_remove.length; i++) {
+                delete room[pattern.room.prop_remove[i]];
+              }
+            }
+
+            // Property change: Remove a value from an array.
+            // Currently only works with 'room.letters'.
+            // It will find a value in a given array, and remove it.
+            if (typeof pattern.room.prop_array_remove != 'undefined') {
+              for (var key in pattern.room.prop_array_remove) {
+                if (pattern.room.prop_array_remove.hasOwnProperty(key)) {
+                  var item = pattern.room.prop_array_remove[key];
+                  remove(room[key], item);
+                }
+              }
+            }
+
+            // Property change: Append a value to an array.
+            // Currently only works with 'room.letters'.
+            if (typeof pattern.room.prop_array_append != 'undefined') {
+              for (var key in pattern.room.prop_array_append) {
+                if (pattern.room.prop_array_append.hasOwnProperty(key)) {
+                  var item = pattern.room.prop_array_append[key];
+                  room[key].push(item);
+                }
+              }
+            }
+
           }
         }
       }
@@ -554,6 +602,7 @@ var ModRooms = (function () {
 
       // Recurse to see if more patterns need resolving.
       objJSON = resolvePatterns(objJSON);
+      return objJSON;
     }
   };
 
@@ -573,7 +622,6 @@ var ModRooms = (function () {
         objJSON = determineDungeonName(objJSON);
       }
       objJSON = determineMultiLocks(objJSON);
-      objJSON = determineChests(objJSON);
       objJSON = determineMinimapRooms(objJSON);
       objJSON = determineEquipmentInventory(objJSON);
 
@@ -584,6 +632,7 @@ var ModRooms = (function () {
         objJSON = determineTiledRooms(objJSON);
         objJSON = resolvePatterns(objJSON);
       }
+      objJSON = determineChests(objJSON);
 
 //      console.log('Room transform complete');
 //      console.log(objJSON);
