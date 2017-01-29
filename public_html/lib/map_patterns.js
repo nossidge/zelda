@@ -50,8 +50,7 @@ map_patterns = [
         "absolute": {
           "letter": "k",
           "entrance": "S",
-          "exits": "ES",
-          "walls": "NW"
+          "exits": "ES"
         }
       },
       {
@@ -66,10 +65,7 @@ map_patterns = [
         },
         "absolute": {
           "letter": "l",
-          "entrance": "W",
-          "exits": "EW",
-          "walls": "NS",
-          "lock_orig": "E"
+          "entrance": "W"
         }
       }
     ]
@@ -88,12 +84,6 @@ map_patterns = [
         },
         "absolute": {
           "letter": "k"
-        },
-        "prop_alter": {
-          "chest": false
-        },
-        "prop_array_remove": {
-          "letters": "k"
         }
       },
       {
@@ -109,17 +99,11 @@ map_patterns = [
         "absolute": {
           "letter": "l",
           "entrance": "S"
-        },
-        "prop_alter": {
-          "chest": true
-        },
-        "prop_array_append": {
-          "letters": "k"
         }
       }
     ]
   },{
-    "name": "test",
+    "name": "lock_key_s_to_n",
     "rooms": [
       {
         "relative": {
@@ -132,7 +116,18 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "l"
+          "letter": "l",
+          "entrance": "E",
+          "walls": "SW"
+        },
+        "prop_remove": [
+          "lock_orig"
+        ],
+        "prop_alter": {
+          "chest": true
+        },
+        "prop_array_append": {
+          "letters": "k"
         }
       },
       {
@@ -147,7 +142,17 @@ map_patterns = [
         },
         "absolute": {
           "letter": "k",
-          "entrance": "S"
+          "entrance": "S",
+          "walls": "E"
+        },
+        "prop_remove": [
+          "lock_dest"
+        ],
+        "prop_alter": {
+          "chest": false
+        },
+        "prop_array_remove": {
+          "letters": "k"
         }
       }
     ]

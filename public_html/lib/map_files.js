@@ -48,6 +48,7 @@ tilemapFilesPatterns = [
   'img/tilemaps/pattern_key_lock_e_to_w_2.tmx',
   'img/tilemaps/pattern_key_lock_s_to_n_1.tmx',
   'img/tilemaps/pattern_key_lock_s_to_n_2.tmx',
-  'img/tilemaps/pattern_test_1.tmx',
-  'img/tilemaps/pattern_test_2.tmx'
+  'img/tilemaps/pattern_lock_key_s_to_n_1.tmx',
+  'img/tilemaps/pattern_lock_key_s_to_n_2.tmx',
+  'img/tilemaps/pattern__empty.tmx'
 ]

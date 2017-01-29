@@ -479,10 +479,13 @@ var ModRooms = (function () {
       if ( absolute.hasOwnProperty(property) ) {
 
         // Make sure it matches the 'room' property.
+        // These are strings of letters, so check if it's in the string.
         if ( room.hasOwnProperty(property) ) {
-          if ( room[property] != absolute[property] ) {
-            isValid = false;
-          }
+          absolute[property].split('').forEach( function(abs_char) {
+            if ( !room[property].includes(abs_char) ) {
+              isValid = false;
+            }
+          });
         }
       }
     }
@@ -622,6 +625,7 @@ var ModRooms = (function () {
         objJSON = determineDungeonName(objJSON);
       }
       objJSON = determineMultiLocks(objJSON);
+      objJSON = determineChests(objJSON);
       objJSON = determineMinimapRooms(objJSON);
       objJSON = determineEquipmentInventory(objJSON);
 
