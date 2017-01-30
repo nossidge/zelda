@@ -155,10 +155,16 @@ module Zelda
         }
       end
 
-      # Debug: Make sure there are at least 4 'l' nodes.
+      # Debug: Make sure there are some 'l' nodes.
       @constraints << {
         value: "nodes.find_by_letter('l').count",
         conditions: '>= 4'
+      }
+
+      # Debug: Make sure there are some 'lm' nodes.
+      @constraints << {
+        value: "nodes.find_by_letter('lm').count",
+        conditions: '>= 0'
       }
     end
 

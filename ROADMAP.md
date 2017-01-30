@@ -10,9 +10,9 @@
 
 
 # TO DO
-* GitHub!!
 * use a stack of room combos, and work backwards if dead end found
 * replace 't' nodes with 'n'
+* remove empty dead end rooms
 * more equipment items
 * more puzzles
 * multi-rooms should match based on count
