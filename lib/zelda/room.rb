@@ -199,6 +199,31 @@ module Zelda
       end.join
     end
 
+    # These are exits which do not have any sort of barrier.
+    def exits_open
+      output = @exits
+      exit_complications = [
+        @lock_orig,
+        @lock_dest,
+        @lock_puzzle_orig,
+        @lock_puzzle_dest,
+        @boss_lock_orig,
+        @boss_lock_dest,
+        @multi_lock_orig,
+        @multi_lock_dest,
+        @weak_walls_orig,
+        @weak_walls_dest,
+        @weak_walls_hidden,
+        @exits_one_way_orig,
+        @exits_one_way_dest,
+        @exits_quest_item
+      ]
+      exit_complications.each do |comp|
+        output.tr!(comp, '')
+      end
+      output
+    end
+
     ############################################################################
 
     # Copy the metadata from the node to the room.
@@ -226,6 +251,7 @@ module Zelda
         exits: @exits
       }
       hash['walls'] = walls if !walls.to_s.empty?
+      hash['exits_open'] = exits_open if !exits_open.to_s.empty?
       add_if_not_nil(hash, 'exits_one_way_orig')
       add_if_not_nil(hash, 'exits_one_way_dest')
       add_if_not_nil(hash, 'exits_quest_item')
