@@ -35,7 +35,7 @@ They alter the properties of the room so patterns can be properly implemented.
 
 map_patterns = [
   {
-    "name": "key_lock_e_to_w",
+    "name": "key_lock_w_to_e",
     "rooms": [
       {
         "relative": {
@@ -48,9 +48,11 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "k",
-          "entrance": "S",
-          "exits": "ES"
+          "all_of": {
+            "letters": "k",
+            "entrance": "S",
+            "exits": "ES"
+          }
         }
       },
       {
@@ -64,8 +66,10 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "l",
-          "entrance": "W"
+          "all_of": {
+            "letters": "l",
+            "entrance": "W"
+          }
         }
       }
     ]
@@ -83,7 +87,9 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "k"
+          "all_of": {
+            "letters": "k"
+          }
         }
       },
       {
@@ -97,8 +103,10 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "l",
-          "entrance": "S"
+          "all_of": {
+            "letters": "l",
+            "entrance": "S"
+          }
         }
       }
     ]
@@ -116,9 +124,11 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "l",
-          "entrance": "E",
-          "walls": "SW"
+          "all_of": {
+            "letters": "l",
+            "entrance": "E",
+            "walls": "SW"
+          }
         },
         "prop_remove": [
           "lock_orig"
@@ -141,9 +151,11 @@ map_patterns = [
           }
         },
         "absolute": {
-          "letter": "k",
-          "entrance": "S",
-          "walls": "E"
+          "all_of": {
+            "letters": "k",
+            "entrance": "S",
+            "walls": "E"
+          }
         },
         "prop_remove": [
           "lock_dest"
@@ -153,6 +165,75 @@ map_patterns = [
         },
         "prop_array_remove": {
           "letters": "k"
+        }
+      }
+    ]
+  },{
+    "name": "pattern_sundial_shrine_four",
+    "comment": "http://vgmaps.com/NewsArchives/April2008/LegendOfZelda-OracleOfHours-SundialShrine.png",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "all_of": {
+            "exits": "NE"
+          },
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "all_of": {
+            "entrance": "W",
+            "exits": "NW"
+          },
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          }
+        }
+      },{
+        "relative": {
+          "id": 3,
+          "x": 1,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "entrance": "S",
+            "exits": "SW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 4,
+          "x": 0,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "entrance": "E",
+            "exits": "ES"
+          }
         }
       }
     ]

@@ -474,15 +474,56 @@ var ModRooms = (function () {
     var absolute = patternRoom.absolute;
     var isValid = true;
 
-    // Loop through each 'patternRoom.absolute' property.
-    for ( var property in absolute ) {
-      if ( absolute.hasOwnProperty(property) ) {
+    // Loop through each 'patternRoom.absolute.all_of' property.
+    var all_of = absolute.all_of;
+    for ( var property in all_of ) {
+      if ( all_of.hasOwnProperty(property) ) {
 
         // Make sure it matches the 'room' property.
         // These are strings of letters, so check if it's in the string.
         if ( room.hasOwnProperty(property) ) {
-          absolute[property].split('').forEach( function(abs_char) {
+
+          // Split to array, if not already.
+          var arr = null;
+          if (all_of[property].constructor === Array) {
+            arr = all_of[property];
+          } else {
+            arr = all_of[property].split('');
+          }
+
+          // If it's not in the room property, then it's not valid.
+          arr.forEach( function(abs_char) {
             if ( !room[property].includes(abs_char) ) {
+              isValid = false;
+            }
+          });
+        }
+      }
+    }
+
+    // Loop through each 'patternRoom.absolute.one_of' property.
+    var one_of = absolute.one_of;
+    for ( var property in one_of ) {
+      if ( one_of.hasOwnProperty(property) ) {
+        console.log(property);
+
+        // Make sure it matches the 'room' property.
+        // These are strings of letters, so check if it's in the string.
+        if ( room.hasOwnProperty(property) ) {
+
+          // Split to array, if not already.
+          var arr = null;
+          if (one_of[property].constructor === Array) {
+            arr = one_of[property];
+          } else {
+            arr = one_of[property].split('');
+          }
+
+          // This is just for 'letters' at the moment.
+          // So we can assume they are both arrays.
+          // If it's not in the room property, then it's not valid.
+          arr.forEach( function(abs_char) {
+            if ( !findOne(room[property], arr) ) {
               isValid = false;
             }
           });

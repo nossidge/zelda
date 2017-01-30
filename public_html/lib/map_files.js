@@ -44,11 +44,15 @@ tilemapFilesMaps = [
   'img/tilemaps/roc_001.tmx'
 ]
 tilemapFilesPatterns = [
-  'img/tilemaps/pattern_key_lock_e_to_w_1.tmx',
-  'img/tilemaps/pattern_key_lock_e_to_w_2.tmx',
   'img/tilemaps/pattern_key_lock_s_to_n_1.tmx',
   'img/tilemaps/pattern_key_lock_s_to_n_2.tmx',
+  'img/tilemaps/pattern_key_lock_w_to_e_1.tmx',
+  'img/tilemaps/pattern_key_lock_w_to_e_2.tmx',
   'img/tilemaps/pattern_lock_key_s_to_n_1.tmx',
   'img/tilemaps/pattern_lock_key_s_to_n_2.tmx',
+  'img/tilemaps/pattern_sundial_shrine_four_1.tmx',
+  'img/tilemaps/pattern_sundial_shrine_four_2.tmx',
+  'img/tilemaps/pattern_sundial_shrine_four_3.tmx',
+  'img/tilemaps/pattern_sundial_shrine_four_4.tmx',
   'img/tilemaps/pattern__empty.tmx'
 ]
