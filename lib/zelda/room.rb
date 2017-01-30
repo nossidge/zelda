@@ -199,10 +199,9 @@ module Zelda
       end.join
     end
 
-    # These are exits which do not have any sort of barrier.
-    def exits_open
-      output = @exits
-      exit_complications = [
+    # All of the possible exits. All of them!
+    def exit_complication_array
+      [
         @lock_orig,
         @lock_dest,
         @lock_puzzle_orig,
@@ -218,7 +217,17 @@ module Zelda
         @exits_one_way_dest,
         @exits_quest_item
       ]
-      exit_complications.each do |comp|
+    end
+
+    # All of the possible exits in one string.
+    def exit_complications
+      direction_order(exit_complication_array.join)
+    end
+
+    # These are exits which do not have any sort of barrier.
+    def exits_open
+      output = @exits
+      exit_complication_array.each do |comp|
         output.tr!(comp, '')
       end
       output
@@ -248,7 +257,7 @@ module Zelda
         zone: @zone,
         letter: @letter,
         entrance: @entrance,
-        exits: @exits
+        exits: direction_order(@exits + exit_complication_array.join)
       }
       hash['walls'] = walls if !walls.to_s.empty?
       hash['exits_open'] = exits_open if !exits_open.to_s.empty?
@@ -281,6 +290,16 @@ module Zelda
 
     def to_json(*options)
       as_json(*options).to_json(*options)
+    end
+
+    ############################################################################
+
+    # Properly order a direction string by NESW.
+    private
+    def direction_order(string)
+      %w(N E S W).select do |i|
+        string.include?(i)
+      end.join
     end
 
   end
