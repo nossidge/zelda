@@ -297,17 +297,23 @@ var ModRooms = (function () {
 
         // Use this to get specific dev output with no unwanted noise.
         var logReason = false;
-//        logReason = (mapFilename == 'img/tilemaps/bl_002.tmx');
+//        logReason = (mapFilename == 'img/tilemaps/roc_001.tmx');
 
         // Innocent until proven guilty.
         var isValid = true;
 
-        // If it needs a chest, but the room doesn't have one,
-        //   or if there is no access from a required direction.
+        // If there is no access from a required direction.
         for (var j = 0; j < room.exits.length; j++) {
-          if ( (objTileMap.tags[ 'from'+room.exits[j] ] == '') ||
-               (room.chest && !objTileMap.layers.includes('Chest')) ) {
+          if (objTileMap.tags[ 'from'+room.exits[j] ] == '') {
             logif(logReason, '1 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+
+        // If it needs a chest, but the room doesn't have one.
+        if (room.chest) {
+          if (!objTileMap.layers.includes('Chest')) {
+            logif(logReason, '10 room.id = ' + room.id);
             isValid = false;
           }
         }
@@ -319,6 +325,21 @@ var ModRooms = (function () {
               logif(logReason, '2 room.id = ' + room.id);
               isValid = false;
             }
+          }
+        }
+
+        // If there is no access from a banned direction.
+        if (objTileMap.tags.hasOwnProperty('directionBanned')) {
+          if (objTileMap.tags['directionBanned'] != '') {
+
+            // For each banned exit, reject if it's present.
+            var exitsLower = room.exits.toLowerCase();
+            objTileMap.tags['directionBanned'].split('').forEach( function(banned) {
+              if (exitsLower.includes(banned)) {
+                logif(logReason, '9 room.id = ' + room.id);
+                isValid = false;
+              }
+            });
           }
         }
 
