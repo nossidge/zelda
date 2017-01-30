@@ -169,7 +169,7 @@ map_patterns = [
       }
     ]
   },{
-    "name": "pattern_sundial_shrine_four",
+    "name": "sundial_shrine_four",
     "comment": "http://vgmaps.com/NewsArchives/April2008/LegendOfZelda-OracleOfHours-SundialShrine.png",
     "rooms": [
       {
@@ -180,11 +180,11 @@ map_patterns = [
           "zone": 1
         },
         "absolute": {
-          "all_of": {
-            "exits": "NE"
-          },
           "one_of": {
             "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits": "NE"
           }
         }
       },{
@@ -195,12 +195,11 @@ map_patterns = [
           "zone": 1
         },
         "absolute": {
-          "all_of": {
-            "entrance": "W",
-            "exits": "NW"
-          },
           "one_of": {
             "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits": "NW"
           }
         }
       },{
@@ -215,7 +214,6 @@ map_patterns = [
             "letters": ["n","t","k","kf","ib","iq"]
           },
           "all_of": {
-            "entrance": "S",
             "exits": "SW"
           }
         }
@@ -231,7 +229,6 @@ map_patterns = [
             "letters": ["n","t","k","kf","ib","iq"]
           },
           "all_of": {
-            "entrance": "E",
             "exits": "ES"
           }
         }
