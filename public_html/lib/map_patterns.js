@@ -42,16 +42,14 @@ map_patterns = [
           "id": 1,
           "x": 0,
           "y": 0,
-          "zone": 1,
-          "lock_group": {
-            "id": 1
-          }
+          "zone": 1
         },
         "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
           "all_of": {
-            "letters": "k",
-            "entrance": "S",
-            "exits": "ES"
+            "exits_open": "E"
           }
         }
       },
@@ -60,15 +58,14 @@ map_patterns = [
           "id": 2,
           "x": 1,
           "y": 0,
-          "zone": 1,
-          "lock_group": {
-            "id": 1
-          }
+          "zone": 1
         },
         "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
           "all_of": {
-            "letters": "l",
-            "entrance": "W"
+            "exits_open": "W"
           }
         }
       }
@@ -81,14 +78,12 @@ map_patterns = [
           "id": 1,
           "x": 0,
           "y": 0,
-          "zone": 1,
-          "lock_group": {
-            "id": 1
-          }
+          "zone": 1
         },
         "absolute": {
           "all_of": {
-            "letters": "k"
+            "letters": "k",
+            "exits_open": "N"
           }
         }
       },
@@ -97,15 +92,12 @@ map_patterns = [
           "id": 2,
           "x": 0,
           "y": -1,
-          "zone": 1,
-          "lock_group": {
-            "id": 1
-          }
+          "zone": 1
         },
         "absolute": {
           "all_of": {
             "letters": "l",
-            "entrance": "S"
+            "exits_open": "S"
           }
         }
       }
@@ -118,16 +110,14 @@ map_patterns = [
           "id": 1,
           "x": 0,
           "y": 0,
-          "zone": 1,
-          "lock_group": {
-            "id": 1
-          }
+          "zone": 1
         },
         "absolute": {
           "all_of": {
             "letters": "l",
             "entrance": "E",
-            "walls": "SW"
+            "walls": "SW",
+            "lock_orig": "N"
           }
         },
         "prop_remove": [
@@ -145,16 +135,14 @@ map_patterns = [
           "id": 2,
           "x": 0,
           "y": -1,
-          "zone": 1,
-          "lock_group": {
-            "id": 1
-          }
+          "zone": 1
         },
         "absolute": {
           "all_of": {
             "letters": "k",
             "entrance": "S",
-            "walls": "E"
+            "walls": "E",
+            "lock_dest": "S"
           }
         },
         "prop_remove": [
@@ -184,7 +172,7 @@ map_patterns = [
             "letters": ["n","t","k","kf","ib","iq"]
           },
           "all_of": {
-            "exits": "NE"
+            "exits_open": "NE"
           }
         }
       },{
@@ -199,7 +187,7 @@ map_patterns = [
             "letters": ["n","t","k","kf","ib","iq"]
           },
           "all_of": {
-            "exits": "NW"
+            "exits_open": "NW"
           }
         }
       },{
@@ -214,7 +202,7 @@ map_patterns = [
             "letters": ["n","t","k","kf","ib","iq"]
           },
           "all_of": {
-            "exits": "SW"
+            "exits_open": "SW"
           }
         }
       },{
@@ -229,7 +217,7 @@ map_patterns = [
             "letters": ["n","t","k","kf","ib","iq"]
           },
           "all_of": {
-            "exits": "ES"
+            "exits_open": "ES"
           }
         }
       }
