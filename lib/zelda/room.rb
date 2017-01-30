@@ -134,14 +134,7 @@ module Zelda
 
       # Only add if we are not already at the maximum exit count.
       if exits_available?
-
-        # Make sure the string is in the right order.
-        exits = @exits + dir
-        @exits = %w(N E S W).reject do |i|
-          !exits.include? i
-        end.join
-
-        true
+        add_exit_force(dir)
       else
         false
       end
@@ -150,9 +143,7 @@ module Zelda
     # Force a new exit, even if we are at the maximum exit count.
     def add_exit_force(dir)
       exits = @exits + dir
-      @exits = %w(N E S W).reject do |i|
-        !exits.include? i
-      end.join
+      @exits = direction_order(exits)
       true
     end
 
@@ -164,21 +155,15 @@ module Zelda
     end
     def add_exit_one_way_orig(dir)
       exits = @exits_one_way_orig + dir
-      @exits_one_way_orig = %w(N E S W).reject do |i|
-        !exits.include? i
-      end.join
+      @exits_one_way_orig = direction_order(exits)
     end
     def add_exit_one_way_dest(dir)
       exits = @exits_one_way_dest + dir
-      @exits_one_way_dest = %w(N E S W).reject do |i|
-        !exits.include? i
-      end.join
+      @exits_one_way_dest = direction_order(exits)
     end
     def add_exit_quest_item(dir)
       exits = @exits_quest_item + dir
-      @exits_quest_item = %w(N E S W).reject do |i|
-        !exits.include? i
-      end.join
+      @exits_quest_item = direction_order(exits)
     end
 
     # Use Alphabet to find the highest number of exits possible.

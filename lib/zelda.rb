@@ -105,7 +105,7 @@ end
 
 # If run directly, output should be verbose.
 if __FILE__ == $0
-  Zelda.run '-v'
+  Zelda.run ['dungeon', '-v']
 end
 
 ################################################################################
