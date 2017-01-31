@@ -495,7 +495,7 @@ var ModRooms = (function () {
     var isValid = true;
 
     // Loop through each 'patternRoom.absolute' property.
-    ['all_of','one_of'].forEach( function(absoluteType) {
+    ['all_of','one_of','none_of'].forEach( function(absoluteType) {
       var absolute = patternRoom.absolute[absoluteType];
       for ( var property in absolute ) {
         if ( absolute.hasOwnProperty(property) ) {
@@ -526,6 +526,13 @@ var ModRooms = (function () {
               // If it's not in the room property, then it's not valid.
               if (absoluteType == 'one_of') {
                 if ( !findOne(room[property], arr) ) {
+                  isValid = false;
+                }
+              }
+
+              // If it IS in the room property, then it's not valid.
+              if (absoluteType == 'none_of') {
+                if ( room[property].includes(absChar) ) {
                   isValid = false;
                 }
               }
