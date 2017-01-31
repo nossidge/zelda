@@ -52,8 +52,7 @@ map_patterns = [
             "exits_open": "E"
           }
         }
-      },
-      {
+      },{
         "relative": {
           "id": 2,
           "x": 1,
@@ -86,8 +85,7 @@ map_patterns = [
             "exits_open": "N"
           }
         }
-      },
-      {
+      },{
         "relative": {
           "id": 2,
           "x": 0,
@@ -129,8 +127,7 @@ map_patterns = [
         "prop_array_append": {
           "letters": "k"
         }
-      },
-      {
+      },{
         "relative": {
           "id": 2,
           "x": 0,
@@ -218,6 +215,62 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "ES"
+          }
+        }
+      }
+    ]
+  },{
+    "name": "normal_corner_three_se",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "NW"
+          },
+          "none_of": {
+            "exits_quest_item": "ES"
+          }
+        }
+      },{
+        "relative": {
+          "id": 3,
+          "x": 1,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "S"
+          },
+          "none_of": {
+            "exits_quest_item": "NEW"
           }
         }
       }
