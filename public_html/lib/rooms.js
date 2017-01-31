@@ -302,6 +302,17 @@ var ModRooms = (function () {
         // Innocent until proven guilty.
         var isValid = true;
 
+        // 'directionBanned' can be inferred from 'fromNESW'.
+        if (!objTileMap.tags.hasOwnProperty('directionBanned')) {
+          objTileMap.tags.directionBanned = '';
+        }
+        ['N','E','S','W'].forEach( function(dir) {
+          if (objTileMap.tags['from'+dir] == '') {
+            objTileMap.tags.directionBanned += dir.toLowerCase();
+          }
+        });
+        objTileMap.tags.directionBanned = dirOrder(objTileMap.tags.directionBanned);
+
         // If there is no access from a required direction.
         for (var j = 0; j < room.exits.length; j++) {
           if (objTileMap.tags[ 'from'+room.exits[j] ] == '') {
