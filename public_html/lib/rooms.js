@@ -329,6 +329,16 @@ var ModRooms = (function () {
           }
         }
 
+        // If it needs an obstacle pit, but the room doesn't have one.
+        if (room.hasOwnProperty('exits_quest_item')) {
+          for (var j = 0; j < room.exits_quest_item.length; j++) {
+            if (!objTileMap.layers.includes('ObstaclePit' + room.exits[j])) {
+              logif(logReason, '11 room.id = ' + room.id);
+              isValid = false;
+            }
+          }
+        }
+
         // If there is no access from a required direction.
         if (objTileMap.tags.hasOwnProperty('directionRequired')) {
           if (objTileMap.tags['directionRequired'] != '') {

@@ -315,20 +315,12 @@ function makeDungeon(objJSON) {
     }
 
     // Draw the obstacles, if necessary.
+    // If it's an observatory, don't need to have an obstacle.
     if (room.exits_quest_item != null) {
       for (var i = 0; i < room.exits_quest_item.length; i++) {
-        var qiDirection = room.exits_quest_item[i];
-
-        // If it's an observatory, don't need to have an obstacle.
-        if (room.observatory_dest != qiDirection) {
-          var pitName = 'ObstaclePit' + qiDirection;
-          if (typeof pixiTileMap.layers[pitName] !== 'undefined') {
-            pixiTileMap.layers[pitName].visible = true;
-          } else {
-            logif(1==1, 'No obstacle pit!');
-            logif(1==1, 'pitName = [' + pitName + ']');
-            logif(1==1, 'room.tiled_file = ' + room.tiled_file);
-          }
+        var qiDir = room.exits_quest_item[i];
+        if (room.observatory_dest != qiDir) {
+          pixiTileMap.layers['ObstaclePit' + qiDir].visible = true;
         }
       }
     }
