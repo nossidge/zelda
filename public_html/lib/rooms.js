@@ -349,7 +349,7 @@ var ModRooms = (function () {
           }
         }
 
-        // If there is no access from a banned direction.
+        // If there is access from a banned direction.
         if (objTileMap.tags.hasOwnProperty('directionBanned')) {
           if (objTileMap.tags['directionBanned'] != '') {
 
@@ -478,7 +478,7 @@ var ModRooms = (function () {
           }
 
           // Loop back through the [roomsTraversed] array.
-          // Add the pattern to the base room, and the room within the pattern.
+          // Add the pattern to the base room, and the rooms within the pattern.
           roomsTraversed.forEach( function(traversedRoom) {
             if ( !traversedRoom.room.hasOwnProperty('patterns_possible') ){
               traversedRoom.room.patterns_possible = [];
@@ -533,20 +533,21 @@ var ModRooms = (function () {
               arr = absolute[property].split('');
             }
 
+            // This is just for 'letters' at the moment.
+            // So we can assume they are both arrays.
+            // If it's not in the room property, then it's not valid.
+            if (absoluteType == 'one_of') {
+              if ( !findOne(room[property], arr) ) {
+                isValid = false;
+              }
+            }
+
+            // For each character in 'absolute[property]'
             arr.forEach( function(absChar) {
 
               // If it's not in the room property, then it's not valid.
               if (absoluteType == 'all_of') {
                 if ( !room[property].includes(absChar) ) {
-                  isValid = false;
-                }
-              }
-
-              // This is just for 'letters' at the moment.
-              // So we can assume they are both arrays.
-              // If it's not in the room property, then it's not valid.
-              if (absoluteType == 'one_of') {
-                if ( !findOne(room[property], arr) ) {
                   isValid = false;
                 }
               }
