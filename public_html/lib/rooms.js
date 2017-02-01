@@ -698,7 +698,7 @@ var ModRooms = (function () {
   return {
 
     // Apply all the transformations.
-    transform: function(fileName, objJSON, largeMap = true) {
+    transform: function(fileName, objJSON, largeMap = true, usePatterns = true) {
 
       objJSON.file_name = strip_extension(basename(fileName));
       objJSON = addLettersArray(objJSON);
@@ -715,11 +715,11 @@ var ModRooms = (function () {
       // Are we displaying a whole TiledMap dungeon?
       // (Or just a minimap?)
       if (largeMap) {
-        objJSON = determinePatterns(objJSON);
+        if (usePatterns) objJSON = determinePatterns(objJSON);
         objJSON = determineTiledRooms(objJSON);
-        objJSON = resolvePatterns(objJSON);
+        if (usePatterns) objJSON = resolvePatterns(objJSON);
       }
-      objJSON = determineChests(objJSON);
+      if (usePatterns) objJSON = determineChests(objJSON);
 
 //      console.log('Room transform complete');
 //      console.log(objJSON);
