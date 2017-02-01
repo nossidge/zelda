@@ -511,7 +511,7 @@ var ModRooms = (function () {
   };
 
   // Does the room match the chosen pattern?
-  var isMatch = function(room, patternRoom) {
+  var isMatch = function(room, patternRoom, verbose = false) {
     if (!room) return false;
     var isValid = true;
 
@@ -539,6 +539,7 @@ var ModRooms = (function () {
             if (absoluteType == 'one_of') {
               if ( !findOne(room[property], arr) ) {
                 isValid = false;
+                logif(verbose, 'isMatch: 1 isValid = false');
               }
             }
 
@@ -549,6 +550,7 @@ var ModRooms = (function () {
               if (absoluteType == 'all_of') {
                 if ( !room[property].includes(absChar) ) {
                   isValid = false;
+                  logif(verbose, 'isMatch: 2 isValid = false');
                 }
               }
 
@@ -556,6 +558,7 @@ var ModRooms = (function () {
               if (absoluteType == 'none_of') {
                 if ( room[property].includes(absChar) ) {
                   isValid = false;
+                  logif(verbose, 'isMatch: 3 isValid = false');
                 }
               }
             });
@@ -563,6 +566,7 @@ var ModRooms = (function () {
           // If the property is nonexistent but required, then it's not valid.
           } else if (['one_of','all_of'].includes(absoluteType)) {
             isValid = false;
+            logif(verbose, 'isMatch: 4 isValid = false');
           }
         }
       }
