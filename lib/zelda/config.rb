@@ -194,6 +194,7 @@ module Zelda
 
     # Get the filelist from the JSON, and eval to read into Ruby array.
     def self.read_file_list_js
+      make_file_list_js if !File.file?(file_list_js)
       json_file_list = File.open(file_list_js, 'r').read
       eval(json_file_list)
     end
