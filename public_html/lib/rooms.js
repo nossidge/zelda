@@ -558,9 +558,10 @@ var ModRooms = (function () {
                   isValid = false;
                 }
               }
-
             });
-          } else {
+
+          // If the property is nonexistent but required, then it's not valid.
+          } else if (['one_of','all_of'].includes(absoluteType)) {
             isValid = false;
           }
         }
