@@ -298,6 +298,7 @@ var ModRooms = (function () {
         // Use this to get specific dev output with no unwanted noise.
         var logReason = false;
 //        logReason = (mapFilename == 'img/tilemaps/roc_001.tmx');
+//        logReason = (room.id == 8);
 
         // Innocent until proven guilty.
         var isValid = true;
