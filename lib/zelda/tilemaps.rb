@@ -59,10 +59,17 @@ module Zelda
     # Read through all the tilemaps and write to the JavaScript code file.
     def self.tilemap_js_make
 
-      # Seperate into 'maps' and 'patterns'.
+      # Get all TMX files.
       all_files = Dir[Zelda::Config.dir_tilemaps + '/*.tmx'].map do |f|
         File.basename(f)
       end
+
+      # Ignore any that start with '_'.
+      all_files.reject! do |f|
+        f.start_with?('_')
+      end
+
+      # Seperate into 'maps' and 'patterns'.
       patterns = all_files.select do |f|
         f.start_with?('pattern_')
       end
