@@ -82,7 +82,7 @@ module Zelda
       patterns.map! { |f| pref + f }
 
       # Output string of JavaScript array assignment.
-      File.open(Zelda::Config.map_files_js, 'w') do |f|
+      File.open(Zelda::Config.file_map_files_js, 'w') do |f|
         f.write Zelda::Config.format_js_array('tilemapFilesMaps', maps)
         f.write Zelda::Config.format_js_array('tilemapFilesPatterns', patterns)
       end

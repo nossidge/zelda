@@ -101,8 +101,8 @@ module Zelda
     end
 
     # The file that lists the filenames of Tiled maps.
-    def self.map_files_js
-      @@map_files_js ||= "#{dir_output}/lib/map_files.js"
+    def self.file_map_files_js
+      @@file_map_files_js ||= "#{dir_output}/lib/map_files.js"
     end
 
     ############################################################################
