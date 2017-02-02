@@ -368,7 +368,9 @@ var ModRooms = (function () {
         // If the exit is required, then enforce it.
         if (objTileMap.tags.hasOwnProperty('exitRequired')) {
           if (objTileMap.tags['exitRequired'] != '') {
-            if (objTileMap.tags['exitRequired'] != exitOnly.toLowerCase()) {
+            var arr1 = objTileMap.tags['exitRequired'].split('');
+            var arr2 = exitOnly.toLowerCase().split('');
+            if (!findOne(arr1, arr2)) {
               logif(logReason, '7 room.id = ' + room.id);
               isValid = false;
             }
