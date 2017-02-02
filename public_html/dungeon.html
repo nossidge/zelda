@@ -222,15 +222,21 @@ function makeDungeon(objJSON) {
     pixiTileMap.y = mapTilesHeight * 16 * (objJSON.max.y - room.y_orig);
 
 
-    // Does the room contain a chest?
-    if (room.chest) {
+    // If the room contains a visible chest layer, but it is not a chest room,
+    //   then have the chest be a trap chest, with a slime in it.
+    var needTrapChest = (!room.chest
+        && (typeof pixiTileMap.layers['Chest'] !== 'undefined')
+        && pixiTileMap.layers['Chest'].visible);
 
-      // Draw the 'Chest' layer. (Error if it doesn't exist)
-      if (typeof pixiTileMap.layers['Chest'] !== 'undefined') {
-        pixiTileMap.layers['Chest'].visible = true;
-      } else {
-        logif(1==1, 'No chest!  room.tiled_file = ' + room.tiled_file);
-        logif(1==1, room);
+    // Does the room contain a chest?
+    if (room.chest || needTrapChest) {
+
+      // Draw the 'Chest' layer.
+      pixiTileMap.layers['Chest'].visible = true;
+
+      // If trap, then draw a slime.
+      if (needTrapChest) {
+        room.chest_contents = 'slime.png';
       }
 
       // Add a sprite for the contents of the chest.
