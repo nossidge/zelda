@@ -446,6 +446,13 @@ var ModRooms = (function () {
       // Loop through each pattern and see if it matches.
       map_patterns.forEach( function(pattern) {
 
+        // If we are only matching a specific pattern.
+        if (typeof objJSON.patternToOnlyUse != 'undefined') {
+          if (pattern.name != objJSON.patternToOnlyUse) {
+            return;
+          }
+        }
+
         // Array to store the rooms traversed in the pattern.
         var roomsTraversed = [];
 

@@ -122,6 +122,13 @@ if ( getURLParameter('file') != null ) {
   dungeonFile = 'data/' + dungeonFile + '.json';
 }
 
+// For development purposes:
+// If a pattern name is passed, only use that pattern.
+var patternToOnlyUse = null;
+if ( getURLParameter('pattern') != null ) {
+  patternToOnlyUse = getURLParameter('pattern');
+}
+
 
 // Set up the PIXI renderer.
 var renderer = PIXI.autoDetectRenderer( 64*15, 64*11 );
@@ -164,6 +171,9 @@ minimapOriginY = 0;
 // Call this when the JSON object has been loaded.
 function getFromJSON(dungeonFile, xReq) {
   var objJSON = xReq.response;
+
+  // Add URL parameters, if necessary.
+  if (patternToOnlyUse) objJSON.patternToOnlyUse = patternToOnlyUse;
 
   // List of the filenames for the screens that are to be read in.
   sprites = [
