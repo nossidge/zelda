@@ -7,10 +7,10 @@
   <property name="fromW" value="nesw"/>
   <property name="letter" value="n"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="270" columns="9">
-  <image source="../dungeon.png" width="164" height="542"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
+  <image source="../dungeon.png" width="164" height="560"/>
  </tileset>
- <tileset firstgid="271" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -61,15 +61,15 @@
  <layer name="Enemies" width="15" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,311,0,0,0,0,0,0,0,0,0,
-0,311,0,0,0,0,0,0,0,0,0,0,311,0,0,
+0,0,0,0,0,320,0,0,0,0,0,0,0,0,0,
+0,320,0,0,0,0,0,0,0,0,0,0,320,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,311,0,0,0,0,0,0,0,0,0,0,311,0,
-0,0,0,0,0,0,0,0,0,311,0,0,0,0,0,
+0,0,320,0,0,0,0,0,0,0,0,0,0,320,0,
+0,0,0,0,0,0,0,0,0,320,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
@@ -115,21 +115,6 @@
 0,69,69,69,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <layer name="ObstaclePitS" width="15" height="11" visible="0">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,69,69,69,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>

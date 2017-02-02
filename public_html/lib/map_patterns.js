@@ -35,7 +35,42 @@ They alter the properties of the room so patterns can be properly implemented.
 
 map_patterns = [
   {
-    "name": "key_lock_w_to_e",
+    "name": "horizontal_1",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "W"
+          }
+        }
+      }
+    ]
+  },{
+    "name": "horizontal_2",
     "rooms": [
       {
         "relative": {
@@ -220,7 +255,7 @@ map_patterns = [
       }
     ]
   },{
-    "name": "normal_corner_three_se",
+    "name": "corner_three_se",
     "rooms": [
       {
         "relative": {
@@ -268,6 +303,128 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "S"
+          },
+          "none_of": {
+            "exits_quest_item": "NEW"
+          }
+        }
+      }
+    ]
+  },{
+    "name": "four_upsidedown_t",
+    "comment": "http://l.j-factor.com/zeldaclassic/map-sand.png",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "NEW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 3,
+          "x": 2,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "W"
+          }
+        }
+      },{
+        "relative": {
+          "id": 4,
+          "x": 1,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "S"
+          }
+        }
+      }
+    ]
+  },{
+    "name": "corner_three_ne",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "SW"
+          },
+          "none_of": {
+            "exits_quest_item": "ES"
+          }
+        }
+      },{
+        "relative": {
+          "id": 3,
+          "x": 1,
+          "y": 1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "N"
           },
           "none_of": {
             "exits_quest_item": "NEW"
