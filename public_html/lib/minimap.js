@@ -103,7 +103,7 @@ Minimap.prototype.drawEquipmentInventory = function() {
 
   // Add a sprite for the contents of the quest chest.
   var spriteItemNew = new PIXI.Sprite(
-    PIXI.loader.resources['img/chest_contents.json'].textures[this.objJSON.equipment.new]
+    PIXI.loader.resources['img/chest_contents.json'].textures[this.objJSON.equipment.new + '.png']
   );
   spriteItemNew.width  = this.zoom * spriteItemNew.width;
   spriteItemNew.height = this.zoom * spriteItemNew.height;
@@ -117,7 +117,7 @@ Minimap.prototype.drawEquipmentInventory = function() {
   for (var i = 0; i < this.objJSON.equipment.required.length; i++) {
     var itemName = this.objJSON.equipment.required[i];
     var spriteItemReq = new PIXI.Sprite(
-      PIXI.loader.resources['img/chest_contents.json'].textures[itemName]
+      PIXI.loader.resources['img/chest_contents.json'].textures[itemName + '.png']
     );
     spriteItemReq.width  = this.zoom * spriteItemReq.width;
     spriteItemReq.height = this.zoom * spriteItemReq.height;

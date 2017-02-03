@@ -250,15 +250,15 @@ var ModRooms = (function () {
 
   // Hard-coded for now. These should become generated later.
   var determineEquipmentInventory = function(objJSON) {
-    var reqItems = ['shield1.png','sword1.png','bomb1.png'];
-    var maybeItems = ['magic_powder.png','bracelet3.png','bow.png',
-                      'boomerang1.png','flippers.png','shovel.png'];
+    var reqItems = ['shield1','sword1','bomb1'];
+    var maybeItems = ['magic_powder','bracelet3','bow',
+                      'boomerang1','flippers','shovel'];
     shuffle(maybeItems);
     for (var i = 0; i < randBetween(0,4); i++) {
       reqItems.push(maybeItems[i]);
     }
     objJSON.equipment = {
-      new: 'roc1.png',
+      new: 'roc1',
       required: reqItems
     }
     return objJSON;
