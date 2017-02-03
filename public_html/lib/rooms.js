@@ -266,6 +266,22 @@ var ModRooms = (function () {
 
   //############################################################################
 
+  // Use 'objJSON.equipment' and 'objJSON.quest_item_zone' to figure out
+  //   the equipment the player has at each room.
+  // This will determine what puzzles can be safely used in the room.
+  var determineRoomEquipment = function(objJSON) {
+    var itemsStart = objJSON.equipment.required.slice();
+    var itemsEnd = itemsStart.slice();
+    itemsEnd.push(objJSON.equipment.new);
+    objJSON.rooms.forEach( function(room) {
+      room.equipment =
+        (room.zone >= objJSON.quest_item_zone) ? itemsEnd : itemsStart;
+    });
+    return objJSON;
+  };
+
+  //############################################################################
+
   // Determine which .tmx file we will use for each room.
   var determineTiledRooms = function(objJSON) {
     objJSON.rooms.forEach( function(room) {
@@ -396,6 +412,22 @@ var ModRooms = (function () {
             }
           }
         }
+
+        // If one or more items are required, make sure we have them in that particular room.
+        ['itemRequired','itemRequiredForChest'].forEach( function(propName) {
+          if (objTileMap.tags.hasOwnProperty(propName)) {
+            if (objTileMap.tags[propName] != '') {
+              var arrItemsMap = objTileMap.tags[propName].split(',');
+              function inRoomItems(elem) {
+                return room.equipment.includes(elem);
+              }
+              if (!arrItemsMap.every(inRoomItems)) {
+                logif(logReason, '12 room.id = ' + room.id);
+                isValid = false;
+              }
+            }
+          }
+        });
 
         // If the room needs an observatory, then get a map with an observatory.
         if (room.hasOwnProperty('observatory_dest')) {
@@ -724,6 +756,7 @@ var ModRooms = (function () {
       // Are we displaying a whole TiledMap dungeon?
       // (Or just a minimap?)
       if (largeMap) {
+        objJSON = determineRoomEquipment(objJSON);
         if (usePatterns) objJSON = determinePatterns(objJSON);
         objJSON = determineTiledRooms(objJSON);
         if (usePatterns) objJSON = resolvePatterns(objJSON);
