@@ -35,8 +35,11 @@ module Zelda
     # Maybe 'dodgy' isn't the right word...
     attr_accessor :dodgy_lock_groups
 
-    # Name ofg the dungeon.
+    # Name of the dungeon.
     attr_accessor :dungeon_name
+
+    # Zone containing the equipment quest item.
+    attr_accessor :quest_item_zone
 
     def initialize
       @rooms = Hash.new(nil)
@@ -46,6 +49,7 @@ module Zelda
       @min = Coords.new(0,0)
       @max = Coords.new(0,0)
       @dungeon_name = generate_dungeon_name
+      @quest_item_zone = nil
     end
     def room(x, y)
       @rooms[[x, y]]
@@ -319,6 +323,7 @@ module Zelda
           y: @max.y
         }
       }
+      add_if_not_nil(hash, 'quest_item_zone')
       add_if_not_nil(hash, 'all_lock_groups', 'lock_groups')
       add_if_not_nil(hash, 'dodgy_lock_groups')
       hash2 = {

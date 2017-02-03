@@ -91,6 +91,9 @@ module Zelda
 
       # Determine non-small-key 'lock_group's.
       determine_dodgy_lock_groups(@rooms)
+
+      # Pass the '@nodes.quest_item_zone' variable.
+      @rooms.quest_item_zone = @nodes.quest_item_zone
     end
 
     ############################################################################
