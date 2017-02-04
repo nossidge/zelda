@@ -37,6 +37,7 @@ var ModMaps = (function () {
   // We'll use this to map tilemaps to rooms.
   var catagoriseTilemapTags = function() {
     var mapTags = {};
+    var puzzleIDs = [];
     tilemapFilesMaps.forEach( function(fileName) {
       var tilemapInfo = new Object();
       var tileMap = new PIXI.extras.TiledMap(fileName);
@@ -53,8 +54,16 @@ var ModMaps = (function () {
         }
       }
       mapTags[fileName] = tilemapInfo;
+
+      // If the map has a 'puzzleID' property, add to the array.
+      if (tileMap.properties.hasOwnProperty('puzzleID')) {
+        puzzleIDs.push(tileMap.properties.puzzleID);
+      }
     });
+
+    // Add to the module variables.
     self.mapTags = mapTags;
+    self.puzzleIDs = Array.from(new Set(puzzleIDs));
   };
 
   //############################################################################
@@ -64,6 +73,7 @@ var ModMaps = (function () {
 
   self.letterToMap = self.letterToMap;
   self.mapTags = self.mapTags;
+  self.puzzleIDs = self.puzzleIDs;
   self.catagoriseTilemaps = function() {
     catagoriseTilemapTags();
     catagoriseTilemaps();
