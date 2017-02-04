@@ -361,8 +361,19 @@ var ModRooms = (function () {
       if (letter == 'km' && room.chest) letter = 'n';
 
       // Make sure the room has the correct 'fromN', 'fromE', etc. tags.
-      var filenameArray = ModMaps.letterToMap[letter];
+      var filenameArray = ModMaps.letterToMap[letter].slice();
       shuffle(filenameArray);
+
+      // If there is a map name to prioritise.
+      // Push matching maps to the front of the queue.
+      // (It is safe to duplicate these map filenames)
+      if (mapToPrioritise != null) {
+        function containsSubstring(elem) {
+          return (elem.search(mapToPrioritise) != -1);
+        }
+        var filtered = filenameArray.filter(containsSubstring);
+        filenameArray = filtered.concat(filenameArray);
+      }
 
       // Shuffle the array of tileMap filenames, and loop until one works.
       var mapFilename = '';
@@ -825,7 +836,6 @@ var ModRooms = (function () {
         objJSON = determineDungeonName(objJSON);
       }
       objJSON = determineMultiLocks(objJSON);
-      objJSON = determinePuzzleLocks(objJSON);
       objJSON = determineChests(objJSON);
       objJSON = determineMinimapRooms(objJSON);
       objJSON = determineEquipmentInventory(objJSON);
@@ -834,6 +844,7 @@ var ModRooms = (function () {
       // (Or just a minimap?)
       if (largeMap) {
         objJSON = determineRoomEquipment(objJSON);
+        objJSON = determinePuzzleLocks(objJSON);
         if (usePatterns) objJSON = determinePatterns(objJSON);
         objJSON = determineTiledRooms(objJSON);
         if (usePatterns) objJSON = resolvePatterns(objJSON);

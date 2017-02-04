@@ -100,11 +100,7 @@ function renderChests() {
   renderer.render(stage);
 }
 
-
 //##############################################################################
-
-// Make this a global, as it has chests that are toggleable via keypress.
-var minimapInstance;
 
 // Set pixelZoom to the URL arg if it exists.
 var pixelZoom = 1;
@@ -129,6 +125,17 @@ if ( getURLParameter('pattern') != null ) {
   patternToOnlyUse = getURLParameter('pattern');
 }
 
+// For development purposes:
+// If a map name is passed, prioritise that map.
+var mapToPrioritise = null;
+if ( getURLParameter('map') != null ) {
+  mapToPrioritise = getURLParameter('map');
+}
+
+//##############################################################################
+
+// Make this a global, as it has chests that are toggleable via keypress.
+var minimapInstance;
 
 // Set up the PIXI renderer.
 var renderer = PIXI.autoDetectRenderer( 64*15, 64*11 );
