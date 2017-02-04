@@ -63,6 +63,38 @@ var ModRooms = (function () {
 
   //############################################################################
 
+  // Get rooms by letter key.
+  // Ordered by keys for easier debugging.
+  var hashByLetters = function(objJSON) {
+    var unsorted = new Object();
+    var sorted = new Object();
+
+    // Add in whatever order.
+    var keys = [];
+    objJSON.rooms.forEach( function(room) {
+      room.letters.forEach( function(letter) {
+        if (typeof unsorted[letter] == 'undefined') {
+          unsorted[letter] = [];
+        }
+        unsorted[letter].push(room);
+        keys.push(letter);
+      });
+    });
+
+    // Now sort the keys and recreate.
+    keys.sort();
+    for (i in keys) {
+      var key = keys[i];
+      var value = unsorted[key];
+      sorted[key] = value;
+    }
+
+    objJSON.room_by_letters = sorted;
+    return objJSON;
+  };
+
+  //############################################################################
+
   // Add the name of the dungeon.
   var determineDungeonName = function(objJSON) {
     var prefixes, suffixes;
@@ -293,6 +325,8 @@ var ModRooms = (function () {
       var letter = room.letter;
       if ( ['t','ti','ts','k','l','lf','iq'].indexOf(room.letter) != -1 ) {
         letter = 'n';
+      } else if ( ['kf'].indexOf(room.letter) != -1 ) {
+        letter = 'ib';
       }
 
       // If the room is a multi-lock with a chest, we can use a 'n' room.
@@ -745,6 +779,7 @@ var ModRooms = (function () {
       objJSON = addLettersArray(objJSON);
       objJSON = calculateTopLeftYCoords(objJSON);
       objJSON = hashByCoords(objJSON);
+      objJSON = hashByLetters(objJSON);
       if (typeof objJSON.dungeon_name == 'undefined') {
         objJSON = determineDungeonName(objJSON);
       }
