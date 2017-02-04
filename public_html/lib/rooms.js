@@ -203,9 +203,9 @@ var ModRooms = (function () {
         }
       });
 
-      // Add the puzzleID to both rooms.
-      lpRoom.puzzleID = puzzleID;
-      kpRoom.puzzleID = puzzleID;
+      // Add to both the key and lock rooms.
+      lpRoom.puzzle_id = puzzleID;
+      kpRoom.puzzle_id = puzzleID;
     });
     return objJSON;
   };
@@ -400,7 +400,7 @@ var ModRooms = (function () {
           }
         }
 
-        // If it needs a chest, but the room doesn't have one.
+        // If it needs a chest, but the tilemap doesn't have one.
         if (room.chest) {
           if (!objTileMap.layers.includes('Chest')) {
             logif(logReason, '10 room.id = ' + room.id);
@@ -408,13 +408,26 @@ var ModRooms = (function () {
           }
         }
 
-        // If it needs an obstacle pit, but the room doesn't have one.
+        // If it needs an obstacle pit, but the tilemap doesn't have one.
         if (room.hasOwnProperty('exits_quest_item')) {
           for (var j = 0; j < room.exits_quest_item.length; j++) {
             if (!objTileMap.layers.includes('ObstaclePit' + room.exits_quest_item[j])) {
               logif(logReason, '11 room.id = ' + room.id);
               isValid = false;
             }
+          }
+        }
+
+        // If it needs a specific 'puzzleID', but the tilemap doesn't match.
+        if (room.hasOwnProperty('puzzle_id')) {
+          if (objTileMap.tags.hasOwnProperty('puzzleID')) {
+            if (objTileMap.tags.puzzleID != room.puzzle_id) {
+              logif(logReason, '14 room.id = ' + room.id);
+              isValid = false;
+            }
+          } else {
+            logif(logReason, '13 room.id = ' + room.id);
+            isValid = false;
           }
         }
 

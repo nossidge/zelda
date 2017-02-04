@@ -40,8 +40,8 @@ Minimap.prototype.wordSprites = function(word, wordZoom = this.zoom) {
         var iLower = i.toLowerCase();
         var charCase = (i == iLower) ? 'down' : 'up';
         filename = 'font_letter_' + charCase + '_' + iLower + '.png';
+        if (i == parseInt(i)) filename = 'font_' + i + '.png';
     }
-    if (i == parseInt(i)) filename = 'font_' + i + '.png';
 
     // Add the sprite, and add the width to the position counter.
     var spriteLetter = new PIXI.Sprite(
