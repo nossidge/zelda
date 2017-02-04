@@ -184,6 +184,34 @@ var ModRooms = (function () {
 
   //############################################################################
 
+  // What type of puzzle rooms should we draw?
+  var determinePuzzleLocks = function(objJSON) {
+    var puzzleIDsAvailable = ModMaps.puzzleIDs.slice();
+    var puzzleIDsUsed = [];
+    objJSON.room_by_letters['lp'].forEach( function(lpRoom) {
+
+      // Find a random item, and make sure it can't be used again.
+      var puzzleID = sample(puzzleIDsAvailable);
+      remove(puzzleIDsAvailable, puzzleID);
+      puzzleIDsUsed.push(puzzleID);
+
+      // Find the matching 'kp' room.
+      var kpRoom = null;
+      objJSON.room_by_letters['kp'].forEach( function(posRoom) {
+        if (posRoom.lock_group.id == lpRoom.lock_group.id) {
+          kpRoom = posRoom;
+        }
+      });
+
+      // Add the puzzleID to both rooms.
+      lpRoom.puzzleID = puzzleID;
+      kpRoom.puzzleID = puzzleID;
+    });
+    return objJSON;
+  };
+
+  //############################################################################
+
   // Loop through to find all the 'ib' rooms.
   // Make sure that the map and compass are in just one chest each.
   var determineChests = function(objJSON) {
@@ -784,6 +812,7 @@ var ModRooms = (function () {
         objJSON = determineDungeonName(objJSON);
       }
       objJSON = determineMultiLocks(objJSON);
+      objJSON = determinePuzzleLocks(objJSON);
       objJSON = determineChests(objJSON);
       objJSON = determineMinimapRooms(objJSON);
       objJSON = determineEquipmentInventory(objJSON);

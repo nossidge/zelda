@@ -57,7 +57,7 @@ var ModMaps = (function () {
 
       // If the map has a 'puzzleID' property, add to the array.
       if (tileMap.properties.hasOwnProperty('puzzleID')) {
-        puzzleIDs.push(tileMap.properties.puzzleID);
+        puzzleIDs.push(parseInt(tileMap.properties.puzzleID));
       }
     });
 
