@@ -335,7 +335,7 @@ var ModRooms = (function () {
     itemsEnd.push(objJSON.equipment.new);
     objJSON.rooms.forEach( function(room) {
       room.equipment =
-        (room.zone >= objJSON.quest_item_zone) ? itemsEnd : itemsStart;
+        (room.zone > objJSON.quest_item_zone) ? itemsEnd : itemsStart;
     });
     return objJSON;
   };
