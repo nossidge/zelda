@@ -442,16 +442,6 @@ var ModRooms = (function () {
           }
         }
 
-        // If there is no access from a required direction.
-        if (objTileMap.tags.hasOwnProperty('directionRequired')) {
-          if (objTileMap.tags['directionRequired'] != '') {
-            if (objTileMap.tags['directionRequired'] != room.exits.toLowerCase()) {
-              logif(logReason, '2 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-        }
-
         // If there is access from a banned direction.
         if (objTileMap.tags.hasOwnProperty('directionBanned')) {
           if (objTileMap.tags['directionBanned'] != '') {
@@ -464,6 +454,20 @@ var ModRooms = (function () {
                 isValid = false;
               }
             });
+          }
+        }
+
+        // 'directionRequired' means that the room has to have these directions.
+        // It may well have more, but it MUST have these.
+        // So reject if there is no access from a required direction.
+        if (objTileMap.tags.hasOwnProperty('directionRequired')) {
+          if (objTileMap.tags['directionRequired'] != '') {
+            var arr1 = objTileMap.tags['directionRequired'].split('');
+            var arr2 = room.exits.toLowerCase().split('');
+            if (!findAll(arr2, arr1)) {
+              logif(logReason, '2 room.id = ' + room.id);
+              isValid = false;
+            }
           }
         }
 
