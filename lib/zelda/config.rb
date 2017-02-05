@@ -138,6 +138,7 @@ module Zelda
       files = Dir.glob(dir_output_data + '/*')
       files = files.select { |f| File.file?(f) }
       files.each { |f| File.delete(f) }
+      clean_file_list_js
     end
 
     ############################################################################
