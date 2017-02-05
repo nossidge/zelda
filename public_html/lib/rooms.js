@@ -641,9 +641,12 @@ var ModRooms = (function () {
   // Does the room match the chosen pattern?
   var isMatch = function(room, patternRoom, verbose = false) {
     if (!room) return false;
-    var isValid = true;
+
+    // If the room is an observatory, then it is not valid.
+    if (room.hasOwnProperty('observatory_dest')) return false;
 
     // Loop through each 'patternRoom.absolute' property.
+    var isValid = true;
     ['all_of','one_of','none_of'].forEach( function(absoluteType) {
       var absolute = patternRoom.absolute[absoluteType];
       for ( var property in absolute ) {
