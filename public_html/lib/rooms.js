@@ -342,6 +342,206 @@ var ModRooms = (function () {
 
   //############################################################################
 
+  // Determine which .tmx file we will use for a single room.
+  var determineTiledMapForARoom = function(objJSON, room, filenameArray) {
+    var mapFilename = '';
+
+    // Loop through the array of tileMap filenames, until one works.
+    // Make sure the room has the correct 'fromN', 'fromE', etc. tags.
+    for (var i = 0; i < filenameArray.length; i++) {
+      mapFilename = filenameArray[i];
+      var objTileMap = ModMaps.mapTags[mapFilename];
+
+      // This is the exits, minus the entrance.
+      var exitOnly = room.exits.replace(room.entrance, '');
+
+      // Use this to get specific dev output with no unwanted noise.
+      var logReason = false;
+//        logReason = (mapFilename == 'img/tilemaps/roc_001.tmx');
+//        logReason = (room.id == 8);
+
+      // Innocent until proven guilty.
+      var isValid = true;
+
+      // 'directionBanned' can be inferred from 'fromNESW'.
+      if (!objTileMap.tags.hasOwnProperty('directionBanned')) {
+        objTileMap.tags.directionBanned = '';
+      }
+      ['N','E','S','W'].forEach( function(dir) {
+        if (objTileMap.tags['from'+dir] == '') {
+          objTileMap.tags.directionBanned += dir.toLowerCase();
+        }
+      });
+      objTileMap.tags.directionBanned = dirOrder(objTileMap.tags.directionBanned);
+
+      // If there is no access from a required direction.
+      for (var j = 0; j < room.exits.length; j++) {
+        if (objTileMap.tags[ 'from'+room.exits[j] ] == '') {
+          logif(logReason, '1 room.id = ' + room.id);
+          isValid = false;
+        }
+      }
+
+      // If it needs a chest, but the tilemap doesn't have one.
+      if (room.chest) {
+        if (!objTileMap.layers.includes('Chest')) {
+          logif(logReason, '10 room.id = ' + room.id);
+          isValid = false;
+        }
+      }
+
+      // If it needs an obstacle pit, but the tilemap doesn't have one.
+      if (room.hasOwnProperty('exits_quest_item')) {
+        for (var j = 0; j < room.exits_quest_item.length; j++) {
+          if (!objTileMap.layers.includes('ObstaclePit' + room.exits_quest_item[j])) {
+            logif(logReason, '11 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+      }
+
+      // If it needs a specific 'puzzleID', but the tilemap doesn't match.
+      if (room.hasOwnProperty('puzzle_id')) {
+        if (objTileMap.tags.hasOwnProperty('puzzleID')) {
+          if (objTileMap.tags.puzzleID != room.puzzle_id) {
+            logif(logReason, '14 room.id = ' + room.id);
+            isValid = false;
+          }
+        } else {
+          logif(logReason, '13 room.id = ' + room.id);
+          isValid = false;
+        }
+      }
+
+      // If there is access from a banned direction.
+      if (objTileMap.tags.hasOwnProperty('directionBanned')) {
+        if (objTileMap.tags['directionBanned'] != '') {
+
+          // For each banned exit, reject if it's present.
+          var exitsLower = room.exits.toLowerCase();
+          objTileMap.tags['directionBanned'].split('').forEach( function(banned) {
+            if (exitsLower.includes(banned)) {
+              logif(logReason, '9 room.id = ' + room.id);
+              isValid = false;
+            }
+          });
+        }
+      }
+
+      // 'directionRequired' means that the room has to have these directions.
+      // It may well have more, but it MUST have these.
+      // So reject if there is no access from a required direction.
+      if (objTileMap.tags.hasOwnProperty('directionRequired')) {
+        if (objTileMap.tags['directionRequired'] != '') {
+          var arr1 = objTileMap.tags['directionRequired'].split('');
+          var arr2 = room.exits.toLowerCase().split('');
+          if (!findAll(arr2, arr1)) {
+            logif(logReason, '2 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+      }
+
+      // If the exit is required, then enforce it.
+      if (objTileMap.tags.hasOwnProperty('exitRequired')) {
+        if (objTileMap.tags['exitRequired'] != '') {
+          var arr1 = objTileMap.tags['exitRequired'].split('');
+          var arr2 = exitOnly.toLowerCase().split('');
+          if (!findOne(arr1, arr2)) {
+            logif(logReason, '7 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+      }
+
+      // If the entrance is required, then enforce it.
+      if (objTileMap.tags.hasOwnProperty('entranceRequired')) {
+        if (objTileMap.tags['entranceRequired'] != '') {
+          if (objTileMap.tags['entranceRequired'] != room.entrance.toLowerCase()) {
+            logif(logReason, '8 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+      }
+
+      // If the room is a multi-room, then make sure we use the correct type.
+      if (findOne(room.letters, ['km','lm'])) {
+        if (objTileMap.tags.hasOwnProperty('multiRoomType')) {
+          if (objTileMap.tags['multiRoomType'] != room.lock_group.multi_type) {
+            logif(logReason, '6 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+      }
+
+      // If one or more items are required, make sure we have them in that particular room.
+      ['itemRequired','itemRequiredForChest'].forEach( function(propName) {
+        if (objTileMap.tags.hasOwnProperty(propName)) {
+          if (objTileMap.tags[propName] != '') {
+            var arrItemsMap = objTileMap.tags[propName].split(',');
+            function inRoomItems(elem) {
+              return room.equipment.includes(elem);
+            }
+            if (!arrItemsMap.every(inRoomItems)) {
+              logif(logReason, '12 room.id = ' + room.id);
+              isValid = false;
+            }
+          }
+        }
+      });
+
+      // If one or more items are banned, make sure we don't have them in that particular room.
+      ['itemBanned','itemPrep'].forEach( function(propName) {
+        if (objTileMap.tags.hasOwnProperty(propName)) {
+          if (objTileMap.tags[propName] != '') {
+            var arrItemsMap = objTileMap.tags[propName].split(',');
+            function inRoomItems(elem) {
+              return room.equipment.includes(elem);
+            }
+            if (arrItemsMap.some(inRoomItems)) {
+              logif(logReason, '15 room.id = ' + room.id);
+              isValid = false;
+            } else if (propName == 'itemPrep' &&
+                      !arrItemsMap.includes(objJSON.equipment.new)) {
+              logif(logReason, '16 room.id = ' + room.id);
+              isValid = false;
+            }
+          }
+        }
+      });
+
+      // If the room needs an observatory, then get a map with an observatory.
+      if (room.hasOwnProperty('observatory_dest')) {
+        if (!objTileMap.tags.hasOwnProperty('observatory')) {
+          logif(logReason, '3 room.id = ' + room.id);
+          isValid = false;
+        } else {
+          if (objTileMap.tags['observatory'] != room.observatory_dest.toLowerCase()) {
+            logif(logReason, '4 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+
+      // If the room does not need one, then don't force one.
+      } else {
+        if (objTileMap.tags.hasOwnProperty('observatory')) {
+          logif(logReason, '5 room.id = ' + room.id);
+          isValid = false;
+        }
+      }
+
+      if (isValid) break;
+    }
+
+    // Return an object with filename and validity.
+    var output = {};
+    output.isValid = isValid;
+    output.mapFilename = mapFilename;
+    return output;
+  };
+
+  //############################################################################
+
   // Determine which .tmx file we will use for each room.
   var determineTiledRooms = function(objJSON) {
 
@@ -394,202 +594,25 @@ var ModRooms = (function () {
         filenameArray = filtered.concat(filenameArray);
       }
 
-      // Loop through the array of tileMap filenames, until one works.
-      // Make sure the room has the correct 'fromN', 'fromE', etc. tags.
-      var mapFilename = '';
-      for (var i = 0; i < filenameArray.length; i++) {
-        mapFilename = filenameArray[i];
-        var objTileMap = ModMaps.mapTags[mapFilename];
+      // Select a valid map from the options.
+      validFilename = determineTiledMapForARoom(objJSON, room, filenameArray);
 
-        // This is the exits, minus the entrance.
-        var exitOnly = room.exits.replace(room.entrance, '');
-
-        // Use this to get specific dev output with no unwanted noise.
-        var logReason = false;
-//        logReason = (mapFilename == 'img/tilemaps/roc_001.tmx');
-//        logReason = (room.id == 8);
-
-        // Innocent until proven guilty.
-        var isValid = true;
-
-        // 'directionBanned' can be inferred from 'fromNESW'.
-        if (!objTileMap.tags.hasOwnProperty('directionBanned')) {
-          objTileMap.tags.directionBanned = '';
-        }
-        ['N','E','S','W'].forEach( function(dir) {
-          if (objTileMap.tags['from'+dir] == '') {
-            objTileMap.tags.directionBanned += dir.toLowerCase();
-          }
-        });
-        objTileMap.tags.directionBanned = dirOrder(objTileMap.tags.directionBanned);
-
-        // If there is no access from a required direction.
-        for (var j = 0; j < room.exits.length; j++) {
-          if (objTileMap.tags[ 'from'+room.exits[j] ] == '') {
-            logif(logReason, '1 room.id = ' + room.id);
-            isValid = false;
-          }
-        }
-
-        // If it needs a chest, but the tilemap doesn't have one.
-        if (room.chest) {
-          if (!objTileMap.layers.includes('Chest')) {
-            logif(logReason, '10 room.id = ' + room.id);
-            isValid = false;
-          }
-        }
-
-        // If it needs an obstacle pit, but the tilemap doesn't have one.
-        if (room.hasOwnProperty('exits_quest_item')) {
-          for (var j = 0; j < room.exits_quest_item.length; j++) {
-            if (!objTileMap.layers.includes('ObstaclePit' + room.exits_quest_item[j])) {
-              logif(logReason, '11 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-        }
-
-        // If it needs a specific 'puzzleID', but the tilemap doesn't match.
-        if (room.hasOwnProperty('puzzle_id')) {
-          if (objTileMap.tags.hasOwnProperty('puzzleID')) {
-            if (objTileMap.tags.puzzleID != room.puzzle_id) {
-              logif(logReason, '14 room.id = ' + room.id);
-              isValid = false;
-            }
-          } else {
-            logif(logReason, '13 room.id = ' + room.id);
-            isValid = false;
-          }
-        }
-
-        // If there is access from a banned direction.
-        if (objTileMap.tags.hasOwnProperty('directionBanned')) {
-          if (objTileMap.tags['directionBanned'] != '') {
-
-            // For each banned exit, reject if it's present.
-            var exitsLower = room.exits.toLowerCase();
-            objTileMap.tags['directionBanned'].split('').forEach( function(banned) {
-              if (exitsLower.includes(banned)) {
-                logif(logReason, '9 room.id = ' + room.id);
-                isValid = false;
-              }
-            });
-          }
-        }
-
-        // 'directionRequired' means that the room has to have these directions.
-        // It may well have more, but it MUST have these.
-        // So reject if there is no access from a required direction.
-        if (objTileMap.tags.hasOwnProperty('directionRequired')) {
-          if (objTileMap.tags['directionRequired'] != '') {
-            var arr1 = objTileMap.tags['directionRequired'].split('');
-            var arr2 = room.exits.toLowerCase().split('');
-            if (!findAll(arr2, arr1)) {
-              logif(logReason, '2 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-        }
-
-        // If the exit is required, then enforce it.
-        if (objTileMap.tags.hasOwnProperty('exitRequired')) {
-          if (objTileMap.tags['exitRequired'] != '') {
-            var arr1 = objTileMap.tags['exitRequired'].split('');
-            var arr2 = exitOnly.toLowerCase().split('');
-            if (!findOne(arr1, arr2)) {
-              logif(logReason, '7 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-        }
-
-        // If the entrance is required, then enforce it.
-        if (objTileMap.tags.hasOwnProperty('entranceRequired')) {
-          if (objTileMap.tags['entranceRequired'] != '') {
-            if (objTileMap.tags['entranceRequired'] != room.entrance.toLowerCase()) {
-              logif(logReason, '8 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-        }
-
-        // If the room is a multi-room, then make sure we use the correct type.
-        if (findOne(room.letters, ['km','lm'])) {
-          if (objTileMap.tags.hasOwnProperty('multiRoomType')) {
-            if (objTileMap.tags['multiRoomType'] != room.lock_group.multi_type) {
-              logif(logReason, '6 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-        }
-
-        // If one or more items are required, make sure we have them in that particular room.
-        ['itemRequired','itemRequiredForChest'].forEach( function(propName) {
-          if (objTileMap.tags.hasOwnProperty(propName)) {
-            if (objTileMap.tags[propName] != '') {
-              var arrItemsMap = objTileMap.tags[propName].split(',');
-              function inRoomItems(elem) {
-                return room.equipment.includes(elem);
-              }
-              if (!arrItemsMap.every(inRoomItems)) {
-                logif(logReason, '12 room.id = ' + room.id);
-                isValid = false;
-              }
-            }
-          }
-        });
-
-        // If one or more items are banned, make sure we don't have them in that particular room.
-        ['itemBanned','itemPrep'].forEach( function(propName) {
-          if (objTileMap.tags.hasOwnProperty(propName)) {
-            if (objTileMap.tags[propName] != '') {
-              var arrItemsMap = objTileMap.tags[propName].split(',');
-              function inRoomItems(elem) {
-                return room.equipment.includes(elem);
-              }
-              if (arrItemsMap.some(inRoomItems)) {
-                logif(logReason, '15 room.id = ' + room.id);
-                isValid = false;
-              } else if (propName == 'itemPrep' &&
-                        !arrItemsMap.includes(objJSON.equipment.new)) {
-                logif(logReason, '16 room.id = ' + room.id);
-                isValid = false;
-              }
-            }
-          }
-        });
-
-        // If the room needs an observatory, then get a map with an observatory.
-        if (room.hasOwnProperty('observatory_dest')) {
-          if (!objTileMap.tags.hasOwnProperty('observatory')) {
-            logif(logReason, '3 room.id = ' + room.id);
-            isValid = false;
-          } else {
-            if (objTileMap.tags['observatory'] != room.observatory_dest.toLowerCase()) {
-              logif(logReason, '4 room.id = ' + room.id);
-              isValid = false;
-            }
-          }
-
-        // If the room does not need one, then don't force one.
-        } else {
-          if (objTileMap.tags.hasOwnProperty('observatory')) {
-            logif(logReason, '5 room.id = ' + room.id);
-            isValid = false;
-          }
-        }
-
-        if (isValid) break;
+      // If there's no valid filename, just use the original list.
+      // Better to have a duplicate tilemap than nothing.
+      if (!validFilename.isValid) {
+        filenameArray = ModMaps.letterToMap[letter].slice();
+        validFilename = determineTiledMapForARoom(objJSON, room, filenameArray);
       }
 
-      // Output a console warning if a room is not found.
+      // If there's still no valid filename, output a console warning.
       // If we get any of these errors, it needs to be fixed.
-      if (!isValid) {
+      if (!validFilename.isValid) {
         logif(1==1, 'Room not able to be found!');
         logif(1==1, room);
       }
 
       // Add to the 'filenamesUsed' array, and the room properties.
+      mapFilename = validFilename.mapFilename;
       filenamesUsed.push(mapFilename);
       room.tiled_file = mapFilename;
 
