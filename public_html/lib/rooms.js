@@ -581,6 +581,9 @@ var ModRooms = (function () {
     // Loop through each room and see if it matches a pattern start room.
     getValues(objJSON.room_by_coords).forEach( function(room) {
 
+      // Initialise this room property.
+      room.pattern_in_use = false;
+
       // Loop through each pattern and see if it matches.
       map_patterns.forEach( function(pattern) {
 

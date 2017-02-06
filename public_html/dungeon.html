@@ -343,7 +343,8 @@ function makeDungeon(objJSON) {
       for (var i = 0; i < room.exits_quest_item.length; i++) {
         var qiDir = room.exits_quest_item[i];
         if (room.observatory_dest != qiDir) {
-          pixiTileMap.layers['ObstaclePit' + qiDir].visible = true;
+          var layerPit = pixiTileMap.layers['ObstaclePit' + qiDir];
+          if (layerPit) layerPit.visible = true;
         }
       }
     }
