@@ -520,18 +520,24 @@ var ModRooms = (function () {
         });
 
         // If one or more items are banned, make sure we don't have them in that particular room.
-        if (objTileMap.tags.hasOwnProperty('itemBanned')) {
-          if (objTileMap.tags['itemBanned'] != '') {
-            var arrItemsMap = objTileMap.tags['itemBanned'].split(',');
-            function inRoomItems(elem) {
-              return room.equipment.includes(elem);
-            }
-            if (arrItemsMap.some(inRoomItems)) {
-              logif(logReason, '15 room.id = ' + room.id);
-              isValid = false;
+        ['itemBanned','itemPrep'].forEach( function(propName) {
+          if (objTileMap.tags.hasOwnProperty(propName)) {
+            if (objTileMap.tags[propName] != '') {
+              var arrItemsMap = objTileMap.tags[propName].split(',');
+              function inRoomItems(elem) {
+                return room.equipment.includes(elem);
+              }
+              if (arrItemsMap.some(inRoomItems)) {
+                logif(logReason, '15 room.id = ' + room.id);
+                isValid = false;
+              } else if (propName == 'itemPrep' &&
+                        !arrItemsMap.includes(objJSON.equipment.new)) {
+                logif(logReason, '16 room.id = ' + room.id);
+                isValid = false;
+              }
             }
           }
-        }
+        });
 
         // If the room needs an observatory, then get a map with an observatory.
         if (room.hasOwnProperty('observatory_dest')) {
