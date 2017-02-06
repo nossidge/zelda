@@ -675,45 +675,39 @@ var ModRooms = (function () {
           if ( room.hasOwnProperty(property) ) {
 
             // Split to array, if not already.
-            var arr = null;
-            if (absolute[property].constructor === Array) {
-              arr = absolute[property];
-            } else {
-              arr = absolute[property].split('');
-            }
+            var arrAbso = absolute[property].constructor === Array
+                        ? absolute[property]
+                        : absolute[property].split('');
+            var arrRoom = room[property].constructor === Array
+                        ? room[property]
+                        : room[property].split('');
 
-            // This is just for 'letters' at the moment.
-            // So we can assume they are both arrays.
             // If it's not in the room property, then it's not valid.
-            if (absoluteType == 'one_of') {
-              if ( !findOne(room[property], arr) ) {
+            if ( absoluteType == 'one_of' ) {
+              if ( !findOne(arrRoom, arrAbso) ) {
                 isValid = false;
                 logif(verbose, 'isMatch: 1 isValid = false');
               }
             }
 
-            // For each character in 'absolute[property]'
-            arr.forEach( function(absChar) {
-
-              // If it's not in the room property, then it's not valid.
-              if (absoluteType == 'all_of') {
-                if ( !room[property].includes(absChar) ) {
-                  isValid = false;
-                  logif(verbose, 'isMatch: 2 isValid = false');
-                }
+            // If it's not ALL in the room property, then it's not valid.
+            if ( absoluteType == 'all_of' ) {
+              if ( !findAll(arrRoom, arrAbso) ) {
+                isValid = false;
+                logif(verbose, 'isMatch: 2 isValid = false');
               }
+            }
 
-              // If it IS in the room property, then it's not valid.
-              if (absoluteType == 'none_of') {
-                if ( room[property].includes(absChar) ) {
-                  isValid = false;
-                  logif(verbose, 'isMatch: 3 isValid = false');
-                }
+            // If it IS in the room property, then it's not valid.
+            if ( absoluteType == 'none_of' ) {
+              if ( findOne(arrRoom, arrAbso) ) {
+                isValid = false;
+                logif(verbose, 'isMatch: 3 isValid = false');
               }
-            });
+            }
 
           // If the property is nonexistent but required, then it's not valid.
-          } else if (['one_of','all_of'].includes(absoluteType)) {
+          } else if ( ['one_of','all_of'].includes(absoluteType) ) {
             isValid = false;
             logif(verbose, 'isMatch: 4 isValid = false');
           }
