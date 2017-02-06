@@ -552,6 +552,9 @@ var ModRooms = (function () {
     // Loop through all the rooms in the dungeon.
     objJSON.rooms.forEach( function(room) {
 
+      // Skip the room if it has a pattern associated.
+      if (room.pattern_in_use) return;
+
       // Which map to use for which room.
       // This is only used for the 'ModMaps.letterToMap' key.
       // 'n' tagged rooms are multi-purpose.
@@ -917,8 +920,8 @@ var ModRooms = (function () {
         objJSON = determineRoomEquipment(objJSON);
         objJSON = determinePuzzleLocks(objJSON);
         if (usePatterns) objJSON = determinePatterns(objJSON);
-        objJSON = determineTiledRooms(objJSON);
         if (usePatterns) objJSON = resolvePatterns(objJSON);
+        objJSON = determineTiledRooms(objJSON);
       }
       if (usePatterns) objJSON = determineChests(objJSON);
 
