@@ -344,6 +344,12 @@ var ModRooms = (function () {
 
   // Determine which .tmx file we will use for each room.
   var determineTiledRooms = function(objJSON) {
+
+    // Keep a list of all the filenames in use.
+    // We will use this to eliminate duplication.
+    var filenamesUsed = [];
+
+    // Loop through all the rooms in the dungeon.
     objJSON.rooms.forEach( function(room) {
 
       // Which map to use for which room.
@@ -360,8 +366,21 @@ var ModRooms = (function () {
       // If the room is a multi-lock with a chest, we can use a 'n' room.
       if (letter == 'km' && room.chest) letter = 'n';
 
-      // Make sure the room has the correct 'fromN', 'fromE', etc. tags.
+      // Choose from only the maps with the correct letter.
       var filenameArray = ModMaps.letterToMap[letter].slice();
+
+      // Remove any tilemaps that are already in use.
+      filenameArray = filenameArray.filter( function(elem) {
+        return !filenamesUsed.includes(elem);
+      });
+
+      // Edge case: If there's now no array, just use the original.
+      // Better to have a duplicate tilemap than nothing.
+      if (filenameArray.length == 0) {
+        filenameArray = ModMaps.letterToMap[letter].slice();
+      }
+
+      // Shuffle the array order.
       shuffle(filenameArray);
 
       // If there is a map name to prioritise.
@@ -375,7 +394,8 @@ var ModRooms = (function () {
         filenameArray = filtered.concat(filenameArray);
       }
 
-      // Shuffle the array of tileMap filenames, and loop until one works.
+      // Loop through the array of tileMap filenames, until one works.
+      // Make sure the room has the correct 'fromN', 'fromE', etc. tags.
       var mapFilename = '';
       for (var i = 0; i < filenameArray.length; i++) {
         mapFilename = filenameArray[i];
@@ -561,14 +581,16 @@ var ModRooms = (function () {
 
         if (isValid) break;
       }
+
+      // Output a console warning if a room is not found.
+      // If we get any of these errors, it needs to be fixed.
       if (!isValid) {
         logif(1==1, 'Room not able to be found!');
         logif(1==1, room);
       }
 
-//      console.log('########################################');
-//      console.log(objTileMap);
-
+      // Add to the 'filenamesUsed' array, and the room properties.
+      filenamesUsed.push(mapFilename);
       room.tiled_file = mapFilename;
 
     });
