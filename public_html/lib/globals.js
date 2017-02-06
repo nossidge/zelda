@@ -113,3 +113,12 @@ function remove(arr, item) {
     }
   }
 }
+
+
+// Find the element with the smallest 'attrib' value.
+// http://stackoverflow.com/a/31844649
+Array.prototype.hasMin = function(attrib) {
+  return this.reduce( function(prev, curr) {
+    return prev[attrib] < curr[attrib] ? prev : curr;
+  });
+}

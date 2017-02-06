@@ -585,7 +585,7 @@ var ModRooms = (function () {
     var patternMatchID = 0;
 
     // Loop through each room and see if it matches a pattern start room.
-    getValues(objJSON.room_by_coords).forEach( function(room) {
+    objJSON.rooms.forEach( function(room) {
 
       // Initialise this room property.
       room.pattern_in_use = false;
@@ -657,6 +657,7 @@ var ModRooms = (function () {
             finalPush.room = traversedRoom.patternRoom;
             finalPush.id   = traversedRoom.patternRoom.relative.id;
             finalPush.pattern_match_id = patternMatchID;
+            finalPush.count = pattern.rooms.length;
             objJSON.patterns_possible[traversedRoom.room.id].push( finalPush );
           });
         }
@@ -815,8 +816,9 @@ var ModRooms = (function () {
       var patternsForTheRoom = objJSON.patterns_possible[roomID];
 
       // Randomly choose one pattern match to banish.
+      // Choose from the patterns with the lowest room count.
       shuffle(patternsForTheRoom);
-      var patternToBanish = patternsForTheRoom[0].pattern_match_id;
+      var patternToBanish = patternsForTheRoom.hasMin('count').pattern_match_id;
 
       // Loop through each 'roomID' in 'objJSON.patterns_possible'.
       for (var roomID in objJSON.patterns_possible) {
