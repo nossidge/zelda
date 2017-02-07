@@ -52,4 +52,6 @@ work*.rb
 /public_html/data/
 /public_html/img/rules/
 /public_html/lib/file_list.js
+/public_html/lib/map_files.js
+/public_html/lib/map_files_info.js
 /public_html/grammar_rules.html
