@@ -122,3 +122,13 @@ Array.prototype.hasMin = function(attrib) {
     return prev[attrib] < curr[attrib] ? prev : curr;
   });
 }
+
+
+// Remove duplicates from an array, preserving order.
+// http://stackoverflow.com/a/9229821
+function uniqPreserveOrder(a) {
+  var seen = {};
+  return a.filter(function(item) {
+    return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+  });
+}

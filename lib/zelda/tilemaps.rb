@@ -60,7 +60,7 @@ module Zelda
       output += @tags['itemBanned']  .andand.split(',').andand.length.to_i
       output += @tags['itemPrep']    .andand.split(',').andand.length.to_i
       output += @chest ? 0 : 1  # Harder to place if there's no chest.
-      @complexity = output
+      @complexity = output + 1
     end
   end
 

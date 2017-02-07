@@ -582,8 +582,18 @@ var ModRooms = (function () {
         filenameArray = ModMaps.letterToMap[letter].slice();
       }
 
-      // Shuffle the array order.
-      shuffle(filenameArray);
+      // Adjust probabilities based on tilemap complexity.
+      // This is a very simple and naive approach.
+      // Duplicate elements based on 'complexity' property.
+      // Shuffle, then remove duplicates, preserving order.
+      var newArray = [];
+      filenameArray.forEach( function(filename) {
+        for (var i = 0; i < ModMaps.mapTags[filename].complexity; i++) {
+          newArray.push(filename);
+        }
+      });
+      shuffle(newArray);
+      filenameArray = uniqPreserveOrder(newArray);
 
       // If there is a map name to prioritise.
       // Push matching maps to the front of the queue.

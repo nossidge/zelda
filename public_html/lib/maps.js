@@ -43,9 +43,11 @@ var ModMaps = (function () {
     tilemapFilesInfo.forEach( function(tileMap) {
       var filename = 'img/tilemaps/' + tileMap.name + '.tmx';
       mapTags[filename] = {
-        filename: filename,
-        tags:     tileMap.tags,
-        layers:   tileMap.layers,
+        filename:   filename,
+        tags:       tileMap.tags,
+        layers:     tileMap.layers,
+        chest:      tileMap.chest,
+        complexity: tileMap.complexity
       };
 
       // If the map has a 'puzzleID' property, add to the array.
