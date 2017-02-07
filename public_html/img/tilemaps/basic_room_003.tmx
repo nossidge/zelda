@@ -5,12 +5,13 @@
   <property name="fromN" value="nesw"/>
   <property name="fromS" value="nesw"/>
   <property name="fromW" value="nesw"/>
+  <property name="itemPrep" value="roc1"/>
   <property name="letter" value="n"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="135" columns="9">
-  <image source="../dungeon.png" width="164" height="272"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
+  <image source="../dungeon.png" width="164" height="560"/>
  </tileset>
- <tileset firstgid="136" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -46,7 +47,7 @@
  <layer name="Collision" width="15" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,68,0,0,0,0,0,0,0,68,0,0,0,0,0,
+0,70,0,0,0,0,0,0,0,70,0,0,0,0,0,
 0,71,0,69,69,69,70,0,0,71,69,69,70,0,0,
 0,0,0,0,0,0,71,70,0,0,0,0,68,0,0,
 0,0,70,69,70,0,0,71,69,69,70,0,71,69,0,
@@ -54,7 +55,7 @@
 0,0,68,0,0,71,69,69,69,0,71,70,0,70,0,
 0,0,71,70,0,0,0,0,0,0,0,71,0,68,0,
 0,0,0,71,69,69,69,69,69,69,0,0,0,68,0,
-0,70,0,0,0,0,0,0,0,0,0,70,70,68,0,
+0,69,0,0,0,0,0,0,0,0,0,69,69,71,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
@@ -63,11 +64,11 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,143,0,0,0,0,0,143,0,0,0,0,
+0,0,0,0,287,0,0,0,0,0,287,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,143,0,0,0,0,0,143,0,0,0,0,
+0,0,0,0,287,0,0,0,0,0,287,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

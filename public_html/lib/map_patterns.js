@@ -105,6 +105,80 @@ map_patterns = [
       }
     ]
   },{
+    "name": "horizontal_3",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E",
+            "equipment": ["roc1"]
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "W",
+            "equipment": ["roc1"]
+          }
+        }
+      }
+    ]
+  },{
+    "name": "horizontal_4",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E",
+            "equipment": ["roc1"]
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "W",
+            "equipment": ["bomb1"]
+          }
+        }
+      }
+    ]
+  },{
     "name": "key_lock_s_to_n",
     "rooms": [
       {
@@ -407,9 +481,6 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "SW"
-          },
-          "none_of": {
-            "exits_quest_item": "ES"
           }
         }
       },{
@@ -425,9 +496,6 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "N"
-          },
-          "none_of": {
-            "exits_quest_item": "NEW"
           }
         }
       }

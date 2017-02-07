@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="11" tilewidth="16" tileheight="16" nextobjectid="1">
  <properties>
-  <property name="directionBanned" value="new"/>
-  <property name="directionRequired" value="s"/>
   <property name="fromE" value=""/>
   <property name="fromN" value=""/>
   <property name="fromS" value="s"/>
   <property name="fromW" value=""/>
+  <property name="itemRequired" value="roc1"/>
   <property name="letter" value="n,ib"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="270" columns="9">
-  <image source="../dungeon.png" width="164" height="542"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
+  <image source="../dungeon.png" width="164" height="560"/>
  </tileset>
- <tileset firstgid="271" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -56,7 +55,7 @@
 0,0,68,68,68,68,68,68,68,68,68,0,0,0,0,
 0,0,68,68,68,68,68,68,68,68,68,0,0,0,0,
 0,0,71,71,71,71,71,71,68,68,68,0,0,0,0,
-0,0,0,0,0,0,0,0,68,68,68,0,0,0,0,
+0,0,0,0,0,0,0,0,71,71,71,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
@@ -64,7 +63,7 @@
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,274,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,283,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

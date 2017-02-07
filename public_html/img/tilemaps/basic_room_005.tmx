@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="11" tilewidth="16" tileheight="16" nextobjectid="1">
  <properties>
-  <property name="directionBanned" value="ne"/>
   <property name="directionRequired" value="sw"/>
   <property name="fromE" value=""/>
   <property name="fromN" value=""/>
@@ -9,10 +8,10 @@
   <property name="fromW" value="sw"/>
   <property name="letter" value="n"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="135" columns="9">
-  <image source="../dungeon.png" width="164" height="272"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
+  <image source="../dungeon.png" width="164" height="560"/>
  </tileset>
- <tileset firstgid="136" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -65,11 +64,11 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,142,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,286,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,142,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,286,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,142,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,286,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
