@@ -33,31 +33,24 @@ var ModMaps = (function () {
 
   //############################################################################
 
-  // Open each map, and read the tags and layers.
+  // Look at each map's info, and read the tags and layers.
   // We'll use this to map tilemaps to rooms.
   var catagoriseTilemapTags = function() {
     var mapTags = {};
     var puzzleIDs = [];
-    tilemapFilesMaps.forEach( function(fileName) {
-      var tilemapInfo = new Object();
-      var tileMap = new PIXI.extras.TiledMap(fileName);
-      tilemapInfo.filename = fileName;
 
-      // Add the 'properties' as 'tags'
-      tilemapInfo.tags = tileMap.properties;
-
-      // Add the 'layer' names as 'layer'
-      tilemapInfo.layers = [];
-      for (var layer in tileMap.layers) {
-        if (tileMap.layers.hasOwnProperty(layer)) {
-          tilemapInfo.layers.push(layer);
-        }
-      }
-      mapTags[fileName] = tilemapInfo;
+    // Read tilemap info from the Ruby pre-calculated object.
+    tilemapFilesInfo.forEach( function(tileMap) {
+      var filename = 'img/tilemaps/' + tileMap.name + '.tmx';
+      mapTags[filename] = {
+        filename: filename,
+        tags:     tileMap.tags,
+        layers:   tileMap.layers,
+      };
 
       // If the map has a 'puzzleID' property, add to the array.
-      if (tileMap.properties.hasOwnProperty('puzzleID')) {
-        puzzleIDs.push(parseInt(tileMap.properties.puzzleID));
+      if (tileMap.tags.hasOwnProperty('puzzleID')) {
+        puzzleIDs.push(parseInt(tileMap.tags.puzzleID));
       }
     });
 

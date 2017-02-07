@@ -70,8 +70,13 @@ module Zelda
   class Tilemaps
 
     # Read each file, and load to 'TilemapInfo' instances.
+    # Only load map files, not patterns.
     def self.all
-      @@all ||= Dir[Zelda::Config.dir_tilemaps + '/*.tmx'].map do |f|
+      @@all ||= nil; return @@all if !@@all.nil?
+      @@all = Dir[Zelda::Config.dir_tilemaps + '/*.tmx'].reject do |f|
+        base = File.basename(f)
+        base.start_with?('_') || base.start_with?('pattern_')
+      end.map do |f|
         TilemapInfo.new(f)
       end
     end
