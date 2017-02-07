@@ -105,6 +105,11 @@ module Zelda
       @@file_map_files_js ||= "#{dir_output}/lib/map_files.js"
     end
 
+    # The file that contains info for the Tiled maps.
+    def self.file_map_files_info_js
+      @@file_map_files_info_js ||= "#{dir_output}/lib/map_files_info.js"
+    end
+
     ############################################################################
 
     # For a given object, run all methods that match a certain regex.

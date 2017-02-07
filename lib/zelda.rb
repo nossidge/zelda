@@ -75,6 +75,7 @@ module Zelda
         Zelda::Config.print_config_values
       when 'tilemap'
         Zelda::Tilemaps.tilemap_js_make
+        Zelda::Tilemaps.tilemap_info_js_make
       when 'tag'
         if argv[0]
           puts Zelda::Tilemaps.tilemaps_by_tag(argv[0])

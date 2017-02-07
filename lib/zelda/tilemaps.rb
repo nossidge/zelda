@@ -123,6 +123,15 @@ module Zelda
         f.write Zelda::Config.format_js_array('tilemapFilesPatterns', patterns)
       end
     end
+
+    # Get the tilemap info and write to the JavaScript code file.
+    def self.tilemap_info_js_make
+      File.open(Zelda::Config.file_map_files_info_js, 'w') do |f|
+        json = JSON.pretty_generate(Zelda::Tilemaps.all)
+        javascript = json.sub('[','tilemapFilesInfo = [')
+        f.puts javascript
+      end
+    end
   end
 end
 
