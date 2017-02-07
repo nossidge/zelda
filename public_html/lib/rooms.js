@@ -352,9 +352,6 @@ var ModRooms = (function () {
       mapFilename = filenameArray[i];
       var objTileMap = ModMaps.mapTags[mapFilename];
 
-      // This is the exits, minus the entrance.
-      var exitOnly = room.exits.replace(room.entrance, '');
-
       // Use this to get specific dev output with no unwanted noise.
       var logReason = false;
 //        logReason = (mapFilename == 'img/tilemaps/roc_001.tmx');
@@ -443,6 +440,8 @@ var ModRooms = (function () {
       }
 
       // If the exit is required, then enforce it.
+      // This is the exits, minus the entrance.
+      var exitOnly = room.exits.replace(room.entrance, '');
       if (objTileMap.tags.hasOwnProperty('exitRequired')) {
         if (objTileMap.tags['exitRequired'] != '') {
           var arr1 = objTileMap.tags['exitRequired'].split('');
@@ -566,8 +565,8 @@ var ModRooms = (function () {
         letter = 'ib';
       }
 
-      // If the room is a multi-lock with a chest, we can use a 'n' room.
-      if (letter == 'km' && room.chest) letter = 'n';
+      // If the room is a multi-lock with a chest, we can use an 'ib' room.
+      if (letter == 'km' && room.chest) letter = 'ib';
 
       // Choose from only the maps with the correct letter.
       var filenameArray = ModMaps.letterToMap[letter].slice();
@@ -614,11 +613,15 @@ var ModRooms = (function () {
         logif(1==1, room);
       }
 
-      // Add to the 'filenamesUsed' array, and the room properties.
-      mapFilename = validFilename.mapFilename;
-      filenamesUsed.push(mapFilename);
-      room.tiled_file = mapFilename;
+      // Add to the 'filenamesUsed' array, unless the map is prioritised.
+      if (mapToPrioritise == null) {
+        filenamesUsed.push(validFilename.mapFilename);
+      } else if (!validFilename.mapFilename.includes(mapToPrioritise)) {
+        filenamesUsed.push(validFilename.mapFilename);
+      }
 
+      // Add to the room properties.
+      room.tiled_file = validFilename.mapFilename;
     });
     return objJSON;
   };
