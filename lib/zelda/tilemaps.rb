@@ -66,26 +66,26 @@ module Zelda
 
   ##############################################################################
 
-  # Singleton. Holds list of tilemaps in 'tilemap_info_list'
+  # Singleton. Holds list of tilemaps in 'Tilemaps.all'
   class Tilemaps
 
     # Read each file, and load to 'TilemapInfo' instances.
-    def self.tilemaps
-      @@tilemaps ||= Dir[Zelda::Config.dir_tilemaps + '/*.tmx'].map do |f|
+    def self.all
+      @@all ||= Dir[Zelda::Config.dir_tilemaps + '/*.tmx'].map do |f|
         TilemapInfo.new(f)
       end
     end
 
     # Get all the tags that are used by maps.
     def self.tilemap_tags
-      @@tilemap_tags ||= tilemaps.map do |i|
+      @@tilemap_tags ||= self.all.map do |i|
         i.tags.keys
       end.flatten.sort.uniq
     end
 
     # Get all the maps that use a specific tag.
     def self.tilemaps_by_tag(tag_name)
-      tilemaps.select do |i|
+      self.all.select do |i|
         i.tags.keys.include?(tag_name)
       end.map do |i|
         i.name
