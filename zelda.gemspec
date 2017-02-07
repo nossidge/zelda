@@ -26,4 +26,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('os',       '~> 0.9', '>= 0.9.6')
   s.add_runtime_dependency('rgl',      '~> 0.5', '>= 0.5.2')
   s.add_runtime_dependency('tmx',      '~> 0.1', '>= 0.1.5')
+  s.add_runtime_dependency('andand',   '~> 1.3', '>= 1.3.3')
 end

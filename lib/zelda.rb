@@ -10,7 +10,9 @@ require 'rgl/implicit'
 require 'rgl/dot'
 require 'rgl/topsort'
 require 'rgl/traversal'
+require 'andand'
 require 'json'
+require 'tmx'
 
 # Hopefully, when I figure out and fix whatever bug is
 #   causing the hang, this will not be needed...

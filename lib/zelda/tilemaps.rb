@@ -8,23 +8,59 @@
 #   can be represented by at least one .tmx file.
 ################################################################################
 
-require 'tmx'
-
-################################################################################
-
 module Zelda
-
-  ##############################################################################
 
   # Don't store everything about the TileMap, just the stuff we need.
   class TilemapInfo
+
     attr_reader :name, :tags, :layers, :chest
+
     def initialize(filepath)
       tilemap = Tmx.load(filepath)
       @name = File.basename(filepath, '.tmx')
       @tags = tilemap.properties
       @layers = tilemap.layers.map{ |i| i.name }
       @chest = @layers.include?('Chest')
+    end
+
+    def as_json(options={})
+      {
+        name: @name,
+        tags: @tags,
+        layers: @layers,
+        chest: @chest,
+        complexity: complexity
+      }
+    end
+
+    def to_json(*options)
+      as_json(*options).to_json(*options)
+    end
+
+    # How picky this tilemap is, with regards to where it can be placed.
+    # Used in the JavaScript to prioritise more complex and needy maps.
+    # This does not need to be exact, an approximation is acceptable.
+    # A higher number indicates a higher complication.
+    private def complexity
+      return @complexity if !@complexity.nil?
+
+      # Get all the 'fromX' tags, and count the values.
+      output = @tags.keys.select do |i|
+        i.start_with?('from')
+      end.map do |i|
+        @tags[i].length
+      end.reduce(:+).to_i
+      output = (16 - output) / 4
+
+      # How many directions or items are required.
+      output += @tags['directionRequired'].andand.length.to_i
+      output += @tags['entranceRequired'] .andand.length.to_i
+      output += @tags['exitRequired']     .andand.length.to_i
+      output += @tags['itemRequired'].andand.split(',').andand.length.to_i * 2
+      output += @tags['itemBanned']  .andand.split(',').andand.length.to_i
+      output += @tags['itemPrep']    .andand.split(',').andand.length.to_i
+      output += @chest ? 0 : 1  # Harder to place if there's no chest.
+      @complexity = output
     end
   end
 
