@@ -314,6 +314,7 @@ module Zelda
     def as_json(options={})
       hash = {
         dungeon_name: @dungeon_name,
+        seed: Zelda::Config.seed_dungeon,
         min: {
           x: @min.x,
           y: @min.y

@@ -24,8 +24,11 @@ module Zelda
           filename = Time.now.strftime('%Y%m%d%H%M%S%L')
           filepath = Zelda::Config.dir_output_data + '/' + filename
 
+          # Initial value of the random seed.
+          Zelda::Config.seed_dungeon = Zelda::Config.seed
+
           # Output if verbose.
-          Zelda::puts_verbose "seed = #{Zelda::Config.seed}"
+          Zelda::puts_verbose "seed = #{Zelda::Config.seed_dungeon}"
           Zelda::puts_verbose "filepath = #{filepath}"
 
           # Generate the mission nodes.

@@ -31,6 +31,14 @@ module Zelda
       @@seed += 1
     end
 
+    @@seed_dungeon = @@seed
+    def self.seed_dungeon=(new_seed)
+      @@seed_dungeon = new_seed
+    end
+    def self.seed_dungeon
+      @@seed_dungeon
+    end
+
     ############################################################################
 
     # The root directory.
