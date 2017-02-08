@@ -21,8 +21,8 @@ module Zelda
 
     # This is the same data as in the originating 'node' metadata.
     # It will only be used if the room is a lock or a key.
-    # Keys = :id, :num, :total
-    attr_reader :lock_group
+    # Keys = :id, :num, :total, :non_small_key, :observatory
+    attr_accessor :lock_group
 
     # Stores an array of all four neighbour cells, as ['W', [x, y]].
     # This is randomised, for dungeon mapping purposes.

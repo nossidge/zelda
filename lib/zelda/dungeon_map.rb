@@ -474,26 +474,50 @@ module Zelda
       # Get the rooms for those 'km's.
       # Then return the affected 'lock_group's.
       # These are the ones that cannot be small keys.
-      rooms.lock_groups_non_small_key = rooms.all.sort_by do |r|
+      non_key_ids = rooms.all.sort_by do |r|
         r.zone
       end.select do |r|
         r.letter == 'km' and zones_km.include?(r.zone)
       end.map do |r|
         r.lock_group[:id]
       end.uniq
+
+      # Find all rooms with the same 'lock_group[:id]'.
+      # Add ':observatory' to their 'lock_group' hash.
+      non_key_ids.each do |obs_id|
+        rooms.all.each do |r|
+          if r.lock_group[:id] == obs_id
+            r.lock_group[:non_small_key] = true
+          end
+        end
+      end
+
+      rooms.lock_groups_non_small_key = non_key_ids
     end
 
     # Problem: One of the 'km' types that we are using is a room that contains
     #   a monster in an arena room. These cannot be observatories, so here we
     #   will look for any 'lm' rooms that contain an observatory.
     def determine_observatory_groups(rooms)
-      rooms.lock_groups_observatory = rooms.all.select do |r|
+      obs_ids = rooms.all.select do |r|
         ['km','lm'].include?(r.letter)
       end.select do |r|
         r.observatory_dest != ''
       end.map do |r|
         r.lock_group[:id]
       end.uniq
+
+      # Find all rooms with the same 'lock_group[:id]'.
+      # Add ':observatory' to their 'lock_group' hash.
+      obs_ids.each do |obs_id|
+        rooms.all.each do |r|
+          if r.lock_group[:id] == obs_id
+            r.lock_group[:observatory] = true
+          end
+        end
+      end
+
+      rooms.lock_groups_observatory = obs_ids
     end
 
     ############################################################################

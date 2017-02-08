@@ -283,11 +283,18 @@ module Zelda
       end.sort_by do |room|
         room.lock_group[:id]
       end.map do |room|
-        {
+        hash = {
           id: room.lock_group[:id],
           type: room.lock_group[:type],
           total: room.lock_group[:total]
         }
+        if !room.lock_group[:non_small_key].nil?
+          hash[:non_small_key] = room.lock_group[:non_small_key]
+        end
+        if !room.lock_group[:observatory].nil?
+          hash[:observatory] = room.lock_group[:observatory]
+        end
+        hash
       end.uniq
     end
 
