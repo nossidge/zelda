@@ -122,37 +122,46 @@ var ModRooms = (function () {
   // What type of multi-lock rooms should we draw?
   // (This will break if there are more than 2 unique multi-key 'lock_groups')
   var determineMultiLocks = function(objJSON) {
-    var multiLockTypes = {
-      normal: ['monsters','slates','keys'],
-      dodgy:  ['monsters','slates']
-    }
-    shuffle(multiLockTypes.normal);
-    shuffle(multiLockTypes.dodgy);
 
-    // Loop through all 'lm' groups. Try to not repeat multiLockTypes.
-    objJSON.lock_groups.forEach( function(lock_group) {
-      if (lock_group.type == 'lm') {
+    // Get all 'lm' groups.
+    var lm_lock_groups = objJSON.lock_groups.filter( function(lock_group) {
+      return (lock_group.type == 'lm');
+    });
 
-        // Determine if 'lock_groups_non_small_key'
-        var excludeSmallKey = false;
-        if (typeof objJSON.lock_groups_non_small_key != 'undefined') {
-          if (objJSON.lock_groups_non_small_key.indexOf(lock_group.id) != -1) {
-            excludeSmallKey = true;
-          }
-        }
+    // Loop through all 'lm' groups.
+    // 'multi_type_choices' will be the array of valid 'multiLockTypes'.
+    lm_lock_groups.forEach( function(lock_group) {
+      var choices = ['monsters','slates','keys'];
+      if (lock_group.non_small_key) remove(choices, 'keys');
+      if (lock_group.observatory)   remove(choices, 'monsters');
+      lock_group.multi_type_choices = choices;
+    });
 
-        // If it's dodgy use the dodgy list. If not then the normal list.
-        if (excludeSmallKey) {
-          var value = multiLockTypes.dodgy.shift();
-          var index = multiLockTypes.normal.indexOf(value);
-          if (index != -1) multiLockTypes.normal.splice(index, 1);
-        } else {
-          var value = multiLockTypes.normal.shift();
-          var index = multiLockTypes.dodgy.indexOf(value);
-          if (index != -1) multiLockTypes.dodgy.splice(index, 1);
-        }
-        lock_group.multi_type = value;
+    // Sort ascending by 'multi_type_choices' length.
+    lm_lock_groups.sort( function(a, b) {
+      return a.multi_type_choices.length - b.multi_type_choices.length;
+    });
+
+    // For each of them, select a 'multi_type'.
+    // Keep a list of types used, to reduce duplication.
+    var typesUsed = [];
+    lm_lock_groups.forEach( function(lock_group) {
+
+      // Get all possibleTypes, minus types already used.
+      var possibleTypes = lock_group.multi_type_choices.slice();
+      typesUsed.forEach( function(type) {
+        remove(possibleTypes, type);
+      });
+
+      // Edge case: If there's now no array, just use the original.
+      // Better to have a duplicate multi_type than nothing.
+      if (possibleTypes.length == 0) {
+        possibleTypes = lock_group.multi_type_choices.slice();
       }
+
+      // Select a random value from the sample. Remove from 'typesUsed'.
+      lock_group.multi_type = sample(possibleTypes);
+      remove(typesUsed, lock_group.multi_type);
     });
 
     // We'll need to use the 'id's as keys.
