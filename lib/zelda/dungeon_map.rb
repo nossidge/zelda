@@ -444,6 +444,7 @@ module Zelda
     # But some map types cannot be used for certain lock groups.
     def determine_dodgy_lock_groups(rooms)
       determine_non_small_key_groups(rooms)
+      determine_observatory_groups(rooms)
     end
 
     # Problem: One of the 'km' types that we are using is a room that contains
@@ -477,6 +478,19 @@ module Zelda
         r.zone
       end.select do |r|
         r.letter == 'km' and zones_km.include?(r.zone)
+      end.map do |r|
+        r.lock_group[:id]
+      end.uniq
+    end
+
+    # Problem: One of the 'km' types that we are using is a room that contains
+    #   a monster in an arena room. These cannot be observatories, so here we
+    #   will look for any 'lm' rooms that contain an observatory.
+    def determine_observatory_groups(rooms)
+      rooms.lock_groups_observatory = rooms.all.select do |r|
+        ['km','lm'].include?(r.letter)
+      end.select do |r|
+        r.observatory_dest != ''
       end.map do |r|
         r.lock_group[:id]
       end.uniq
