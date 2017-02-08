@@ -31,12 +31,6 @@ module Zelda
     # Must call #calculate_mins_and_maxs for accurate stats.
     attr_reader :min, :max
 
-    # 'lock_group's that cannot be small keys.
-    attr_accessor :lock_groups_non_small_key
-
-    # 'lock_group's that contain one or more observatories.
-    attr_accessor :lock_groups_observatory
-
     # Name of the dungeon.
     attr_accessor :dungeon_name
 
@@ -47,8 +41,6 @@ module Zelda
       @rooms = Hash.new(nil)
       @rooms_added = []
       @reserved_rooms = []
-      @lock_groups_non_small_key = nil
-      @lock_groups_observatory = nil
       @min = Coords.new(0,0)
       @max = Coords.new(0,0)
       @dungeon_name = generate_dungeon_name
@@ -336,8 +328,6 @@ module Zelda
       }
       add_if_not_nil(hash, 'quest_item_zone')
       add_if_not_nil(hash, 'all_lock_groups', 'lock_groups')
-      add_if_not_nil(hash, 'lock_groups_non_small_key')
-      add_if_not_nil(hash, 'lock_groups_observatory')
       hash2 = {
         rooms: self.sort_by do |i|
           i.id

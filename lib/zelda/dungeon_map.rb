@@ -491,8 +491,6 @@ module Zelda
           end
         end
       end
-
-      rooms.lock_groups_non_small_key = non_key_ids
     end
 
     # Problem: One of the 'km' types that we are using is a room that contains
@@ -516,8 +514,6 @@ module Zelda
           end
         end
       end
-
-      rooms.lock_groups_observatory = obs_ids
     end
 
     ############################################################################
