@@ -133,16 +133,16 @@ var ModRooms = (function () {
     objJSON.lock_groups.forEach( function(lock_group) {
       if (lock_group.type == 'lm') {
 
-        // Determine if 'dodgy_lock_groups'
-        var isDodgy = false;
-        if (typeof objJSON.dodgy_lock_groups != 'undefined') {
-          if (objJSON.dodgy_lock_groups.indexOf(lock_group.id) != -1) {
-            isDodgy = true;
+        // Determine if 'lock_groups_non_small_key'
+        var excludeSmallKey = false;
+        if (typeof objJSON.lock_groups_non_small_key != 'undefined') {
+          if (objJSON.lock_groups_non_small_key.indexOf(lock_group.id) != -1) {
+            excludeSmallKey = true;
           }
         }
 
         // If it's dodgy use the dodgy list. If not then the normal list.
-        if (isDodgy) {
+        if (excludeSmallKey) {
           var value = multiLockTypes.dodgy.shift();
           var index = multiLockTypes.normal.indexOf(value);
           if (index != -1) multiLockTypes.normal.splice(index, 1);

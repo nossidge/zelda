@@ -89,7 +89,7 @@ module Zelda
       # Remove walls between non-essential rooms.
       destroy_walls(@rooms, ['n','t'])
 
-      # Determine non-small-key 'lock_group's.
+      # Determine 'lock_group's that need special treatment.
       determine_dodgy_lock_groups(@rooms)
 
       # Pass the '@nodes.quest_item_zone' variable.
@@ -438,11 +438,19 @@ module Zelda
       rooms
     end
 
+    ############################################################################
+
+    # Lock groups are designed to be quite flexible in terms of the maps used.
+    # But some map types cannot be used for certain lock groups.
+    def determine_dodgy_lock_groups(rooms)
+      determine_non_small_key_groups(rooms)
+    end
+
     # Problem: One of the 'km' types that we are using is a room that contains
     #   multiple small-key lock blocks. This could result in sequence breaking
     #   or unfinishable dungeons, when a key designed for a single 'l' room is
     #   used instead in the multi-lock room. This code attempts to solve that.
-    def determine_dodgy_lock_groups(rooms)
+    def determine_non_small_key_groups(rooms)
 
       # Find zones locked by 'l' rooms.
       zones_locked = @zone_info.select do |i|
@@ -465,7 +473,9 @@ module Zelda
       # Get the rooms for those 'km's.
       # Then return the affected 'lock_group's.
       # These are the ones that cannot be small keys.
-      rooms.dodgy_lock_groups = rooms.all.sort_by{|r|r.zone}.select do |r|
+      rooms.lock_groups_non_small_key = rooms.all.sort_by do |r|
+        r.zone
+      end.select do |r|
         r.letter == 'km' and zones_km.include?(r.zone)
       end.map do |r|
         r.lock_group[:id]

@@ -32,8 +32,7 @@ module Zelda
     attr_reader :min, :max
 
     # 'lock_group's that cannot be small keys.
-    # Maybe 'dodgy' isn't the right word...
-    attr_accessor :dodgy_lock_groups
+    attr_accessor :lock_groups_non_small_key
 
     # Name of the dungeon.
     attr_accessor :dungeon_name
@@ -45,7 +44,7 @@ module Zelda
       @rooms = Hash.new(nil)
       @rooms_added = []
       @reserved_rooms = []
-      @dodgy_lock_groups = nil
+      @lock_groups_non_small_key = nil
       @min = Coords.new(0,0)
       @max = Coords.new(0,0)
       @dungeon_name = generate_dungeon_name
@@ -326,7 +325,7 @@ module Zelda
       }
       add_if_not_nil(hash, 'quest_item_zone')
       add_if_not_nil(hash, 'all_lock_groups', 'lock_groups')
-      add_if_not_nil(hash, 'dodgy_lock_groups')
+      add_if_not_nil(hash, 'lock_groups_non_small_key')
       hash2 = {
         rooms: self.sort_by do |i|
           i.id
