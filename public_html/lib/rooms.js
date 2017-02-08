@@ -159,9 +159,9 @@ var ModRooms = (function () {
         possibleTypes = lock_group.multi_type_choices.slice();
       }
 
-      // Select a random value from the sample. Remove from 'typesUsed'.
+      // Select a random value from the sample. Push to 'typesUsed'.
       lock_group.multi_type = sample(possibleTypes);
-      remove(typesUsed, lock_group.multi_type);
+      typesUsed.push(lock_group.multi_type);
     });
 
     // We'll need to use the 'id's as keys.
