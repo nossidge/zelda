@@ -154,7 +154,6 @@ var spriteDim = 16;
 renderer.view.style.position = 'absolute';
 renderer.view.style.display = 'block';
 renderer.autoResize = true;
-//renderer.backgroundColor = 0xE0B0FF;
 renderer.backgroundColor = 0xDCDCDC;
 document.body.appendChild(renderer.view);
 
@@ -175,8 +174,8 @@ xReq.send(null);
 // Globals...
 mapTilesWidth  = 15;
 mapTilesHeight = 11;
-mapPixelsWidth  = mapTilesWidth  * 16 * pixelZoom;
-mapPixelsHeight = mapTilesHeight * 16 * pixelZoom;
+mapPixelsWidth  = mapTilesWidth  * spriteDim * pixelZoom;
+mapPixelsHeight = mapTilesHeight * spriteDim * pixelZoom;
 minimapOriginX = 0;
 minimapOriginY = 0;
 
@@ -241,8 +240,8 @@ function makeDungeon(objJSON) {
     // Position of the room.
     // The JSON data is from origin bottom-left, so need
     //   to use this to make the map from origin top.
-    pixiTileMap.x = mapTilesWidth  * 16 * room.x;
-    pixiTileMap.y = mapTilesHeight * 16 * (objJSON.max.y - room.y_orig);
+    pixiTileMap.x = mapTilesWidth  * spriteDim * room.x;
+    pixiTileMap.y = mapTilesHeight * spriteDim * (objJSON.max.y - room.y_orig);
 
 
     // If the room contains a visible chest layer, but it is not a chest room,
@@ -278,10 +277,10 @@ function makeDungeon(objJSON) {
         }
       }
 
+      // Size and position.
       var itemSpriteZoom = 2;
       sprite.width  = spriteDim * itemSpriteZoom;
       sprite.height = spriteDim * itemSpriteZoom;
-
       var offsetX = -(itemSpriteZoom-1)*(spriteDim/2);
       var offsetY = -(itemSpriteZoom-1)*(spriteDim);
       sprite.x = pixiTileMap.x + spriteDim * x + offsetX;
@@ -304,11 +303,6 @@ function makeDungeon(objJSON) {
       if (room.letters.includes('g')) {
         pixiTileMap.layers['Chest'].visible = false;
       }
-
-      if (room.tiled_file != 'img/tilemaps/basic_room_001.tmx') {
-//        console.log(room.tiled_file);
-//        console.log(pixiTileMap);
-      }
     }
 
     // Draw the thresholds from the direction strings.
@@ -330,20 +324,20 @@ function makeDungeon(objJSON) {
     displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBombVisible');
     displayLayersFromDirString(pixiTileMap, room.observatory_dest, 'Observatory');
 
-    // If there's a
+    // Show a visual indicator of weak wall, if it's not hidden.
     if (room.weak_walls_orig != null && room.weak_walls_hidden == null) {
       displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'WallBombVisible');
     }
 
-    // Multi-key rooms should display the correct fire-pit.
-    if (findOne(room.letters, ['km','lm']) && room.lock_group.multi_type == 'monsters') {
+    // Multi-key monster rooms should display the correct fire-pit.
+    if (findOne(room.letters, ['km','lm'])) {
       if (typeof pixiTileMap.layers['LockNo' + room.lock_group.num] !== 'undefined') {
         pixiTileMap.layers['LockNo' + room.lock_group.num].visible = true;
       }
     }
 
     // Multi-key 'crystal' rooms should display crystals OVER chests.
-    if (findOne(room.letters, ['km','lm']) && room.lock_group.multi_type == 'crystals') {
+    if (room.lock_group && room.lock_group.multi_type == 'crystals') {
 
       // Find the x and y coords of where the sprite should be displayed.
       // This is based off the position of the 'chest' layer.
@@ -397,9 +391,7 @@ function makeDungeon(objJSON) {
     }
   });
 
-//  console.log(getMethods(stage));
-//  console.log(stage);
-
+  // Add the sprite collections, and render the stage.
   stage.addChild(tilemapChests);
   stage.addChild(tilemapChestsColour);
   renderer.render(stage);
