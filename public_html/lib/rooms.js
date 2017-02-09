@@ -131,7 +131,7 @@ var ModRooms = (function () {
     // Loop through all 'lm' groups.
     // 'multi_type_choices' will be the array of valid 'multiLockTypes'.
     lm_lock_groups.forEach( function(lock_group) {
-      var choices = ['monsters','slates','keys'];
+      var choices = ['monsters','slates','keys','crystals'];
       if (lock_group.non_small_key) remove(choices, 'keys');
       if (lock_group.observatory)   remove(choices, 'monsters');
       lock_group.multi_type_choices = choices;
@@ -182,6 +182,8 @@ var ModRooms = (function () {
             } else if (room.lock_group.multi_type == 'keys') {
               room.chest = true;
               room.chest_contents = 'dungeon_key2.png';
+            } else if (room.lock_group.multi_type == 'crystals') {
+              room.chest = true;
             }
           }
         }
@@ -576,6 +578,7 @@ var ModRooms = (function () {
 
       // If the room is a multi-lock with a chest, we can use an 'ib' room.
       if (letter == 'km' && room.chest) letter = 'ib';
+      if (room.lock_group && room.lock_group.multi_type == 'crystals') letter = 'ib';
 
       // Choose from only the maps with the correct letter.
       var filenameArray = ModMaps.letterToMap[letter].slice();

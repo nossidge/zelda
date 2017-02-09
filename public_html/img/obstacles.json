@@ -58,7 +58,7 @@
 },
 "post.png":
 {
-	"frame": {"x":128,"y":2,"w":16,"h":16},
+	"frame": {"x":2,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -66,7 +66,7 @@
 },
 "pot.png":
 {
-	"frame": {"x":146,"y":2,"w":16,"h":16},
+	"frame": {"x":20,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -74,7 +74,15 @@
 },
 "shrub.png":
 {
-	"frame": {"x":164,"y":2,"w":16,"h":16},
+	"frame": {"x":38,"y":20,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"stalagmites.png":
+{
+	"frame": {"x":56,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -82,7 +90,7 @@
 },
 "switch_diamond.png":
 {
-	"frame": {"x":182,"y":2,"w":16,"h":16},
+	"frame": {"x":74,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -90,7 +98,7 @@
 },
 "tree.png":
 {
-	"frame": {"x":200,"y":2,"w":16,"h":16},
+	"frame": {"x":92,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -98,7 +106,7 @@
 },
 "urchin.png":
 {
-	"frame": {"x":218,"y":2,"w":16,"h":16},
+	"frame": {"x":110,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -109,8 +117,8 @@
 	"version": "1.0",
 	"image": "obstacles.png",
 	"format": "RGBA8888",
-	"size": {"w":236,"h":20},
+	"size": {"w":128,"h":38},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:7e395f126336f2b667d8d564eb6ad0e0:e887e3a7aef05b6aa843e4a925d5a0dd:641f848f5767e234ed2c8b58348ca01d$"
+	"smartupdate": "$TexturePacker:SmartUpdate:5cf883a5219802e240fda2ce5ab6c134:a102853084cb3d3c1ee418b68e280913:641f848f5767e234ed2c8b58348ca01d$"
 }
 }

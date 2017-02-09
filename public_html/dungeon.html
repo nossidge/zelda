@@ -342,6 +342,22 @@ function makeDungeon(objJSON) {
       }
     }
 
+    // Multi-key 'crystal' rooms should display crystals OVER chests.
+    if (findOne(room.letters, ['km','lm']) && room.lock_group.multi_type == 'crystals') {
+
+      // Find the x and y coords of where the sprite should be displayed.
+      // This is based off the position of the 'chest' layer.
+      // The tile with '.gid == 7' is the chest.
+      var tiles = pixiTileMap.layers['Chest'].tiles;
+      for (var i = 0; i < tiles.length; i++) {
+        if ( tiles[i].gid == 7 ) {
+          var xObs = pixiTileMap.x + spriteDim * tiles[i]._x;
+          var yObs = pixiTileMap.y + spriteDim * tiles[i]._y;
+          drawObstacle(stage, 'crystal.png', xObs, yObs);
+        }
+      }
+    }
+
     // Draw the obstacles, if necessary.
     // If it's an observatory, don't need to have an obstacle.
     if (room.exits_quest_item != null) {
