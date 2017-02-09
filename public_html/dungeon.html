@@ -426,29 +426,31 @@ function drawRoomObstacle(pixiTileMap, dir, item) {
   var tiles = layerObstacle.tiles;
   for (var i = 0; i < tiles.length; i++) {
     if ( tiles[i].gid >= 68 && tiles[i].gid <= 71 ) {
-
-      // We're always going to need a floor tile to cover the existing pit.
-      var spriteFloor = new PIXI.Sprite(
-        PIXI.loader.resources['img/obstacles.json'].textures['floor.png']
-      );
-      var sprite1 = new PIXI.Sprite(
+      var spriteObstacle = new PIXI.Sprite(
         PIXI.loader.resources['img/obstacles.json'].textures[itemToObstacle[item]]
       );
-
-      // Size and position of sprites. They should be the same.
-      var spriteDim = 16;
-      sprite1.width  = spriteDim;
-      sprite1.height = spriteDim;
-      sprite1.x = pixiTileMap.x + spriteDim * tiles[i]._x;
-      sprite1.y = pixiTileMap.y + spriteDim * tiles[i]._y;
-      spriteFloor.width  = sprite1.width;
-      spriteFloor.height = sprite1.height;
-      spriteFloor.x      = sprite1.x;
-      spriteFloor.y      = sprite1.y;
-      stage.addChild(spriteFloor);
-      stage.addChild(sprite1);
+      drawFloorAndObstacle(stage, spriteObstacle);
     }
   }
+}
+
+
+// Draw a floor tile, and then an obstacle on top of it.
+function drawFloorAndObstacle(stage, spriteObstacle) {
+  var spriteFloor = new PIXI.Sprite(
+    PIXI.loader.resources['img/obstacles.json'].textures['floor.png']
+  );
+  var spriteDim = 16;
+  spriteObstacle.width  = spriteDim;
+  spriteObstacle.height = spriteDim;
+  spriteObstacle.x = pixiTileMap.x + spriteDim * tiles[i]._x;
+  spriteObstacle.y = pixiTileMap.y + spriteDim * tiles[i]._y;
+  spriteFloor.width  = spriteObstacle.width;
+  spriteFloor.height = spriteObstacle.height;
+  spriteFloor.x      = spriteObstacle.x;
+  spriteFloor.y      = spriteObstacle.y;
+  stage.addChild(spriteFloor);
+  stage.addChild(spriteObstacle);
 }
 
 
