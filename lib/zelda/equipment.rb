@@ -34,31 +34,38 @@ module Zelda
     end
     def self.level_2
       @@level_2 ||= array_to_equipment_hash [
-        ['shovel',          "Shovel"],
-        ['magic_powder',    "Magic Powder"],
         ['roc1',            "Roc's Feather"],
-        ['bracelet3',       "Power Bracelet"]
+        ['bracelet3',       "Power Bracelet"],
+        ['pegasus_boots',   "Pegasus Boots"],
+        ['hammer',          "Hammer"]
       ].freeze
     end
     def self.level_3
       @@level_3 ||= array_to_equipment_hash [
-        ['pegasus_boots',   "Pegasus Boots"],
         ['flippers',        "Flippers"],
-        ['hammer',          "Hammer"],
+        ['fire_rod',        "Fire Rod"],
+        ['hook_switch',     "Switch Hook"],
         ['cane_of_somaria', "Cane of Somaria"]
       ].freeze
+    end
+    def self.full_game
+      [ level_1.keys,
+        level_2.keys.shuffle,
+        level_3.keys.shuffle
+      ].flatten
     end
 
     # Create a hash of Equipment objects.
     # These are as yet unimplemented.
     def self.unimplemented
       @@unimplemented ||= array_to_equipment_hash [
+        ['shovel', "Shovel"],
+        ['magic_powder', "Magic Powder"],
         ['bow', "Bow"],
         ['roc3', "Roc's Cape"],
         ['boomerang1', "Boomerang"],
         ['boomerang3', "Magic Boomerang"],
         ['hook_shot', "Hookshot"],
-        ['hook_switch', "Switch Hook"],
         ['shield2', "Iron Shield"],
         ['shield3', "Mirror Shield"],
         ['sword2', "Steel Sword"],
@@ -67,7 +74,6 @@ module Zelda
         ['magnetic_glove', "Magnetic Gloves"],
         ['ladder', "Stepladder"],
         ['mermaid_suit', "Mermaid Suit"],
-        ['fire_rod', "Fire Rod"],
         ['id', "Power Glove"],
         ['id', "Titan's Mitt"],
         ['id', "Longshot"],
