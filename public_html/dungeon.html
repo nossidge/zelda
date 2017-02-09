@@ -137,7 +137,7 @@ if ( getURLParameter('map') != null ) {
 // If 'obstacles' is not null, show all obstacles.
 var showAllObstacles = null;
 if ( getURLParameter('obstacles') != null ) {
-  showAllObstacles = true;
+  showAllObstacles = getURLParameter('obstacles');
 }
 
 //##############################################################################
@@ -355,10 +355,10 @@ function makeDungeon(objJSON) {
 
     // Dev stuff: Display all obstacles.
     if (showAllObstacles) {
-      drawRoomObstacle(pixiTileMap, 'N', objJSON.equipment.new);
-      drawRoomObstacle(pixiTileMap, 'E', objJSON.equipment.new);
-      drawRoomObstacle(pixiTileMap, 'S', objJSON.equipment.new);
-      drawRoomObstacle(pixiTileMap, 'W', objJSON.equipment.new);
+      drawRoomObstacle(pixiTileMap, 'N', showAllObstacles);
+      drawRoomObstacle(pixiTileMap, 'E', showAllObstacles);
+      drawRoomObstacle(pixiTileMap, 'S', showAllObstacles);
+      drawRoomObstacle(pixiTileMap, 'W', showAllObstacles);
     }
 
     // Add the room map to the sprite collection.
@@ -396,7 +396,7 @@ var itemToObstacle = {
   "bracelet3":     "boulder.png",
   "bracelet3":     "pot.png",
   "sword1":        "shrub.png",
-  "sword1":        "crystal.png",
+  "sword1":        "stalagmites.png",
   "bomb1":         "cracked_block.png",
   "pegasus_boots": "dash_rock.png",
   "fire_rod":      "ice_block.png",
@@ -429,6 +429,9 @@ function drawRoomObstacle(pixiTileMap, dir, item) {
       var spriteObstacle = new PIXI.Sprite(
         PIXI.loader.resources['img/obstacles.json'].textures[itemToObstacle[item]]
       );
+      var spriteDim = 16;
+      spriteObstacle.x = pixiTileMap.x + spriteDim * tiles[i]._x;
+      spriteObstacle.y = pixiTileMap.y + spriteDim * tiles[i]._y;
       drawFloorAndObstacle(stage, spriteObstacle);
     }
   }
@@ -440,15 +443,8 @@ function drawFloorAndObstacle(stage, spriteObstacle) {
   var spriteFloor = new PIXI.Sprite(
     PIXI.loader.resources['img/obstacles.json'].textures['floor.png']
   );
-  var spriteDim = 16;
-  spriteObstacle.width  = spriteDim;
-  spriteObstacle.height = spriteDim;
-  spriteObstacle.x = pixiTileMap.x + spriteDim * tiles[i]._x;
-  spriteObstacle.y = pixiTileMap.y + spriteDim * tiles[i]._y;
-  spriteFloor.width  = spriteObstacle.width;
-  spriteFloor.height = spriteObstacle.height;
-  spriteFloor.x      = spriteObstacle.x;
-  spriteFloor.y      = spriteObstacle.y;
+  spriteFloor.x = spriteObstacle.x;
+  spriteFloor.y = spriteObstacle.y;
   stage.addChild(spriteFloor);
   stage.addChild(spriteObstacle);
 }
