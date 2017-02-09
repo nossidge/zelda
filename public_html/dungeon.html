@@ -133,6 +133,13 @@ if ( getURLParameter('map') != null ) {
   mapToPrioritise = getURLParameter('map');
 }
 
+// For development purposes:
+// If 'obstacles' is not null, show all obstacles.
+var showAllObstacles = null;
+if ( getURLParameter('obstacles') != null ) {
+  showAllObstacles = true;
+}
+
 //##############################################################################
 
 // Make this a global, as it has chests that are toggleable via keypress.
@@ -344,6 +351,14 @@ function makeDungeon(objJSON) {
           drawRoomObstacle(pixiTileMap, qiDir, objJSON.equipment.new);
         }
       }
+    }
+
+    // Dev stuff: Display all obstacles.
+    if (showAllObstacles) {
+      drawRoomObstacle(pixiTileMap, 'N', objJSON.equipment.new);
+      drawRoomObstacle(pixiTileMap, 'E', objJSON.equipment.new);
+      drawRoomObstacle(pixiTileMap, 'S', objJSON.equipment.new);
+      drawRoomObstacle(pixiTileMap, 'W', objJSON.equipment.new);
     }
 
     // Add the room map to the sprite collection.
