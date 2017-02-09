@@ -157,10 +157,6 @@ stage.scale.y = pixelZoom;
 
 // Grab data from the JSON file.
 var xReq = new XMLHttpRequest();
-//xReq.open('GET', 'data/example.json', true);
-//xReq.open('GET', 'data/example20161214020153550.json', true);
-//xReq.open('GET', 'data/example20161214170808264.json', true);
-//xReq.open('GET', 'data/example20161214172155587.json', true);
 xReq.open('GET', dungeonFile, true);
 xReq.responseType = 'json';
 xReq.onload = function() {
@@ -185,6 +181,7 @@ function getFromJSON(dungeonFile, xReq) {
 
   // List of the filenames for the screens that are to be read in.
   sprites = [
+    'img/obstacles.json',
     'img/chest_contents.json',
     'img/chest_contents_colour.json',
     'img/room.json',
@@ -344,8 +341,7 @@ function makeDungeon(objJSON) {
       for (var i = 0; i < room.exits_quest_item.length; i++) {
         var qiDir = room.exits_quest_item[i];
         if (room.observatory_dest != qiDir) {
-          var layerPit = pixiTileMap.layers['ObstaclePit' + qiDir];
-          if (layerPit) layerPit.visible = true;
+          drawRoomObstacle(pixiTileMap, qiDir, objJSON.equipment.new);
         }
       }
     }
@@ -378,6 +374,67 @@ function makeDungeon(objJSON) {
   renderer.render(stage);
 }
 
+
+// Which item is used to get past which one-tile obstacle.
+var itemToObstacle = {
+  "roc1":          "pit.png",
+  "bracelet3":     "boulder.png",
+  "bracelet3":     "pot.png",
+  "sword1":        "shrub.png",
+  "sword1":        "crystal.png",
+  "bomb1":         "cracked_block.png",
+  "pegasus_boots": "dash_rock.png",
+  "fire_rod":      "ice_block.png",
+  "hammer":        "post.png",
+  "hook_switch":   "switch_diamond.png",
+  "fire_rod":      "tree.png",
+  "shield1":       "urchin.png"
+};
+
+
+// Maps have pits in layers named 'ObstaclePitX'.
+// This is fine for the Roc's Feather, but not for other items.
+// Use the pit tile position to place the correct obstacle.
+function drawRoomObstacle(pixiTileMap, dir, item) {
+  var layerObstacle = pixiTileMap.layers['ObstaclePit' + dir];
+  if (!layerObstacle) return;
+  if (!itemToObstacle[item]) return;
+
+  // The existing layer is already designed for the Roc's Feather.
+  if (item == 'roc1') {
+    layerObstacle.visible = true;
+    return;
+  }
+
+  // Find the x and y coords of where the sprite should be displayed.
+  // The tile with '.gid >= 68, <= 71' is the pit.
+  var tiles = layerObstacle.tiles;
+  for (var i = 0; i < tiles.length; i++) {
+    if ( tiles[i].gid >= 68 && tiles[i].gid <= 71 ) {
+
+      // We're always going to need a floor tile to cover the existing pit.
+      var spriteFloor = new PIXI.Sprite(
+        PIXI.loader.resources['img/obstacles.json'].textures['floor.png']
+      );
+      var sprite1 = new PIXI.Sprite(
+        PIXI.loader.resources['img/obstacles.json'].textures[itemToObstacle[item]]
+      );
+
+      // Size and position of sprites. They should be the same.
+      var spriteDim = 16;
+      sprite1.width  = spriteDim;
+      sprite1.height = spriteDim;
+      sprite1.x = pixiTileMap.x + spriteDim * tiles[i]._x;
+      sprite1.y = pixiTileMap.y + spriteDim * tiles[i]._y;
+      spriteFloor.width  = sprite1.width;
+      spriteFloor.height = sprite1.height;
+      spriteFloor.x      = sprite1.x;
+      spriteFloor.y      = sprite1.y;
+      stage.addChild(spriteFloor);
+      stage.addChild(sprite1);
+    }
+  }
+}
 
 
 // Display the layers specified in the string, for all directions.
