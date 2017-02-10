@@ -264,7 +264,7 @@ var ModRooms = (function () {
       }
       if (room.chest) {
         if (room.id == ibRooms[0]) {
-          room.chest_contents = 'dungeon_map.png';
+          room.chest_contents = 'dungeon_map2.png';
         } else if (room.id == ibRooms[1]) {
           room.chest_contents = 'dungeon_compass.png';
         } else if (ibRooms.indexOf(room.id) != -1) {
