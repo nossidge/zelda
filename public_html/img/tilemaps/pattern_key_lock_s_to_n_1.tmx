@@ -7,10 +7,10 @@
   <property name="fromW" value="nesw"/>
   <property name="letter" value="n"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="270" columns="9">
-  <image source="../dungeon.png" width="164" height="542"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
+  <image source="../dungeon.png" width="164" height="560"/>
  </tileset>
- <tileset firstgid="271" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -61,12 +61,12 @@
  <layer name="Enemies" width="15" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,312,0,0,0,
-0,0,0,0,0,0,0,0,0,0,312,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,321,0,0,0,
+0,0,0,0,0,0,0,0,0,0,321,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,277,0,0,0,0,0,277,0,0,0,0,
+0,0,0,0,286,0,0,0,0,0,286,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

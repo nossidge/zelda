@@ -50,6 +50,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "E"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -65,6 +68,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "W"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -85,6 +91,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "E"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -100,6 +109,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "W"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -121,6 +133,9 @@ map_patterns = [
           "all_of": {
             "exits_open": "E",
             "equipment": ["roc1"]
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -137,6 +152,9 @@ map_patterns = [
           "all_of": {
             "exits_open": "W",
             "equipment": ["roc1"]
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -158,6 +176,9 @@ map_patterns = [
           "all_of": {
             "exits_open": "E",
             "equipment": ["roc1"]
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -174,6 +195,9 @@ map_patterns = [
           "all_of": {
             "exits_open": "W",
             "equipment": ["bomb1"]
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -205,6 +229,9 @@ map_patterns = [
           "all_of": {
             "letters": "l",
             "exits_open": "S"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -225,6 +252,9 @@ map_patterns = [
             "entrance": "E",
             "walls": "SW",
             "lock_orig": "N"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         },
         "prop_remove": [
@@ -249,6 +279,9 @@ map_patterns = [
             "entrance": "S",
             "walls": "E",
             "lock_dest": "S"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         },
         "prop_remove": [
@@ -259,6 +292,53 @@ map_patterns = [
         },
         "prop_array_remove": {
           "letters": "k"
+        }
+      }
+    ]
+  },{
+    "name": "vertical_1",
+    "comment": "http://vgmaps.com/NewsArchives/April2008/LegendOfZelda-OracleOfHours-Vampire'sCrypt.png",
+    "comment_direction": "S to N",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t"]
+          },
+          "all_of": {
+            "exits_open": "N",
+            "equipment": ["roc1"]
+          },
+          "none_of": {
+            "exits_quest_item": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 0,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "S",
+            "equipment": ["roc1"]
+          },
+          "none_of": {
+            "exits_quest_item": "NESW",
+            "observatory_dest": "NESW",
+            "exits": "W"
+          }
         }
       }
     ]
@@ -279,6 +359,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "NE"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -294,6 +377,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "NW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -309,6 +395,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "SW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -324,6 +413,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "ES"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -344,6 +436,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "E"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -362,6 +457,9 @@ map_patterns = [
           },
           "none_of": {
             "exits_quest_item": "ES"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -380,6 +478,9 @@ map_patterns = [
           },
           "none_of": {
             "exits_quest_item": "NEW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -401,6 +502,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "E"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -416,6 +520,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "NEW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -431,6 +538,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "W"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -446,6 +556,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "S"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
@@ -466,6 +579,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "E"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -481,6 +597,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "SW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       },{
@@ -496,6 +615,9 @@ map_patterns = [
           },
           "all_of": {
             "exits_open": "N"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
           }
         }
       }
