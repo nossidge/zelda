@@ -9,13 +9,13 @@
   <property name="multiRoomLockCount" value="4"/>
   <property name="multiRoomType" value="monsters"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="270" columns="9">
-  <image source="../dungeon.png" width="164" height="542"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
+  <image source="../dungeon.png" width="164" height="560"/>
  </tileset>
- <tileset firstgid="271" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
- <tileset firstgid="361" name="minibosses" tilewidth="48" tileheight="48" spacing="2" margin="2" tilecount="16" columns="4">
+ <tileset firstgid="370" name="minibosses" tilewidth="48" tileheight="48" spacing="2" margin="2" tilecount="16" columns="4">
   <image source="../minibosses.png" width="202" height="202"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -56,7 +56,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,363,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,372,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -385,7 +385,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 112,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1610613006,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 112,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -405,7 +405,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,111,21,111,0,0,0,0,0,0
+0,0,0,0,0,0,111,3221225742,111,0,0,0,0,0,0
 </data>
  </layer>
  <layer name="LockE" width="15" height="11" visible="0">
@@ -415,7 +415,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,109,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,2684354830,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,109,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -425,7 +425,7 @@
  </layer>
  <layer name="LockN" width="15" height="11" visible="0">
   <data encoding="csv">
-0,0,0,0,0,0,110,20,110,0,0,0,0,0,0,
+0,0,0,0,0,0,110,270,110,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
