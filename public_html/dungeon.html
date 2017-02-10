@@ -329,6 +329,16 @@ function makeDungeon(objJSON) {
       displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'WallBombVisible');
     }
 
+    // If the room is a 'g', draw a 'NoEntry' door to the entrance.
+    if (room.letters.includes('g')) {
+      displayLayersFromDirString(pixiTileMap, room.entrance, 'NoEntry');
+    }
+
+    // If the room is a boss, draw a temporarily closed 'Door' to the open exits.
+    if (findOne(room.letters, ['bm','bl'])) {
+      displayLayersFromDirString(pixiTileMap, room.exits_open, 'Door');
+    }
+
     // Multi-key monster rooms should display the correct fire-pit.
     if (findOne(room.letters, ['km','lm'])) {
       if (typeof pixiTileMap.layers['LockNo' + room.lock_group.num] !== 'undefined') {
