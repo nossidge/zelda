@@ -162,15 +162,6 @@ PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 stage.scale.x = pixelZoom;
 stage.scale.y = pixelZoom;
 
-// Grab data from the JSON file.
-var xReq = new XMLHttpRequest();
-xReq.open('GET', dungeonFile, true);
-xReq.responseType = 'json';
-xReq.onload = function() {
-  getFromJSON(dungeonFile, xReq);
-};
-xReq.send(null);
-
 // Globals...
 mapTilesWidth  = 15;
 mapTilesHeight = 11;
@@ -179,15 +170,28 @@ mapPixelsHeight = mapTilesHeight * spriteDim * pixelZoom;
 minimapOriginX = 0;
 minimapOriginY = 0;
 
-// Call this when the JSON object has been loaded.
-function getFromJSON(dungeonFile, xReq) {
+//##############################################################################
+
+// Grab data from the JSON file.
+var xReq = new XMLHttpRequest();
+xReq.open('GET', dungeonFile, true);
+xReq.responseType = 'json';
+xReq.onload = function() {
   var objJSON = xReq.response;
-
-  // Add URL parameters, if necessary.
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
   if (patternToOnlyUse) objJSON.patternToOnlyUse = patternToOnlyUse;
+  ModMaps.catagoriseTilemaps();
+  ModRooms.transform(dungeonFile, objJSON);
+  console.log(objJSON);
+  loadPixiTextures(dungeonFile, objJSON);
+};
+xReq.send(null);
 
-  // List of the filenames for the screens that are to be read in.
-  sprites = [
+// Call this when the JSON object has been loaded.
+function loadPixiTextures(dungeonFile, objJSON) {
+
+  // List of filenames for the sprites.
+  var sprites = [
     'img/obstacles.json',
     'img/chest_contents.json',
     'img/chest_contents_colour.json',
@@ -195,24 +199,25 @@ function getFromJSON(dungeonFile, xReq) {
     'img/font_minimap.json',
     'img/minimap_x1.png'
   ];
-  var allToLoad = sprites.concat(tilemapFilesMaps);
-  allToLoad = allToLoad.concat(tilemapFilesPatterns);
 
+  // List of filenames for the tilemaps.
+  mapsInUse = objJSON.rooms.map(function(room) {
+    return room.tiled_file;
+  });
+  mapsInUse = uniqPreserveOrder(mapsInUse);
+
+  // Cat the arrays together, load the files, and then make the dungeon!
+  var allToLoad = sprites.concat(mapsInUse);
   PIXI.loader
     .add( allToLoad )
     .load( function() {
-      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-      ModMaps.catagoriseTilemaps();
-      ModRooms.transform(dungeonFile, objJSON);
-      console.log(objJSON);
       makeDungeon(objJSON);
       displayMinimap(objJSON);
     }
   );
 }
 
-
-
+//##############################################################################
 
 // https://github.com/riebel/pixi-tiledmap
 tilemapChests = new PIXI.Container();
