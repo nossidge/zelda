@@ -203,6 +203,49 @@ map_patterns = [
       }
     ]
   },{
+    "name": "horizontal_5",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "E"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits_quest_item": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "W"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits_quest_item": "NESW"
+          }
+        }
+      }
+    ]
+  },{
     "name": "key_lock_s_to_n",
     "rooms": [
       {
