@@ -196,6 +196,14 @@ var ModRooms = (function () {
         var destRoom = roomNextDoor(objJSON, room, room.multi_lock_orig);
         destRoom.multi_lock_dest = '';
       }
+
+      // Add a door to the destination room if the origin is a miniboss.
+      if (room.letters.includes('bm')) {
+        room.exits_open.split('').forEach( function(dir) {
+          var destRoom = roomNextDoor(objJSON, room, dir);
+          destRoom.boss_lock_dest = oppositeDirection(dir);
+        });
+      }
     });
 
     return objJSON;
