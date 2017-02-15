@@ -188,9 +188,37 @@ var ModRooms = (function () {
           }
         }
       }
+
+      // Remove the door from the destination room if
+      //   the origin is a 'slates' or 'keys' multilock.
+      if (room.letters.includes('lm') &&
+          findOne(room.lock_group.multi_type, ['slates','keys'])) {
+        var destRoom = roomNextDoor(objJSON, room, room.multi_lock_orig);
+        destRoom.multi_lock_dest = '';
+      }
     });
 
     return objJSON;
+  };
+
+  // Convert a cardinal direction to a coord difference.
+  var dirToXYDiff = function(dir) {
+    var output = {x: 0, y: 0};
+    switch(dir) {
+      case 'N': output.y = -1; break;
+      case 'S': output.y =  1; break;
+      case 'E': output.x =  1; break;
+      case 'W': output.x = -1; break;
+    }
+    return output;
+  };
+
+  // Return the room next door in the given direction.
+  var roomNextDoor = function(objJSON, room, dir) {
+    coordDiff = dirToXYDiff(dir);
+    var x = room.x + coordDiff.x;
+    var y = room.y + coordDiff.y;
+    return objJSON.room_by_coords[ [x,y] ];
   };
 
   //############################################################################
@@ -260,7 +288,7 @@ var ModRooms = (function () {
     // But for now, there is still only one chest to a room.
     objJSON.rooms.forEach( function(room) {
       if (typeof room.chest == 'undefined') {
-        room.chest = findOne(room.letters, ['ib','iq','kf','k','g'])
+        room.chest = findOne(room.letters, ['ib','iq','kf','k','g']);
       }
       if (room.chest) {
         if (room.id == ibRooms[0]) {
