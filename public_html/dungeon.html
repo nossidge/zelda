@@ -328,6 +328,7 @@ function makeDungeon(objJSON) {
     displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBomb');
     displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBombVisible');
     displayLayersFromDirString(pixiTileMap, room.observatory_dest, 'Observatory');
+    displayLayersFromDirString(pixiTileMap, room.door, 'Door');
 
     // Show a visual indicator of weak wall, if it's not hidden.
     if (room.weak_walls_orig != null && room.weak_walls_hidden == null) {

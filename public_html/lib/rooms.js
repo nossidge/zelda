@@ -201,7 +201,7 @@ var ModRooms = (function () {
       if (room.letters.includes('bm')) {
         room.exits_open.split('').forEach( function(dir) {
           var destRoom = roomNextDoor(objJSON, room, dir);
-          destRoom.boss_lock_dest = oppositeDirection(dir);
+          destRoom.door = oppositeDirection(dir);
         });
       }
     });
