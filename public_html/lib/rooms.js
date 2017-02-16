@@ -133,8 +133,9 @@ var ModRooms = (function () {
     lm_lock_groups.forEach( function(lock_group) {
       var choices = ['monsters','slates','keys','crystals'];
       if (lock_group.non_small_key) remove(choices, 'keys');
-      if (lock_group.observatory)   remove(choices, 'monsters');
       if (lock_group.observatory)   remove(choices, 'crystals');
+      if (lock_group.observatory)   remove(choices, 'monsters');
+      if (lock_group.total != 4)    remove(choices, 'monsters');
       lock_group.multi_type_choices = choices;
     });
 
