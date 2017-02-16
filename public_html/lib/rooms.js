@@ -614,20 +614,32 @@ var ModRooms = (function () {
 
       // If the room is a multi-lock with a chest, we can use an 'ib' room.
       if (letter == 'km' && room.chest) letter = 'ib';
-      if (room.lock_group && room.lock_group.multi_type == 'crystals') letter = 'ib';
 
       // Choose from only the maps with the correct letter.
-      var filenameArray = ModMaps.letterToMap[letter].slice();
+      var filenameArrayOrig = ModMaps.letterToMap[letter].slice();
+
+      // If it's a multi room, choose based on 'multi_type' and room count.
+      if (room.lock_group && letter == 'lm') {
+        filenameArrayOrig = filenameArrayOrig.filter( function(filename) {
+          var tags = ModMaps.mapTags[filename].tags;
+          var isValid1 = (tags.multiRoomType == room.lock_group.multi_type);
+          var isValid2 = true;
+          if (ModMaps.mapTags[filename].tags.multiRoomLockCount) {
+            isValid2 = (tags.multiRoomLockCount == room.lock_group.total);
+          }
+          return (isValid1 && isValid2);
+        });
+      }
 
       // Remove any tilemaps that are already in use.
-      filenameArray = filenameArray.filter( function(elem) {
-        return !filenamesUsed.includes(elem);
+      var filenameArray = filenameArrayOrig.filter( function(filename) {
+        return !filenamesUsed.includes(filename);
       });
 
       // Edge case: If there's now no array, just use the original.
       // Better to have a duplicate tilemap than nothing.
       if (filenameArray.length == 0) {
-        filenameArray = ModMaps.letterToMap[letter].slice();
+        filenameArray = filenameArrayOrig;
       }
 
       // Adjust probabilities based on tilemap complexity.
