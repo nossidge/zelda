@@ -319,6 +319,7 @@ function makeDungeon(objJSON) {
     displayLayersFromDirString(pixiTileMap, room.lock_puzzle_orig, 'LockPuzzle');
     displayLayersFromDirString(pixiTileMap, room.lock_puzzle_dest, 'NoEntry');
     displayLayersFromDirString(pixiTileMap, room.multi_lock_orig, 'Lock');
+    displayLayersFromDirString(pixiTileMap, room.multi_lock_orig, 'MultiLock');
     displayLayersFromDirString(pixiTileMap, room.multi_lock_dest, 'NoEntry');
     displayLayersFromDirString(pixiTileMap, room.boss_lock_orig, 'BossLock');
     displayLayersFromDirString(pixiTileMap, room.boss_lock_dest, 'NoEntry');
@@ -349,22 +350,6 @@ function makeDungeon(objJSON) {
     if (findOne(room.letters, ['km','lm'])) {
       if (typeof pixiTileMap.layers['LockNo' + room.lock_group.num] !== 'undefined') {
         pixiTileMap.layers['LockNo' + room.lock_group.num].visible = true;
-      }
-    }
-
-    // Multi-key 'crystal' rooms should display crystals OVER chests.
-    if (room.lock_group && room.lock_group.multi_type == 'crystals') {
-
-      // Find the x and y coords of where the sprite should be displayed.
-      // This is based off the position of the 'chest' layer.
-      // The tile with '.gid == 7' is the chest.
-      var tiles = pixiTileMap.layers['Chest'].tiles;
-      for (var i = 0; i < tiles.length; i++) {
-        if ( tiles[i].gid == 7 ) {
-          var xObs = pixiTileMap.x + spriteDim * tiles[i]._x;
-          var yObs = pixiTileMap.y + spriteDim * tiles[i]._y;
-          drawObstacle(stage, 'crystal.png', xObs, yObs);
-        }
       }
     }
 

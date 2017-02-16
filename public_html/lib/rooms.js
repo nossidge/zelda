@@ -134,6 +134,7 @@ var ModRooms = (function () {
       var choices = ['monsters','slates','keys','crystals'];
       if (lock_group.non_small_key) remove(choices, 'keys');
       if (lock_group.observatory)   remove(choices, 'monsters');
+      if (lock_group.observatory)   remove(choices, 'crystals');
       lock_group.multi_type_choices = choices;
     });
 
@@ -182,8 +183,6 @@ var ModRooms = (function () {
             } else if (room.lock_group.multi_type == 'keys') {
               room.chest = true;
               room.chest_contents = 'dungeon_key2.png';
-            } else if (room.lock_group.multi_type == 'crystals') {
-              room.chest = true;
             }
           }
         }
@@ -403,6 +402,7 @@ var ModRooms = (function () {
       var logReason = false;
 //        logReason = (mapFilename == 'img/tilemaps/roc_001.tmx');
 //        logReason = (room.id == 8);
+//        logReason = (room.lock_group && room.lock_group.multi_type == 'crystals');
 
       // Innocent until proven guilty.
       var isValid = true;
@@ -619,16 +619,21 @@ var ModRooms = (function () {
       var filenameArrayOrig = ModMaps.letterToMap[letter].slice();
 
       // If it's a multi room, choose based on 'multi_type' and room count.
-      if (room.lock_group && letter == 'lm') {
+      if (room.lock_group && ['km','lm'].includes(letter)) {
         filenameArrayOrig = filenameArrayOrig.filter( function(filename) {
           var tags = ModMaps.mapTags[filename].tags;
-          var isValid1 = (tags.multiRoomType == room.lock_group.multi_type);
-          var isValid2 = true;
-          if (ModMaps.mapTags[filename].tags.multiRoomLockCount) {
-            isValid2 = (tags.multiRoomLockCount == room.lock_group.total);
-          }
-          return (isValid1 && isValid2);
+          return (tags.multiRoomType == room.lock_group.multi_type);
         });
+        if (letter == 'lm') {
+          filenameArrayOrig = filenameArrayOrig.filter( function(filename) {
+            var tags = ModMaps.mapTags[filename].tags;
+            var isValid = true;
+            if (tags.multiRoomLockCount) {
+              isValid = (tags.multiRoomLockCount == room.lock_group.total);
+            }
+            return (isValid);
+          });
+        }
       }
 
       // Remove any tilemaps that are already in use.
@@ -672,7 +677,7 @@ var ModRooms = (function () {
       // If there's no valid filename, just use the original list.
       // Better to have a duplicate tilemap than nothing.
       if (!validFilename.isValid) {
-        filenameArray = ModMaps.letterToMap[letter].slice();
+        filenameArray = filenameArrayOrig;
         validFilename = determineTiledMapForARoom(objJSON, room, filenameArray);
       }
 
