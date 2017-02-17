@@ -637,6 +637,16 @@ var ModRooms = (function () {
         }
       }
 
+      // Special case: If it's a 'km' 'crystals' room,
+      //   add 'ib' rooms that have a 'Crystal' layer.
+      if (letter == 'km' && room.lock_group.multi_type == 'crystals') {
+        var ibFilenames = ModMaps.letterToMap['ib'].slice();
+        ibFilenames = ibFilenames.filter( function(filename) {
+          return ModMaps.mapTags[filename].layers.includes('Crystal');
+        });
+        filenameArrayOrig = filenameArrayOrig.concat(ibFilenames);
+      }
+
       // Remove any tilemaps that are already in use.
       var filenameArray = filenameArrayOrig.filter( function(filename) {
         return !filenamesUsed.includes(filename);

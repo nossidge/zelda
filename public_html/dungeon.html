@@ -353,6 +353,13 @@ function makeDungeon(objJSON) {
       }
     }
 
+    // Multi-key crystal rooms should display the 'Crystal' layer.
+    if (room.lock_group && room.lock_group.multi_type == 'crystals') {
+      if (typeof pixiTileMap.layers['Crystal'] !== 'undefined') {
+        pixiTileMap.layers['Crystal'].visible = true;
+      }
+    }
+
     // Draw the obstacles, if necessary.
     // If it's an observatory, don't need to have an obstacle.
     if (room.exits_quest_item != null) {
