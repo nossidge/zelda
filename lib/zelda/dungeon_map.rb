@@ -102,7 +102,10 @@ module Zelda
       destroy_walls(@rooms, ['n','t'])
 
       # Find all rooms with letter 'n' that don't lead to useful rooms.
-      destroy_dead_ends(@rooms)
+      # Loop until there are no more dead-ends.
+      loop do
+        break if not destroy_dead_ends(@rooms)
+      end
 
       # Determine 'lock_group's that need special treatment.
       determine_dodgy_lock_groups(@rooms)
@@ -456,8 +459,11 @@ module Zelda
     # Find all rooms with letter 'n' that don't lead to useful rooms.
     # Delete the room, and delete the threshold to neighbours.
     def destroy_dead_ends(rooms)
+      rooms_removed = false
+
       rooms.select{ |r| ['n','t'].include?(r.letter) }.each do |r|
         if r.exits == r.entrance
+          rooms_removed = true
 
           # Find open directions.
           open_dirs = %w(N E S W) - r.walls.chars
@@ -473,7 +479,9 @@ module Zelda
           rooms.delete(r)
         end
       end
-      rooms
+
+      # Return bool of successful removal.
+      rooms_removed
     end
 
     ############################################################################
