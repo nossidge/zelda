@@ -88,6 +88,9 @@ module Zelda
       end
       @rooms[[x, y]]
     end
+    def delete(room)
+      @rooms.delete [room.x, room.y]
+    end
     def alter_letter(x, y, letter)
       @rooms[[x, y]].letter = letter
     end

@@ -58,6 +58,18 @@ module Zelda
       end
     end
 
+    # Convert a cardinal direction to a coord difference.
+    def dir_to_xy_diff(dir)
+      output = Coords.new(0, 0)
+      case dir
+        when 'N'; output.y =  1
+        when 'S'; output.y = -1
+        when 'E'; output.x =  1
+        when 'W'; output.x = -1
+      end
+      output
+    end
+
     ############################################################################
 
     def initialize(nodes)
@@ -88,6 +100,9 @@ module Zelda
 
       # Remove walls between non-essential rooms.
       destroy_walls(@rooms, ['n','t'])
+
+      # Find all rooms with letter 'n' that don't lead to useful rooms.
+      destroy_dead_ends(@rooms)
 
       # Determine 'lock_group's that need special treatment.
       determine_dodgy_lock_groups(@rooms)
@@ -394,7 +409,7 @@ module Zelda
 
     # Find all rooms with letter 'n'. If any borders another room that
     #   is in the same zone, then remove the walls between them.
-    # They have to be the exact same zone, not fractional.
+    # They have to be the exact same zone, not just same integer.
     def destroy_walls(rooms, letters)
       letters = [*letters]
       rooms.select{ |r| letters.include?(r.letter) }.each do |r|
@@ -433,6 +448,29 @@ module Zelda
               r.add_exit_quest_item n_arr[0]
             end
           end
+        end
+      end
+      rooms
+    end
+
+    # Find all rooms with letter 'n' that don't lead to useful rooms.
+    # Delete the room, and delete the threshold to neighbours.
+    def destroy_dead_ends(rooms)
+      rooms.select{ |r| ['n','t'].include?(r.letter) }.each do |r|
+        if r.exits == r.entrance
+
+          # Find open directions.
+          open_dirs = %w(N E S W) - r.walls.chars
+
+          # For each open direction, get the orig room and remove the threshold.
+          open_dirs.each do |dir|
+            diff = dir_to_xy_diff(dir)
+            room_orig = rooms.rooms[ [r.x + diff.x, r.y + diff.y] ]
+            room_orig.delete_exit opposite_direction(dir)
+          end
+
+          # Kill this useless dead-end room.
+          rooms.delete(r)
         end
       end
       rooms
