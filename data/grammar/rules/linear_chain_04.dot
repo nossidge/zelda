@@ -7,7 +7,7 @@ digraph linear_chain_04 {
 
 
   # New node relations.
-  "1 = t"
+  "1 = n"
 
 
   # Old node relations.

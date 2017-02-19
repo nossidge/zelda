@@ -7,8 +7,8 @@ digraph parallel_chain_06 {
 
 
   # New node relations.
-  "1 = F" -> "3 = t"
-  "3 = t" -> "2 = k" [color = red]
+  "1 = F" -> "3 = n"
+  "3 = n" -> "2 = k" [color = red]
 
 
   # Old node relations.

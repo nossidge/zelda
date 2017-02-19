@@ -9,9 +9,9 @@ digraph final_chain_02 {
   # New node relations.
   "1 = C"  -> "3 = G"  [color = red]
   "3 = G"  -> "6 = kf" [color = red]
-  "1 = C"  -> "5 = t"
+  "1 = C"  -> "5 = n"
   "1 = C"  -> "7 = H"
-  "5 = t"  -> "8 = H"
+  "5 = n"  -> "8 = H"
   "6 = kf" -> "2 = lf"
 
 
