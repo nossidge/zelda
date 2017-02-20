@@ -311,40 +311,52 @@ function makeDungeon(objJSON) {
       }
     }
 
-    // Draw the thresholds from the direction strings.
+    // Draw the layers and thresholds from the direction strings.
     displayLayersFromDirString(pixiTileMap, room.exits, 'Exit');
     displayLayersFromDirString(pixiTileMap, room.walls, 'Wall');
-    displayLayersFromDirString(pixiTileMap, room.walls, 'WallDecoration');
-    displayLayersFromDirString(pixiTileMap, room.lock_orig, 'Lock');
-    displayLayersFromDirString(pixiTileMap, room.lock_dest, 'NoEntry');
-    displayLayersFromDirString(pixiTileMap, room.lock_puzzle_orig, 'LockPuzzle');
-    displayLayersFromDirString(pixiTileMap, room.lock_puzzle_dest, 'NoEntry');
-    displayLayersFromDirString(pixiTileMap, room.multi_lock_orig, 'Lock');
-    displayLayersFromDirString(pixiTileMap, room.multi_lock_orig, 'MultiLock');
-    displayLayersFromDirString(pixiTileMap, room.multi_lock_dest, 'NoEntry');
-    displayLayersFromDirString(pixiTileMap, room.boss_lock_orig, 'BossLock');
-    displayLayersFromDirString(pixiTileMap, room.boss_lock_dest, 'NoEntry');
-    displayLayersFromDirString(pixiTileMap, room.exits_one_way_orig, 'OneWay');
-    displayLayersFromDirString(pixiTileMap, room.exits_one_way_dest, 'NoEntry');
-    displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'WallBomb');
-    displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBomb');
-    displayLayersFromDirString(pixiTileMap, room.weak_walls_dest, 'WallBombVisible');
-    displayLayersFromDirString(pixiTileMap, room.observatory_dest, 'Observatory');
-    displayLayersFromDirString(pixiTileMap, room.door, 'Door');
+    displayThresholdFromDirString(pixiTileMap, room.lock_orig, 'lock.png');
+    displayThresholdFromDirString(pixiTileMap, room.lock_dest, 'no_entry.png');
+    displayThresholdFromDirString(pixiTileMap, room.lock_puzzle_orig, 'puzzle.png');
+    displayThresholdFromDirString(pixiTileMap, room.lock_puzzle_dest, 'no_entry.png');
+    displayThresholdFromDirString(pixiTileMap, room.boss_lock_orig, 'boss.png');
+    displayThresholdFromDirString(pixiTileMap, room.boss_lock_dest, 'no_entry.png');
+    displayThresholdFromDirString(pixiTileMap, room.exits_one_way_orig, 'oneway.png');
+    displayThresholdFromDirString(pixiTileMap, room.exits_one_way_dest, 'no_entry.png');
+    displayThresholdFromDirString(pixiTileMap, room.weak_walls_dest, 'hidden_bomb.png');
+    displayThresholdFromDirString(pixiTileMap, room.door, 'closed.png');
 
     // Show a visual indicator of weak wall, if it's not hidden.
-    if (room.weak_walls_orig != null && room.weak_walls_hidden == null) {
-      displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'WallBombVisible');
+    if (room.weak_walls_orig != null) {
+      if (room.weak_walls_hidden == null) {
+        displayThresholdFromDirString(pixiTileMap, room.weak_walls_orig, 'hidden_bomb.png');
+      } else {
+        displayLayersFromDirString(pixiTileMap, room.weak_walls_orig, 'Wall');
+      }
     }
 
-    // If the room is a 'g', draw a 'NoEntry' door to the entrance.
+    // If the room is a 'g', draw a 'no_entry' door to the entrance.
     if (room.letters.includes('g')) {
-      displayLayersFromDirString(pixiTileMap, room.entrance, 'NoEntry');
+      displayThresholdFromDirString(pixiTileMap, room.entrance, 'no_entry.png');
     }
 
-    // If the room is a boss, draw a temporarily closed 'Door' to the open exits.
+    // If the room is a boss, draw a temporarily 'closed' door to the open exits.
     if (findOne(room.letters, ['bm','bl'])) {
-      displayLayersFromDirString(pixiTileMap, room.exits_open, 'Door');
+      displayThresholdFromDirString(pixiTileMap, room.exits_open, 'closed.png');
+    }
+
+    // Multilock thresholds.
+    displayThresholdFromDirString(pixiTileMap, room.multi_lock_dest, 'no_entry.png');
+    if (room.letters.includes('lm')) {
+      switch( room.lock_group.multi_type ) {
+        case 'crystals':
+          displayThresholdFromDirString(pixiTileMap, room.multi_lock_orig, 'multi_crystals.png');
+          break;
+        case 'monsters':
+          displayThresholdFromDirString(pixiTileMap, room.multi_lock_orig, 'multi_monsters.png');
+          break;
+        default:  // 'slates' or 'keys'
+          displayLayersFromDirString(pixiTileMap, room.multi_lock_orig, 'Lock');
+      }
     }
 
     // Multi-key monster rooms should display the correct fire-pit.
@@ -463,6 +475,56 @@ function drawObstacle(stage, spriteName, x, y) {
   spriteFloor.y = y; spriteObstacle.y = y;
   stage.addChild(spriteFloor);
   stage.addChild(spriteObstacle);
+}
+
+
+// Draw a door tile, in the middle of the wall.
+function drawThreshold(pixiTileMap, dir, spriteName) {
+  var spriteThreshold = new PIXI.Sprite(
+    PIXI.loader.resources['img/doors.json'].textures[spriteName]
+  );
+
+  // Position and rotation of the sprite.
+  switch(dir) {
+    case 'N':
+      spriteThreshold.x = pixiTileMap.x + (spriteDim * 7);
+      spriteThreshold.y = pixiTileMap.y;
+      break;
+    case 'E':
+      spriteThreshold.x = pixiTileMap.x + (spriteDim * 14);
+      spriteThreshold.y = pixiTileMap.y + (spriteDim * 5);
+      spriteThreshold.anchor.set(0,1);
+      spriteThreshold.rotation = 90 * (Math.PI / 180);
+      break;
+    case 'S':
+      spriteThreshold.x = pixiTileMap.x + (spriteDim * 7);
+      spriteThreshold.y = pixiTileMap.y + (spriteDim * 10);
+      spriteThreshold.anchor.set(1);
+      spriteThreshold.rotation = 180 * (Math.PI / 180);
+      break;
+    case 'W':
+      spriteThreshold.x = pixiTileMap.x;
+      spriteThreshold.y = pixiTileMap.y + (spriteDim * 5);
+      spriteThreshold.anchor.set(1,0);
+      spriteThreshold.rotation = 270 * (Math.PI / 180);
+      break;
+    default: break;
+  }
+  stage.addChild(spriteThreshold);
+}
+
+
+// Display the layers specified in the string, for all directions.
+function displayThresholdFromDirString(pixiTileMap, dirString, spriteName) {
+  if (dirString != null) {
+    for (var i = 0; i < dirString.length; i++) {
+      var layerName = 'Wall' + dirString[i];
+      if (typeof pixiTileMap.layers[layerName] !== 'undefined') {
+        pixiTileMap.layers[layerName].visible = true;
+      }
+      drawThreshold(pixiTileMap, dirString[i], spriteName)
+    }
+  }
 }
 
 
