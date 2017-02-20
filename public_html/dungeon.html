@@ -518,9 +518,12 @@ function drawThreshold(pixiTileMap, dir, spriteName) {
 function displayThresholdFromDirString(pixiTileMap, dirString, spriteName) {
   if (dirString != null) {
     for (var i = 0; i < dirString.length; i++) {
-      var layerName = 'Wall' + dirString[i];
-      if (typeof pixiTileMap.layers[layerName] !== 'undefined') {
-        pixiTileMap.layers[layerName].visible = true;
+      var wall = 'Wall' + dirString[i];
+      var door = 'Door' + dirString[i];
+      if (pixiTileMap.layers[door]) {
+        pixiTileMap.layers[door].visible = true;
+      } else if (pixiTileMap.layers[wall]) {
+        pixiTileMap.layers[wall].visible = true;
       }
       drawThreshold(pixiTileMap, dirString[i], spriteName)
     }
