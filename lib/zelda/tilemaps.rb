@@ -13,7 +13,7 @@ module Zelda
   # Don't store everything about the TileMap, just the stuff we need.
   class TilemapInfo
 
-    attr_reader :name, :tags, :layers, :chest
+    attr_reader :name, :tags, :layers, :chest, :crystal
 
     def initialize(filepath)
       tilemap = Tmx.load(filepath)
@@ -21,6 +21,7 @@ module Zelda
       @tags = tilemap.properties
       @layers = tilemap.layers.map{ |i| i.name }
       @chest = @layers.include?('Chest')
+      @crystal = @layers.include?('Crystal')
     end
 
     def as_json(options={})
@@ -29,6 +30,7 @@ module Zelda
         tags: @tags,
         layers: @layers,
         chest: @chest,
+        crystal: @crystal,
         complexity: complexity
       }
     end
