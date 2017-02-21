@@ -386,6 +386,52 @@ map_patterns = [
       }
     ]
   },{
+    "name": "vertical_2",
+    "comment": "http://vgmaps.com/Atlas/GB-GBC/LegendOfZelda-OracleOfAges-MoonlitGrotto.png",
+    "comment_direction": "N to S",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "S",
+            "equipment": ["bomb1"]
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 0,
+          "y": 1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["k","kf","ib","iq"]
+          },
+          "all_of": {
+            "entrance": "N",
+            "equipment": ["bomb1"]
+          },
+          "none_of": {
+            "exits_quest_item": "NESW",
+            "observatory_dest": "NESW"
+          }
+        }
+      }
+    ]
+  },{
     "name": "sundial_shrine_four",
     "comment": "http://vgmaps.com/NewsArchives/April2008/LegendOfZelda-OracleOfHours-SundialShrine.png",
     "rooms": [
