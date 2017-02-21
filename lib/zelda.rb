@@ -82,6 +82,12 @@ module Zelda
         else
           puts Zelda::Tilemaps.tilemap_tags
         end
+      when 'layer'
+        if argv[0]
+          puts Zelda::Tilemaps.tilemaps_by_layer(argv[0])
+        else
+          puts Zelda::Tilemaps.tilemap_layers
+        end
       when 'open'
         Zelda::Config.open_in_default(Zelda::Config.file_html_index, true)
       when 'gen4'

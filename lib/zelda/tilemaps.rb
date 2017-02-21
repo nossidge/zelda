@@ -81,6 +81,8 @@ module Zelda
       end
     end
 
+    ########################################
+
     # Get all the tags that are used by maps.
     def self.tilemap_tags
       @@tilemap_tags ||= self.all.map do |i|
@@ -91,11 +93,31 @@ module Zelda
     # Get all the maps that use a specific tag.
     def self.tilemaps_by_tag(tag_name)
       self.all.select do |i|
-        i.tags.keys.include?(tag_name)
+        i.tags.keys.map{ |j| j.downcase }.include?(tag_name.downcase)
       end.map do |i|
         i.name
       end
     end
+
+    ########################################
+
+    # Get all the layers that are used by maps.
+    def self.tilemap_layers
+      @@tilemap_layers ||= self.all.map do |i|
+        i.layers
+      end.flatten.sort.uniq
+    end
+
+    # Get all the maps that use a specific layer.
+    def self.tilemaps_by_layer(layer_name)
+      self.all.select do |i|
+        i.layers.map{ |j| j.downcase }.include?(layer_name.downcase)
+      end.map do |i|
+        i.name
+      end
+    end
+
+    ########################################
 
     # Read through all the tilemaps and write to the JavaScript code file.
     def self.tilemap_js_make

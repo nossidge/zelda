@@ -268,6 +268,8 @@ module Zelda
         'config'  => 'Display various config options',
         'tag'     => "Output the Tiled map tags that are in use\n" +
           ' ' * indent + "Add a second arg and it will output maps using that tag",
+        'layer'   => "Output the Tiled map layers that are in use\n" +
+          ' ' * indent + "Add a second arg and it will output maps using that layer",
         'open'    => "Open the output 'level select' HTML file in default browser\n" +
           ' ' * indent + "Won't work unless your browser accepts xrefs from 'file://'"
       }
@@ -311,6 +313,8 @@ module Zelda
         'con'       => 'config',
         'tag'       => 'tag',
         'tags'      => 'tag',
+        'layer'     => 'layer',
+        'layers'    => 'layer',
         'open'      => 'open',
         'o'         => 'open'
       }
