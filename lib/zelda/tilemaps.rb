@@ -15,13 +15,22 @@ module Zelda
 
     attr_reader :name, :tags, :layers, :chest, :crystal
 
-    def initialize(filepath)
-      tilemap = Tmx.load(filepath)
-      @name = File.basename(filepath, '.tmx')
-      @tags = tilemap.properties
-      @layers = tilemap.layers.map{ |i| i.name }
-      @chest = @layers.include?('Chest')
-      @crystal = @layers.include?('Crystal')
+    # Argument can be a filename, or an existing hash.
+    def initialize(filepath_or_hash)
+      if not filepath_or_hash.is_a?(Hash)
+        tilemap  = Tmx.load(filepath_or_hash)
+        @name    = File.basename(filepath_or_hash, '.tmx')
+        @tags    = tilemap.properties
+        @layers  = tilemap.layers.map{ |i| i.name }
+        @chest   = @layers.include?('Chest')
+        @crystal = @layers.include?('Crystal')
+      else
+        @name    = filepath_or_hash[:name]
+        @tags    = filepath_or_hash[:tags]
+        @layers  = filepath_or_hash[:layers]
+        @chest   = filepath_or_hash[:chest]
+        @crystal = filepath_or_hash[:crystal]
+      end
     end
 
     def as_json(options={})
@@ -117,6 +126,14 @@ module Zelda
       end.map do |i|
         i.name
       end
+    end
+
+    ########################################
+
+    # Get the tilemap info from the JSON, and eval to read into Ruby array.
+    def self.tilemap_js_read
+      json = File.open(Zelda::Config.file_map_files_info_js, 'r').read
+      eval(json).map { |i| TilemapInfo.new(i) }
     end
 
     ########################################
