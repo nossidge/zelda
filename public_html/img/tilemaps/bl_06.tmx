@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="11" tilewidth="16" tileheight="16" nextobjectid="1">
  <properties>
+  <property name="entranceBanned" value="n"/>
   <property name="exitRequired" value="n"/>
   <property name="fromE" value=""/>
   <property name="fromN" value="ns"/>
