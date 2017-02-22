@@ -542,6 +542,18 @@ var ModRooms = (function () {
         }
       }
 
+      // If the entrance is banned, then enforce it.
+      if (objTileMap.tags.hasOwnProperty('entranceBanned')) {
+        if (objTileMap.tags['entranceBanned'] != '') {
+          var arr1 = objTileMap.tags['entranceBanned'].split('');
+          var arr2 = room.entrance.toLowerCase().split('');
+          if (findOne(arr1, arr2)) {
+            logif(logReason, '17 room.id = ' + room.id);
+            isValid = false;
+          }
+        }
+      }
+
       // If the room is a multi-room, then make sure we use the correct type.
       if (findOne(room.letters, ['km','lm'])) {
         if (objTileMap.tags.hasOwnProperty('multiRoomType')) {
