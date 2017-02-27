@@ -49,7 +49,7 @@ module Zelda
 
         # If the above timed out.
         rescue Timeout::Error => e
-          Zelda::puts_verbose "Seed #{Zelda::Config.seed} timed out..."
+          Zelda::puts_verbose "Seed #{Zelda::Config.seed_dungeon} timed out..."
         end
 
         # Exit the loop if we've reached the correct number of dungeons.
