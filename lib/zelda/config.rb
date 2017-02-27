@@ -240,6 +240,7 @@ module Zelda
       @@options[:verbose]         = true  # ToDo: Turn this off.
       @@options[:verbose_grammar] = false
     end
+    options_default
 
     def self.options_exist?
       !@@optparse.getopts.empty?
