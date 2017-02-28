@@ -80,6 +80,11 @@ module Zelda
       @@dir_rules_images ||= dir_output + '/' + rel_src_dir_rules_images
     end
 
+    # The location of the contraint files.
+    def self.dir_dungeon_settings
+      @@dir_dungeon_settings ||= "#{dir_data}/dungeon_settings"
+    end
+
     # The location of the final .dot and .json files.
     def self.dir_output_data
       @@dir_output_data ||= "#{dir_output}/data"
