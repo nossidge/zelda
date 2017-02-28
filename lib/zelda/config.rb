@@ -51,7 +51,7 @@ module Zelda
       @@dir_lib ||= "#{dir_root}/lib"
     end
     def self.dir_lib_zelda
-      @@dir_lib_zelda ||= "#{dir_root}/lib/zelda"
+      @@dir_lib_zelda ||= "#{dir_lib}/zelda"
     end
 
     # Ouput location. This is the public HTML stuff.
@@ -66,12 +66,12 @@ module Zelda
 
     # The location of the base grammar directory.
     def self.dir_grammar
-      @@dir_grammar ||= "#{dir_root}/data/grammar"
+      @@dir_grammar ||= "#{dir_data}/grammar"
     end
 
     # The location of the grammar rules.
     def self.dir_rules
-      @@dir_rules ||= "#{dir_root}/data/grammar/rules"
+      @@dir_rules ||= "#{dir_grammar}/rules"
     end
     def self.rel_src_dir_rules_images
       @@rel_src_dir_rules_images ||= 'img/rules'
