@@ -98,11 +98,14 @@ module Zelda
         final_chain*
       )
     end
+    def rules_from_dungeon_settings(settings_dir = 'default')
+      load_rules('*', "#{Zelda::Config.dir_dungeon_settings}/#{settings_dir}")
+    end
 
-    def load_rules(rule_file_globs)
+    def load_rules(rule_file_globs, directory = Zelda::Config.dir_rules)
       rules = {}
       [*rule_file_globs].each do |glob|
-        hash = load_from_rules("#{Zelda::Config.dir_rules}/#{glob}.dot")
+        hash = load_from_rules("#{directory}/#{glob}.dot")
         rules = rules.merge(hash)
       end
       @rules = rules
