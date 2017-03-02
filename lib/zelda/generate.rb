@@ -14,7 +14,12 @@ module Zelda
     ############################################################################
 
     # Generate dungeons using the parameters set in 'Zelda::Config.options'
-    def self.generate
+    def self.generate(dungeon_setting_dir = 'default')
+
+      # For the moment, this is the same for all 8 dungeons.
+      dungeon_settings = Zelda::DungeonSettings.new(dungeon_setting_dir)
+
+      # Loop to make 'Zelda::Config.options[:number]' dungeons.
       nodes = nil
       counter = 0
       loop do
@@ -33,7 +38,7 @@ module Zelda
 
           # Generate the mission nodes.
           if nodes.nil? or not Zelda::Config.options[:one_mission]
-            nodes = generate_mission
+            nodes = generate_mission(dungeon_settings)
           end
 
           # Stop generation if the particular seed takes too long.
@@ -63,7 +68,7 @@ module Zelda
     ############################################################################
 
     # One mission means use just one MissionTree for all maps.
-    def self.generate_mission
+    def self.generate_mission(dungeon_settings)
       nodes = nil
 
       # Generate a dungeon mission tree.
@@ -71,7 +76,7 @@ module Zelda
       grammar = Grammar.new
       grammar.rules_complex
       grammar.constraints_usual
-      nodes = MissionTree.generate(grammar)
+      nodes = MissionTree.generate(grammar, dungeon_settings)
 
       # Write the nodes to a RGL::DirectedAdjacencyGraph.
       # Use the 'desc' property as the node description.

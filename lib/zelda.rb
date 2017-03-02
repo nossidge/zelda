@@ -35,6 +35,7 @@ require_relative 'zelda/nodes.rb'
 require_relative 'zelda/room.rb'
 require_relative 'zelda/rooms.rb'
 require_relative 'zelda/tilemaps.rb'
+require_relative 'zelda/dungeon_settings.rb'
 
 ################################################################################
 

@@ -13,18 +13,18 @@ module Zelda
   class MissionTree
 
     # Keep generating until we get a valid dungeon.
-    def self.generate(grammar)
+    def self.generate(grammar, dungeon_settings)
       @@failed_attempts = 0
       nodes = false
       loop do
-        nodes = generate_or_fail(grammar)
+        nodes = generate_or_fail(grammar, dungeon_settings)
         break if nodes
       end
       nodes
     end
 
     # Use the data in Grammar to generate a dungeon mission tree.
-    def self.generate_or_fail(grammar, dev_snapshots = false)
+    def self.generate_or_fail(grammar, dungeon_settings, dev_snapshots = false)
 
       # Set up a new nodes object with a single 'S' start node.
       nodes = Nodes.new('S')
@@ -80,8 +80,8 @@ module Zelda
         break if !replaced
       end
 
-      # Use the grammar constraints to assert that it's valid.
-      if not grammar.constraints_assert(nodes)
+      # Use the constraints to assert that it's valid.
+      if not dungeon_settings.assert_constraints(nodes)
         Zelda::Config.seed_increment
         return false
       end
