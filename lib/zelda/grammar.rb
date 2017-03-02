@@ -25,7 +25,6 @@ module Zelda
     attr_reader :rules_start      # Substitutions of the 'S' start node.
     attr_reader :files_start      # Array of files that contain start rules.
     attr_reader :start_rule_name  # The currently chosen start rule file name.
-    attr_reader :constraints      # Conditions that a mission tree must pass.
     attr_reader :zone_traversal   # Zone traversal requiring quest item.
                                   #   Key is the file basename.
     attr_reader :failed_attempts  # Number of failed tree making attempts.
@@ -34,7 +33,6 @@ module Zelda
     def initialize(verbose = Zelda::Config.options[:verbose_grammar])
       @rules           = {}
       @rules_start     = []
-      @constraints     = nil
       @files_start     = []
       @start_rule_name = nil
       @zone_traversal  = Hash.new { |h,k| h[k] = [] }
@@ -109,87 +107,6 @@ module Zelda
         rules = rules.merge(hash)
       end
       @rules = rules
-    end
-
-    ############################################################################
-
-    # Set the usual contraints.
-    def constraints_usual
-      @constraints = []
-
-      # Make sure it's a decent size.
-      @constraints << {
-        value: "nodes.count",
-        conditions: ['>= 30', '<= 53']
-      }
-
-      # Make sure all the letters are lowercase.
-      @constraints << {
-        value: "nodes.select{|k,v| v.letter == v.letter.upcase}.count",
-        conditions: '== 0'
-      }
-
-      # Make sure there are at least 12 nodes before the miniboss.
-      @constraints << {
-        value: %{
-          nodes.all.select do |n|
-            n.zone <= nodes.find_by_letter('bm')[0].zone
-          end.count},
-        conditions: '>= 12'
-      }
-
-      # There should not be too many 'ts' nodes.
-      @constraints << {
-        value: "nodes.find_by_letter('ts').count",
-        conditions: ['>= 1', '<= 2']
-      }
-
-      # There should be a range of 'ib' nodes.
-      @constraints << {
-        value: "nodes.find_by_letter('ib').count",
-        conditions: ['>= 4', '<= 7']
-      }
-
-      # There should just be 1 of each of these nodes.
-      %w(e iq bm bl).each do |i|
-        @constraints << {
-          value: "nodes.find_by_letter('#{i}').count",
-          conditions: '== 1'
-        }
-      end
-
-      # Debug: Make sure there are some 'l' nodes.
-      @constraints << {
-        value: "nodes.find_by_letter('l').count",
-        conditions: '>= 4'
-      }
-
-      # Debug: Make sure there are some 'lm' nodes.
-      @constraints << {
-        value: "nodes.find_by_letter('lm').count",
-        conditions: '>= 0'
-      }
-    end
-
-    # Assert that the constraints are being followed.
-    # Each condition must output to true.
-    # We use eval for this. Scary.
-    def constraints_assert(nodes)
-      @constraints.each do |i|
-        [*i[:conditions]].each do |c|
-          cond_string = "#{i[:value]} #{c}"
-          if not eval(cond_string) == true
-            @failed_attempts += 1
-            if verbose
-              a = "Grammar failure #{@failed_attempts.to_s.rjust(3)}, "
-              b = "condition false: (#{cond_string})"
-              Zelda::puts_verbose a + b
-            end
-            return false
-          end
-        end
-      end
-      true
     end
 
     ############################################################################
