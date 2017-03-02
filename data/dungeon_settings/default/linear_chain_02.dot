@@ -1,0 +1,25 @@
+digraph linear_chain_02 {
+
+
+  # Weirdly, if you specify horizontal direction, you
+  #   have to put the new nodes before the old nodes.
+  rankdir="LR";
+
+
+  # New node relations.
+  "1 = CL" -> "3 = CL" [color = red]
+  "3 = CL" -> "4 = CL" [color = red]
+  "4 = CL" -> "2 = CL" [color = red]
+
+
+  # Old node relations.
+  "1 - C" -> "2 - G"
+
+
+  # Just a visual thing.
+  # Make the nodes with the same ID show in the same position.
+  { rank=same; "1 - C"; "1 = CL"; }
+  { rank=same; "2 - G"; "2 = CL"; }
+
+
+}
