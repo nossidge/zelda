@@ -73,29 +73,7 @@ module Zelda
 
     ############################################################################
 
-    # Select how complex you want the grammar to be.
-    # This will eventually be a config option, but for now it's hard coded.
-    def rules_all
-      load_rules('*')
-    end
-    def rules_simple
-      load_rules %w(
-        start_chain_01
-        linear_chain*
-        parallel_chain*
-        hook*
-        final_chain*
-      )
-    end
-    def rules_complex
-      load_rules %w(
-        start_chain_multi_01
-        linear_chain*
-        parallel_chain*
-        hook*
-        final_chain*
-      )
-    end
+    # Load the grammar rules from the settings directory.
     def rules_from_dungeon_settings(settings_dir = 'default')
       load_rules('*', "#{Zelda::Config.dir_dungeon_settings}/#{settings_dir}")
     end

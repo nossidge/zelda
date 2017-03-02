@@ -74,7 +74,7 @@ module Zelda
       # Generate a dungeon mission tree.
       # Return the generated tree as a Zelda::Nodes object.
       grammar = Grammar.new
-      grammar.rules_complex
+      grammar.rules_from_dungeon_settings(dungeon_settings.settings_dir)
       nodes = MissionTree.generate(grammar, dungeon_settings)
 
       # Write the nodes to a RGL::DirectedAdjacencyGraph.
