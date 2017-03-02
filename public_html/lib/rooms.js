@@ -264,6 +264,7 @@ var ModRooms = (function () {
 
   // What type of puzzle rooms should we draw?
   var determinePuzzleLocks = function(objJSON) {
+    if (!objJSON.room_by_letters['lp']) return objJSON;
     var puzzleIDsAvailable = ModMaps.puzzleIDs.slice();
     var puzzleIDsUsed = [];
     objJSON.room_by_letters['lp'].forEach( function(lpRoom) {
