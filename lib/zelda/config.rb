@@ -64,22 +64,6 @@ module Zelda
       @@dir_data ||= "#{dir_root}/data"
     end
 
-    # The location of the base grammar directory.
-    def self.dir_grammar
-      @@dir_grammar ||= "#{dir_data}/grammar"
-    end
-
-    # The location of the grammar rules.
-    def self.dir_rules
-      @@dir_rules ||= "#{dir_grammar}/rules"
-    end
-    def self.rel_src_dir_rules_images
-      @@rel_src_dir_rules_images ||= 'img/rules'
-    end
-    def self.dir_rules_images
-      @@dir_rules_images ||= dir_output + '/' + rel_src_dir_rules_images
-    end
-
     # The location of the contraint files.
     def self.dir_dungeon_settings
       @@dir_dungeon_settings ||= "#{dir_data}/dungeon_settings"

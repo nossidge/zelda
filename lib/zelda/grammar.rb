@@ -195,12 +195,13 @@ module Zelda
     # Convert all the DOT files in the directory to PNG, and output an
     #   HTML page to see them next to each other.
     # Ideally this would be done using 'viz.js'
+    # ToDo: This needs to be amended to use the new 'dungeon_settings' dir.
     def self.output_html
 
       # Initialise the HTML and file stuff.
       dir_rules = Zelda::Config.dir_rules
-      dir_img   = Zelda::Config.dir_rules_images
-      rel_img   = Zelda::Config.rel_src_dir_rules_images
+      dir_img   = Zelda::Config.dir_output + '/img/rules'
+      rel_img   = 'img/rules'
       html = ''
 
       # Find all .dot files.
