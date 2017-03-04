@@ -1,0 +1,9 @@
+[
+  {
+    "type": "letter_count",
+    "letter": "lm",
+    "assert": [
+      ">= 2"
+    ]
+  }
+]

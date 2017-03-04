@@ -1,0 +1,18 @@
+digraph linear_chain_05 {
+
+
+  # Weirdly, if you specify horizontal direction, you
+  #   have to put the new nodes before the old nodes.
+  rankdir="LR";
+
+
+  # New node relations.
+  "1 = n" -> "2 = n"  [color = red]
+  "2 = n" -> "3 = ib" [color = red]
+
+
+  # Old node relations.
+  "1 - CL"
+
+
+}

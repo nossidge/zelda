@@ -1,0 +1,24 @@
+digraph parallel_chain_04 {
+
+
+  # Weirdly, if you specify horizontal direction, you
+  #   have to put the new nodes before the old nodes.
+  rankdir="LR";
+
+
+  # New node relations.
+  "1 = F" -> "3 = n"
+  "3 = n" -> "2 = km"  [color = red]
+
+
+  # Old node relations.
+  "1 - F" -> "2 - km"
+
+
+  # Just a visual thing.
+  # Make the nodes with the same ID show in the same position.
+  { rank=same; "1 - F";  "1 = F"; }
+  { rank=same; "2 - km"; "2 = km"; }
+
+
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "type": "just_one",
+    "letters": [
+      "e",
+      "iq",
+      "bm",
+      "bl"
+    ]
+  },
+  {
+    "type": "nodes_count",
+    "assert": [
+      ">= 30",
+      "<= 53"
+    ]
+  },
+  {
+    "type": "nodes_before",
+    "letter": "bm",
+    "assert": ">= 12"
+  },
+  {
+    "type": "letter_count",
+    "letter": "ts",
+    "assert": [
+      ">= 1",
+      "<= 2"
+    ]
+  },
+  {
+    "type": "letter_count",
+    "letter": "ib",
+    "assert": [
+      ">= 4",
+      "<= 7"
+    ]
+  }
+]
