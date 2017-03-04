@@ -49,8 +49,8 @@ module Zelda
   ##############################################################################
 
   # Generate a dungeon.
-  def self.dungeon
-    Zelda::Generate.generate
+  def self.dungeon(dungeon_settings_dir = 'default')
+    Zelda::Generate.generate(dungeon_settings_dir)
   end
 
   # Delete all files in the data directory.
