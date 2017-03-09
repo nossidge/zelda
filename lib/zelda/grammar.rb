@@ -10,7 +10,8 @@
 #   Node.new to specify the parent ID.
 #   Code location is Zelda::Nodes#replace_sequence_with_sequence
 # These are read in from .dot files, that each must contain a single rule.
-#   The location of these files is specified in 'Zelda::Config.dir_rules'
+#   The location of these files is in the chosen subdirectory of
+#   'Zelda::Config.dir_dungeon_settings'
 ################################################################################
 
 require_relative 'nodes.rb'
@@ -78,7 +79,8 @@ module Zelda
       load_rules('*', "#{Zelda::Config.dir_dungeon_settings}/#{settings_dir}")
     end
 
-    def load_rules(rule_file_globs, directory = Zelda::Config.dir_rules)
+    def load_rules(rule_file_globs,
+                   directory = "#{Zelda::Config.dir_dungeon_settings}/default")
       rules = {}
       [*rule_file_globs].each do |glob|
         hash = load_from_rules("#{directory}/#{glob}.dot")
@@ -199,7 +201,7 @@ module Zelda
     def self.output_html
 
       # Initialise the HTML and file stuff.
-      dir_rules = Zelda::Config.dir_rules
+      dir_rules = Zelda::Config.dir_dungeon_settings + '/default'
       dir_img   = Zelda::Config.dir_output + '/img/rules'
       rel_img   = 'img/rules'
       html = ''
