@@ -197,7 +197,6 @@ module Zelda
     # Convert all the DOT files in the directory to PNG, and output an
     #   HTML page to see them next to each other.
     # Ideally this would be done using 'viz.js'
-    # ToDo: This needs to be finalised with better HTML.
     def self.output_html
 
       # Initialise.
@@ -225,31 +224,15 @@ module Zelda
         # Make the directory if necessary.
         FileUtils::mkdir_p(dir_img)
 
-        # For each rule.
-        rules.each do |filename|
-
-          # Convert to png using the command line.
-          system %{dot -Tpng "#{dir}/#{filename}.dot" > "#{dir_img}/#{filename}.png"}
-
-          # Add the image and description to the HTML output.
-          elem_id = filename.gsub(' ','_')
-          html += %{<div id='#{elem_id}' class='graph' onclick="toggleSelection('#{elem_id}')">}
-          html += "<p><input id='check_#{elem_id}' type='checkbox' hidden>"
-          html += "#{filename}</p>"
-          html += "<img src='#{rel_img}/#{filename}.png'></div>"
+        # Convert each rule to png using the command line.
+        rules.each do |f|
+          system %{dot -Tpng "#{dir}/#{f}.dot" > "#{dir_img}/#{f}.png"}
         end
       end
 
       # Save JSON to file.
       File.open(Zelda::Config.dir_output + '/grammar_rules.json', 'w') do |f|
         f.write JSON.pretty_generate(all_rules)
-      end
-
-      # Save to HTML using the template file.
-      File.open(Zelda::Config.file_grammar, 'w') do |fo|
-        File.open(Zelda::Config.file_grammar_template, 'r') do |fi|
-          fo.puts fi.read.gsub('<!-- @DOT_PNGS -->', html)
-        end
       end
 
       # Open in default browser, if necessary.

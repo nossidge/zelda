@@ -80,9 +80,6 @@ module Zelda
     end
 
     # File that displays all the grammar rules as diagrams.
-    def self.file_grammar_template
-      @@file_grammar_template ||= "#{dir_data}/template_grammars.html"
-    end
     def self.file_grammar
       @@file_grammar ||= "#{dir_output}/grammar_rules.html"
     end
