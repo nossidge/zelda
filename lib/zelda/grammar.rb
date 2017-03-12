@@ -197,28 +197,52 @@ module Zelda
     # Convert all the DOT files in the directory to PNG, and output an
     #   HTML page to see them next to each other.
     # Ideally this would be done using 'viz.js'
-    # ToDo: This needs to be amended to use the new 'dungeon_settings' dir.
+    # ToDo: This needs to be finalised with better HTML.
     def self.output_html
 
-      # Initialise the HTML and file stuff.
-      dir_rules = Zelda::Config.dir_dungeon_settings + '/default'
-      dir_img   = Zelda::Config.dir_output + '/img/rules'
-      rel_img   = 'img/rules'
+      # Initialise.
+      all_rules = {}
       html = ''
 
-      # Find all .dot files.
-      Dir["#{dir_rules}/*.dot"].each do |f|
-        filename = File.basename(f, '.dot')
+      # Loop through the dungeon settings subdirectories.
+      Zelda::Config.dungeon_settings_dirs.each do |setting|
+        dir = Zelda::Config.dir_dungeon_settings + '/' + setting
 
-        # Convert to png using the command line.
-        system %{dot -Tpng "#{dir_rules}/#{filename}.dot" > "#{dir_img}/#{filename}.png"}
+        # Get all rules in the directory.
+        rules = Dir[dir + '/*.dot'].map do |f|
+          File.basename(f, '.dot')
+        end
 
-        # Add the image and description to the HTML output.
-        elem_id = filename.gsub(' ','_')
-        html += %{<div id='#{elem_id}' class='graph' onclick="toggleSelection('#{elem_id}')">}
-        html += "<p><input id='check_#{elem_id}' type='checkbox' hidden>"
-        html += "#{filename}</p>"
-        html += "<img src='#{rel_img}/#{filename}.png'></div>"
+        # Add a 'rules' layer to the JSON, because the layout might change.
+        hash = {}
+        hash['rules'] = rules
+        all_rules[setting] = hash
+
+        # Directories for HTML output.
+        dir_img = Zelda::Config.dir_output + '/img/rules/' + setting
+        rel_img = 'img/rules/' + setting
+
+        # Make the directory if necessary.
+        FileUtils::mkdir_p(dir_img)
+
+        # For each rule.
+        rules.each do |filename|
+
+          # Convert to png using the command line.
+          system %{dot -Tpng "#{dir}/#{filename}.dot" > "#{dir_img}/#{filename}.png"}
+
+          # Add the image and description to the HTML output.
+          elem_id = filename.gsub(' ','_')
+          html += %{<div id='#{elem_id}' class='graph' onclick="toggleSelection('#{elem_id}')">}
+          html += "<p><input id='check_#{elem_id}' type='checkbox' hidden>"
+          html += "#{filename}</p>"
+          html += "<img src='#{rel_img}/#{filename}.png'></div>"
+        end
+      end
+
+      # Save JSON to file.
+      File.open(Zelda::Config.dir_output + '/grammar_rules.json', 'w') do |f|
+        f.write JSON.pretty_generate(all_rules)
       end
 
       # Save to HTML using the template file.

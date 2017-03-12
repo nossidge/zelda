@@ -219,6 +219,17 @@ module Zelda
 
     ############################################################################
 
+    # All dungeon settings subdirectories.
+    def self.dungeon_settings_dirs
+      Dir.glob(dir_dungeon_settings + '/*').select do |i|
+        File.directory?(i)
+      end.map do |i|
+        File.basename(i)
+      end
+    end
+
+    ############################################################################
+
     def self.options_default
       @@options = {}
       @@options[:seed]            = Random.rand(9999999)
