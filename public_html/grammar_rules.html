@@ -192,9 +192,19 @@ div.graph {
         html_str += "FILENAME</p>"
         html_str += "<img id='img_FILENAME' src='" + rel_img + "/FILENAME.png'></div>"
 
+        // Sort the rules alphabetically.
+        var rules = objJSON[setting].rules;
+        rules.sort( function(a, b) {
+          var lowerA = a.toLowerCase();
+          var lowerB = b.toLowerCase();
+          if (lowerA < lowerB) return -1;
+          if (lowerA > lowerB) return 1;
+          return 0;
+        });
+
         // For each rule, add the image.
         html = ''
-        objJSON[setting].rules.forEach( function(rule) {
+        rules.forEach( function(rule) {
           html += html_str.replace(/FILENAME/g, rule);
         });
 
