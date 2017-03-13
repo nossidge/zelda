@@ -142,6 +142,9 @@ div.graph {
   transition: all 0.18s;
   box-shadow: inset 0 0 0 0;
 }
+.col_right h2 {
+  margin: 10px;
+}
 
 /*############################################################################*/
 
@@ -172,18 +175,26 @@ div.graph {
         // Create buttons for each settings type.
         col_left = document.getElementById('col_left');
         col_left.innerHTML = '';
-        html_input = "<input id='button_SETTING' type='button' value='SETTING' onclick='settingToggle(this)'>"
+        html_input = "<input id='button_SETTING' type='button' value='SETTING' onclick='settingToggle(this.value)'>"
         Object.keys(objJSON).forEach( function(setting) {
           if (col_left.innerHTML != '') col_left.innerHTML += '<br>';
           html = html_input.replace(/SETTING/g, setting);
           col_left.innerHTML += html;
         });
+
+        // Show the 'default' settings on load.
+        settingToggle('default');
       }
 
+      // Why does this only work if I run it twice??
+      function settingToggle(setting) {
+        settingToggleOnce(setting);
+        window.setTimeout(function() {
+          settingToggleOnce(setting);
+        }, 200);
+      }
       // Toggle the rules that are shown to the right.
-      // 'button_elem' is the button that was clicked.
-      function settingToggle(button_elem) {
-        var setting = button_elem.value
+      function settingToggleOnce(setting) {
         var rel_img = 'img/rules/' + setting
 
         // Template for the HTML.
@@ -193,17 +204,22 @@ div.graph {
         html_str += "<img id='img_FILENAME' src='" + rel_img + "/FILENAME.png'></div>"
 
         // Sort the rules alphabetically.
+        // But keep the 'start' chains at the top.
         var rules = objJSON[setting].rules;
         rules.sort( function(a, b) {
           var lowerA = a.toLowerCase();
           var lowerB = b.toLowerCase();
+          var startA = lowerA.startsWith('start_');
+          var startB = lowerB.startsWith('start_');
+          if (startA && !startB) return -1;
+          if (!startA && startB) return 1;
           if (lowerA < lowerB) return -1;
           if (lowerA > lowerB) return 1;
           return 0;
         });
 
         // For each rule, add the image.
-        html = ''
+        var html = '<h2>' + setting + '</h2>'
         rules.forEach( function(rule) {
           html += html_str.replace(/FILENAME/g, rule);
         });
