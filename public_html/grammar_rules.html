@@ -57,6 +57,11 @@ body {
   text-align: left;
 }
 
+/*############################################################################*/
+/* This section was copied from my JS Conway's Life implementation. */
+/* I'm leaving irrelevant stuff here just in case we need it later. */
+/* Because I might change the grey buttons to prettier radio ones. */
+
 summary {
   font-weight: bold;
   font-size: 1.3em;
@@ -115,8 +120,8 @@ summary {
   cursor: pointer;
 }
 table.centre {
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /*############################################################################*/
@@ -126,7 +131,7 @@ div.graph {
   background-color: #fff;
   text-align: center;
   border: 2px solid;
-  margin: 10px;
+  margin: 10px 10px 0px 0px;
   padding: 10px;
   -webkit-column-break-inside: avoid; /* Chrome, Safari */
   page-break-inside: avoid;           /* Theoretically FF 20+ */
@@ -142,27 +147,109 @@ div.graph {
   transition: all 0.18s;
   box-shadow: inset 0 0 0 0;
 }
-.col_right h2 {
+#col_right_content {
   margin: 10px;
+  padding: 10px;
+}
+#col_right_content h2 {
+  margin: 4px 0px 4px 0px;
+  padding: 0px;
+}
+#col_right_content textarea, #new_setting_name {
+  font-family: 'Lucida Console', Monaco, monospace;
+  font-size: 110%;
+  width: 90%;
+  margin: 4px 0px 4px 0px;
+  padding: 10px;
 }
 
 /*############################################################################*/
 
     </style>
     <script language="javascript">
+
+      // http://stackoverflow.com/a/3820412
+      function baseName(str) {
+        var base = new String(str).substring(str.lastIndexOf('/') + 1);
+        if (base.lastIndexOf('.') != -1)
+          base = base.substring(0, base.lastIndexOf('.'));
+        return base;
+      }
+
+      // Sort alphabetically but keep the 'start' chains at the top.
+      function sortWithStartAtTop(rules) {
+        rules.sort( function(a, b) {
+          var lowerA = a.toLowerCase();
+          var lowerB = b.toLowerCase();
+          var startA = lowerA.startsWith('start_');
+          var startB = lowerB.startsWith('start_');
+          if (startA && !startB) return -1;
+          if (!startA && startB) return 1;
+          if (lowerA < lowerB) return -1;
+          if (lowerA > lowerB) return 1;
+          return 0;
+        });
+        return rules;
+      }
+
+      // For each image, resize to be nicely viewable.
+      function resizeImgElems(elemIds, multiplier = 0.7) {
+        elemIds.forEach( function(elemId) {
+          var elem = document.getElementById(elemId);
+          elem.style.height = (elem.naturalHeight * multiplier) + 'px';
+          elem.style.width  = (elem.naturalWidth  * multiplier) + 'px';
+        });
+      }
+
+      //########################################################################
+
+      // Toggle the checkbox, even if just the div is clicked.
+      function toggleSelection(elemId) {
+        var elemDiv = document.getElementById(elemId);
+        var elemCheck = document.getElementById('check_' + elemId);
+        elemCheck.checked = !elemCheck.checked;
+        if (elemCheck.checked) {
+          elemDiv.classList.add('highlight');
+          elemDiv.classList.remove('nohighlight');
+        } else {
+          elemDiv.classList.remove('highlight');
+          elemDiv.classList.add('nohighlight');
+        }
+        copySelection();
+      }
+
+      // Save all the selected checkboxes to a textbox.
+      function copySelection() {
+        var selText = document.getElementById('new_setting_command');
+        var nameText = document.getElementById('new_setting_name').value;
+        nameText = nameText.replace(/\ /g,'_');
+        nameText = nameText.toLowerCase();
+        if (!selText) return;
+        var elemsCheck = document.getElementsByTagName('input');
+        var selection = 'zelda grammar add ' + nameText;
+        for (var i = 0; i < elemsCheck.length; i++) {
+          if (elemsCheck[i].type == 'checkbox' && elemsCheck[i].checked) {
+            selection += ' ' + elemsCheck[i].id.replace('check_','');
+          }
+        }
+        var elemText = document.getElementById('new_setting_command');
+        elemText.value = selection.trim();
+      }
+
+      //########################################################################
+
       // Run on DOM load.
       window.onload = function() {
         xReqRun();
       };
 
       // Get the grammar rules from the JSON file.
+      // objJSON is a global.
       function xReqRun() {
         var xReq = new XMLHttpRequest();
         xReq.open('GET', 'grammar_rules.json', true);
         xReq.responseType = 'json';
         xReq.onload = function() {
-
-          // objJSON is a global.
           objJSON = xReq.response;
           main();
         };
@@ -173,13 +260,13 @@ div.graph {
       function main() {
 
         // Create buttons for each settings type.
-        col_left = document.getElementById('col_left');
-        col_left.innerHTML = '';
+        var leftPane = document.getElementById('col_left_content');
+        leftPane.innerHTML = "<input id='button_all' type='button' value='all' onclick='settingToggleAll()'>";
         html_input = "<input id='button_SETTING' type='button' value='SETTING' onclick='settingToggle(this.value)'>"
         Object.keys(objJSON).forEach( function(setting) {
-          if (col_left.innerHTML != '') col_left.innerHTML += '<br>';
+          if (leftPane.innerHTML != '') leftPane.innerHTML += '<br>';
           html = html_input.replace(/SETTING/g, setting);
-          col_left.innerHTML += html;
+          leftPane.innerHTML += html;
         });
 
         // Show the 'default' settings on load.
@@ -203,20 +290,9 @@ div.graph {
         html_str += "FILENAME</p>"
         html_str += "<img id='img_FILENAME' src='" + rel_img + "/FILENAME.png'></div>"
 
-        // Sort the rules alphabetically.
-        // But keep the 'start' chains at the top.
+        // Sort alphabetically but keep the 'start' chains at the top.
         var rules = objJSON[setting].rules;
-        rules.sort( function(a, b) {
-          var lowerA = a.toLowerCase();
-          var lowerB = b.toLowerCase();
-          var startA = lowerA.startsWith('start_');
-          var startB = lowerB.startsWith('start_');
-          if (startA && !startB) return -1;
-          if (!startA && startB) return 1;
-          if (lowerA < lowerB) return -1;
-          if (lowerA > lowerB) return 1;
-          return 0;
-        });
+        sortWithStartAtTop(rules);
 
         // For each rule, add the image.
         var html = '<h2>' + setting + '</h2>'
@@ -225,30 +301,56 @@ div.graph {
         });
 
         // Add to the main HTML element.
-        col_right = document.getElementById('col_right');
-        col_right.innerHTML = html;
+        document.getElementById('col_right_content').innerHTML = html;
 
         // For each image, resize to be nicely viewable.
-        var multiplier = 0.7;
-        objJSON[setting].rules.forEach( function(rule) {
-          var elem = document.getElementById('img_' + rule);
-          elem.style.height = (elem.naturalHeight * multiplier) + 'px';
-          elem.style.width  = (elem.naturalWidth  * multiplier) + 'px';
+        var elemIds = objJSON[setting].rules.map( function(rule) {
+          return 'img_' + baseName(rule);
         });
+        resizeImgElems(elemIds);
       }
 
-      // Toggle the checkbox, even if just the div is clicked.
-      function toggleSelection(elemId) {
-        var elemDiv = document.getElementById(elemId);
-        var elemCheck = document.getElementById('check_' + elemId);
-        elemCheck.checked = !elemCheck.checked;
-        if (elemCheck.checked) {
-          elemDiv.classList.add('highlight');
-          elemDiv.classList.remove('nohighlight');
-        } else {
-          elemDiv.classList.remove('highlight');
-          elemDiv.classList.add('nohighlight');
-        }
+      // Show all rules, and let the user select the ones they desire.
+      function settingToggleAll() {
+        var rulesName = [];
+        var rulesFull = [];
+        Object.keys(objJSON).forEach( function(setting) {
+          objJSON[setting].rules.forEach( function(rule) {
+            var ruleName = baseName(rule);
+            if ( !rulesName.includes(ruleName) ) {
+              rulesName.push(ruleName);
+              rulesFull.push(setting + '/' + ruleName);
+            }
+          });
+        });
+
+        // Template for the HTML.
+        html_str  = "<div id='FILENAME' class='graph' onclick=\"toggleSelection('FILENAME')\""
+        html_str += "<p><input id='check_FILENAME' type='checkbox' hidden>"
+        html_str += "FILENAME</p>"
+        html_str += "<img id='img_FILENAME' src='img/rules/FILENAME.png'></div>"
+
+        // Html for main area.
+        var html = '';
+        html += "<h2>all</h2>"
+        html += "<input type='text' id='new_setting_name' value='new_setting_name' spellcheck='false' onfocus='this.select()' onmouseup='return false' onchange='copySelection()' onKeyUp='copySelection()'></textarea>"
+        html += "<textarea id='new_setting_command' rows='4' spellcheck='false' onfocus='this.select()' onmouseup='return false'></textarea>"
+        html += "<p>Use this to create a new grammar rule setting.";
+        html += " Click the grammar rules below to select them,";
+        html += " alter the name of the setting, then copy and run the command.</p>"
+        rulesFull.forEach( function(rule) {
+          var ruleName = baseName(rule);
+          html += html_str.replace(/FILENAME/g, ruleName);
+        });
+
+        // Add to the main HTML element.
+        document.getElementById('col_right_content').innerHTML = html;
+
+        // For each image, resize to be nicely viewable.
+        var elemIds = rulesFull.map( function(rule) {
+          return 'img_' + baseName(rule);
+        });
+        resizeImgElems(elemIds);
       }
     </script>
   </head>
@@ -258,26 +360,23 @@ div.graph {
         <div class='header_title'>
           <h1>Zelda Grammars</h1>
         </div>
-        <div class='header_left'>
-        </div>
-        <div class='header_right'>
-        </div>
+        <div class='header_left'></div>
+        <div class='header_right'></div>
       </div>
     </header>
     <div class='contents'>
       <div id='col_left' class='col_left border'>
+        <div id='col_left_content'></div>
       </div>
       <div id='col_right' class='col_right border'>
+        <div id='col_right_content'></div>
       </div>
     </div>
     <footer class='border'>
       <div class='footer_div'>
-        <div class='footer_title'>
-        </div>
-        <div class='footer_left'>
-        </div>
-        <div class='footer_right'>
-        </div>
+        <div class='footer_title'></div>
+        <div class='footer_left'></div>
+        <div class='footer_right'></div>
       </div>
     </footer>
   </body>
