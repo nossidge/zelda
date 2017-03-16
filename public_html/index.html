@@ -70,6 +70,9 @@ PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 
 // Grab data from all the JSON files.
 // Push them all to one array.
+xReqStart = false;
+xReqTotal = 0;
+xReqCount = 0;
 function getAllJSON() {
   var allJSON = [];
 
@@ -87,6 +90,7 @@ function getAllJSON() {
   // The PIXI stuff gets overwhelmed by more than 8 simultaneous sessions.
   fileListSplice = fileListSplice.slice(0,2);
   [].concat.apply([], fileListSplice).forEach( function(fileName) {
+    xReqTotal += 1;
     var xReq = new XMLHttpRequest();
     xReq.open('GET', 'data/' + fileName + '.json', true);
     xReq.responseType = 'json';
@@ -94,6 +98,8 @@ function getAllJSON() {
       objJSON = xReq.response;
       ModRooms.transform('data/' + fileName + '.json', objJSON, false);
       allJSON.push(objJSON);
+      xReqStart = true;
+      xReqCount += 1;
     };
     xReq.send(null);
   });
@@ -102,8 +108,19 @@ function getAllJSON() {
 var allDungeonsJSON = getAllJSON();
 
 
-// This'll be run when the DOM and xReqs have been completed.
-document.addEventListener('DOMContentLoaded', function() {
+// Wait until all the xReqs have been loaded.
+function afterAllHasLoaded() {
+  if (xReqStart && xReqTotal == xReqCount) {
+    main();
+  } else {
+    window.setTimeout(afterAllHasLoaded, 100);
+  }
+}
+afterAllHasLoaded();
+
+
+// Load the Pixi maps, and write to canvas.
+function main() {
   images = [
     'img/chest_contents.json',
     'img/room.json',
@@ -121,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   );
-}, false);
+}
 
 
 // Generate the HTML table with IDs that we can use later.
