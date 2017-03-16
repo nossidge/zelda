@@ -194,9 +194,9 @@ module Zelda
 
     ############################################################################
 
-    # Convert all the DOT files in the directory to PNG, and output an
-    #   HTML page to see them next to each other.
-    # Ideally this would be done using 'viz.js'
+    # Save each setting and rule to a JSON.
+    # Copy each rule DOT file to the output dir.
+    # These files will be read by 'grammar_rules.html' using 'viz.js'
     def self.output_html
 
       # Initialise.
@@ -224,9 +224,9 @@ module Zelda
         # Make the directory if necessary.
         FileUtils::mkdir_p(dir_img)
 
-        # Convert each rule to png using the command line.
+        # Copy each rule DOT file to the output dir.
         rules.each do |f|
-          system %{dot -Tpng "#{dir}/#{f}.dot" > "#{dir_img}/#{f}.png"}
+          FileUtils::cp "#{dir}/#{f}.dot", "#{dir_img}/#{f}.dot"
         end
       end
 

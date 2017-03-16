@@ -3,6 +3,7 @@
   <head>
     <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
     <title>Zelda Grammar Rules</title>
+    <script src='lib/ext/viz.js'></script>
     <style title='holy_grail'>
 
 /*############################################################################*/
@@ -40,7 +41,7 @@ body {
     flex: 1;
   }
   .col_left {
-    flex: 0 0 16em;
+    flex: 0 0 14em;
   }
 }
 
@@ -192,15 +193,6 @@ div.graph {
         return rules;
       }
 
-      // For each image, resize to be nicely viewable.
-      function resizeImgElems(elemIds, multiplier = 0.7) {
-        elemIds.forEach( function(elemId) {
-          var elem = document.getElementById(elemId);
-          elem.style.height = (elem.naturalHeight * multiplier) + 'px';
-          elem.style.width  = (elem.naturalWidth  * multiplier) + 'px';
-        });
-      }
-
       //########################################################################
 
       // Toggle the checkbox, even if just the div is clicked.
@@ -238,22 +230,65 @@ div.graph {
 
       //########################################################################
 
-      // Run on DOM load.
-      window.onload = function() {
-        xReqRun();
-      };
-
       // Get the grammar rules from the JSON file.
       // objJSON is a global.
+      objJSON = {};
       function xReqRun() {
         var xReq = new XMLHttpRequest();
         xReq.open('GET', 'grammar_rules.json', true);
         xReq.responseType = 'json';
         xReq.onload = function() {
           objJSON = xReq.response;
-          main();
+          xReqDots();
         };
         xReq.send(null);
+      }
+
+      // Get the grammar rules from the DOT files.
+      allDOTs = {};
+      xReqDotsStart = false;
+      xReqDotsTotal = 0;
+      xReqDotsCount = 0;
+      function xReqDots() {
+        Object.keys(objJSON).forEach( function(setting) {
+          allDOTs[setting] = {};
+          objJSON[setting].rules.forEach( function(rule) {
+            allDOTs[setting][rule] = '';
+            xReqDotsTotal += 1;
+            var xReqDOT = new XMLHttpRequest();
+            xReqDOT.open('GET', 'img/rules/' + setting + '/' + rule + '.dot', true);
+            xReqDOT.responseType = 'text';
+            xReqDOT.onload = function() {
+              var digraph = xReqDOT.response;  // Shrink the text down a bit.
+              digraph = digraph.replace('{', '{ node [ fontsize = 9 ]');
+              allDOTs[setting][rule] = digraph;
+              xReqDotsStart = true;
+              xReqDotsCount += 1;
+            };
+            xReqDOT.send(null);
+          });
+        });
+      }
+      xReqRun();
+
+      // Wait until all the DOT files have been loaded.
+      function afterAllHasLoaded() {
+        if (xReqDotsStart && xReqDotsTotal == xReqDotsCount) {
+          vizifyAllDOTs();
+          main();
+        } else {
+          window.setTimeout(afterAllHasLoaded, 100);
+        }
+      }
+      afterAllHasLoaded();
+
+      // Convert all DOT markup to actual graphs.
+      function vizifyAllDOTs() {
+        Object.keys(allDOTs).forEach( function(setting) {
+          Object.keys(allDOTs[setting]).forEach( function(rule) {
+            allDOTs[setting][rule] = Viz( allDOTs[setting][rule] );
+          });
+        });
       }
 
       // Wait for the xReq to run, then use the data.
@@ -288,7 +323,7 @@ div.graph {
         html_str  = "<div id='FILENAME' class='graph' onclick=\"toggleSelection('FILENAME')\""
         html_str += "<p><input id='check_FILENAME' type='checkbox' hidden>"
         html_str += "FILENAME</p>"
-        html_str += "<img id='img_FILENAME' src='" + rel_img + "/FILENAME.png'></div>"
+        html_str += "DOTGRAPH</div>"
 
         // Sort alphabetically but keep the 'start' chains at the top.
         var rules = objJSON[setting].rules;
@@ -297,17 +332,14 @@ div.graph {
         // For each rule, add the image.
         var html = '<h2>' + setting + '</h2>'
         rules.forEach( function(rule) {
-          html += html_str.replace(/FILENAME/g, rule);
+          var htmlNew = html_str;
+          htmlNew = htmlNew.replace(/FILENAME/g, rule);
+          htmlNew = htmlNew.replace(/DOTGRAPH/g, allDOTs[setting][rule]);
+          html += htmlNew;
         });
 
         // Add to the main HTML element.
         document.getElementById('col_right_content').innerHTML = html;
-
-        // For each image, resize to be nicely viewable.
-        var elemIds = objJSON[setting].rules.map( function(rule) {
-          return 'img_' + baseName(rule);
-        });
-        resizeImgElems(elemIds);
       }
 
       // Show all rules, and let the user select the ones they desire.
@@ -328,7 +360,7 @@ div.graph {
         html_str  = "<div id='FILENAME' class='graph' onclick=\"toggleSelection('FILENAME')\""
         html_str += "<p><input id='check_FILENAME' type='checkbox' hidden>"
         html_str += "FILENAME</p>"
-        html_str += "<img id='img_FILENAME' src='img/rules/FILENAME.png'></div>"
+        html_str += "DOTGRAPH</div>"
 
         // Html for main area.
         var html = '';
@@ -339,18 +371,16 @@ div.graph {
         html += " Click the grammar rules below to select them,";
         html += " alter the name of the setting, then copy and run the command.</p>"
         rulesFull.forEach( function(rule) {
+          var settingName = rule.split('/')[0];
           var ruleName = baseName(rule);
-          html += html_str.replace(/FILENAME/g, ruleName);
+          var htmlNew = html_str;
+          htmlNew = htmlNew.replace(/FILENAME/g, ruleName);
+          htmlNew = htmlNew.replace(/DOTGRAPH/g, allDOTs[settingName][ruleName]);
+          html += htmlNew;
         });
 
         // Add to the main HTML element.
         document.getElementById('col_right_content').innerHTML = html;
-
-        // For each image, resize to be nicely viewable.
-        var elemIds = rulesFull.map( function(rule) {
-          return 'img_' + baseName(rule);
-        });
-        resizeImgElems(elemIds);
       }
     </script>
   </head>
@@ -369,7 +399,12 @@ div.graph {
         <div id='col_left_content'></div>
       </div>
       <div id='col_right' class='col_right border'>
-        <div id='col_right_content'></div>
+        <div id='col_right_content'>
+          <div style='text-align: center'>
+            <br><br><br><br><br><br><br>
+            <img src='img/loading.gif'>
+          </div>
+        </div>
       </div>
     </div>
     <footer class='border'>
