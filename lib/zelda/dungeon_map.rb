@@ -294,13 +294,14 @@ module Zelda
         # If the parent room is a lock, and they're tightly coupled,
         #   then link to this room.
         if is_tight
+          if room.letter == 'bm'
+            room_base.boss_mini_orig += moving
+            room.boss_mini_dest += opposite_direction(moving)
+          end
+
           if room_base.letter == 'lf'
             room_base.boss_lock_orig += moving
             room.boss_lock_dest += opposite_direction(moving)
-
-          elsif room.letter == 'bm'
-            room_base.boss_mini_orig += moving
-            room.boss_mini_dest += opposite_direction(moving)
 
           elsif room_base.letter == 'lm'
             room_base.multi_lock_orig += moving
