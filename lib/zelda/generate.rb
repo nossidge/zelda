@@ -21,7 +21,7 @@ module Zelda
 
       # Loop to make 'Zelda::Config.options[:number]' dungeons.
       nodes = nil
-      counter_success, counter_fail, counter_both = 0, 0, 0
+      counter_success, counter_fail = 0, 0
       loop do
         begin
 
@@ -61,9 +61,8 @@ module Zelda
         break if counter_success == Zelda::Config.options[:number]
 
         # New seed for the next dungeon.
-        counter_both = counter_success + counter_fail
-        new_seed = Zelda::Config.options[:seed] + (counter_both * 1000000)
-        Zelda::Config.seed = new_seed
+        seed_delta = (counter_success + counter_fail) * 1000000
+        Zelda::Config.seed = Zelda::Config.options[:seed] + seed_delta
       end
 
       # Open in default browser, if necessary.
