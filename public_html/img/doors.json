@@ -16,7 +16,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
 	"sourceSize": {"w":16,"h":16}
 },
-"hidden_bomb.png":
+"floor.png":
 {
 	"frame": {"x":38,"y":2,"w":16,"h":16},
 	"rotated": false,
@@ -24,9 +24,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
 	"sourceSize": {"w":16,"h":16}
 },
+"hidden_bomb.png":
+{
+	"frame": {"x":2,"y":20,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
 "hidden_burn.png":
 {
-	"frame": {"x":56,"y":2,"w":16,"h":16},
+	"frame": {"x":20,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -34,7 +42,7 @@
 },
 "lock.png":
 {
-	"frame": {"x":74,"y":2,"w":16,"h":16},
+	"frame": {"x":38,"y":20,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -42,7 +50,7 @@
 },
 "multi_crystals.png":
 {
-	"frame": {"x":92,"y":2,"w":16,"h":16},
+	"frame": {"x":2,"y":38,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -50,7 +58,7 @@
 },
 "multi_monsters.png":
 {
-	"frame": {"x":110,"y":2,"w":16,"h":16},
+	"frame": {"x":20,"y":38,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -58,7 +66,7 @@
 },
 "no_entry.png":
 {
-	"frame": {"x":128,"y":2,"w":16,"h":16},
+	"frame": {"x":38,"y":38,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -66,7 +74,15 @@
 },
 "oneway.png":
 {
-	"frame": {"x":146,"y":2,"w":16,"h":16},
+	"frame": {"x":2,"y":56,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"open.png":
+{
+	"frame": {"x":20,"y":56,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -74,7 +90,7 @@
 },
 "puzzle.png":
 {
-	"frame": {"x":164,"y":2,"w":16,"h":16},
+	"frame": {"x":38,"y":56,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -85,8 +101,8 @@
 	"version": "1.0",
 	"image": "doors.png",
 	"format": "RGBA8888",
-	"size": {"w":182,"h":20},
+	"size": {"w":56,"h":74},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:1519602387de5dcefd763b97bd6612d9:6562739695b6f67c2681d8a1edb02eb0:cc5c92f828d81c3078c7b0d2ee7791c4$"
+	"smartupdate": "$TexturePacker:SmartUpdate:cad4fa922aa81a0de5a36911b9251a78:2c67ab10f6338cc3092f3c10027debdf:cc5c92f828d81c3078c7b0d2ee7791c4$"
 }
 }
