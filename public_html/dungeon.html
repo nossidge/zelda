@@ -321,6 +321,7 @@ function makeDungeon(objJSON) {
     displayThresholdFromDirString(pixiTileMap, room.lock_puzzle_dest, 'no_entry.png');
     displayThresholdFromDirString(pixiTileMap, room.boss_lock_orig, 'boss.png');
     displayThresholdFromDirString(pixiTileMap, room.boss_lock_dest, 'no_entry.png');
+    displayThresholdFromDirString(pixiTileMap, room.boss_mini_dest, 'no_entry.png');
     displayThresholdFromDirString(pixiTileMap, room.exits_one_way_orig, 'oneway.png');
     displayThresholdFromDirString(pixiTileMap, room.exits_one_way_dest, 'no_entry.png');
     displayThresholdFromDirString(pixiTileMap, room.weak_walls_dest, 'hidden_bomb.png');
@@ -343,6 +344,13 @@ function makeDungeon(objJSON) {
     // If the room is a boss, draw a temporarily 'closed' door to the open exits.
     if (findOne(room.letters, ['bm','bl'])) {
       displayThresholdFromDirString(pixiTileMap, room.exits_open, 'closed.png');
+    }
+
+    // Special entrance threshold for mini-boss rooms.
+    if (room.boss_mini_orig) {
+      displayThresholdFromDirString(pixiTileMap, room.boss_mini_orig, 'no_entry.png');
+      drawThreshold(pixiTileMap, room.boss_mini_orig, 'floor.png', false);
+      drawThreshold(pixiTileMap, room.boss_mini_orig, 'open.png');
     }
 
     // Multilock thresholds.
@@ -480,7 +488,7 @@ function drawObstacle(stage, spriteName, x, y) {
 
 
 // Draw a door tile, in the middle of the wall.
-function drawThreshold(pixiTileMap, dir, spriteName) {
+function drawThreshold(pixiTileMap, dir, spriteName, rotate = true) {
   var spriteThreshold = new PIXI.Sprite(
     PIXI.loader.resources['img/doors.json'].textures[spriteName]
   );
@@ -494,20 +502,26 @@ function drawThreshold(pixiTileMap, dir, spriteName) {
     case 'E':
       spriteThreshold.x = pixiTileMap.x + (spriteDim * 14);
       spriteThreshold.y = pixiTileMap.y + (spriteDim * 5);
-      spriteThreshold.anchor.set(0,1);
-      spriteThreshold.rotation = 90 * (Math.PI / 180);
+      if (rotate) {
+        spriteThreshold.anchor.set(0,1);
+        spriteThreshold.rotation = 90 * (Math.PI / 180);
+      }
       break;
     case 'S':
       spriteThreshold.x = pixiTileMap.x + (spriteDim * 7);
       spriteThreshold.y = pixiTileMap.y + (spriteDim * 10);
-      spriteThreshold.anchor.set(1);
-      spriteThreshold.rotation = 180 * (Math.PI / 180);
+      if (rotate) {
+        spriteThreshold.anchor.set(1);
+        spriteThreshold.rotation = 180 * (Math.PI / 180);
+      }
       break;
     case 'W':
       spriteThreshold.x = pixiTileMap.x;
       spriteThreshold.y = pixiTileMap.y + (spriteDim * 5);
-      spriteThreshold.anchor.set(1,0);
-      spriteThreshold.rotation = 270 * (Math.PI / 180);
+      if (rotate) {
+        spriteThreshold.anchor.set(1,0);
+        spriteThreshold.rotation = 270 * (Math.PI / 180);
+      }
       break;
     default: break;
   }
