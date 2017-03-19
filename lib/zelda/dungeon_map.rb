@@ -298,6 +298,10 @@ module Zelda
             room_base.boss_lock_orig += moving
             room.boss_lock_dest += opposite_direction(moving)
 
+          elsif room.letter == 'bm'
+            room_base.boss_mini_orig += opposite_direction(moving)
+            room.boss_mini_dest += moving
+
           elsif room_base.letter == 'lm'
             room_base.multi_lock_orig += moving
             room.multi_lock_dest += opposite_direction(moving)
@@ -593,6 +597,8 @@ module Zelda
             klass += " multilock#{r.multi_lock_dest}" if r.multi_lock_dest != ''
             klass += " bosslock#{r.boss_lock_orig}" if r.boss_lock_orig != ''
             klass += " bosslock#{r.boss_lock_dest}" if r.boss_lock_dest != ''
+            klass += " bossmini#{r.boss_mini_orig}" if r.boss_mini_orig != ''
+            klass += " bossmini#{r.boss_mini_dest}" if r.boss_mini_dest != ''
             klass += " weak_wall#{r.weak_walls_orig}" if r.weak_walls_orig != ''
             klass += " weak_wall#{r.weak_walls_dest}" if r.weak_walls_dest != ''
             klass += " observatory#{r.observatory_orig}" if r.observatory_orig != ''

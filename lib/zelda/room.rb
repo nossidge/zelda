@@ -41,6 +41,7 @@ module Zelda
     attr_accessor :lock_puzzle_orig, :lock_puzzle_dest
     attr_accessor :multi_lock_orig, :multi_lock_dest
     attr_accessor :boss_lock_orig, :boss_lock_dest
+    attr_accessor :boss_mini_orig, :boss_mini_dest
 
     # Bombable / burnable walls.
     attr_accessor :weak_walls_orig, :weak_walls_dest, :weak_walls_hidden
@@ -61,6 +62,8 @@ module Zelda
       @lock_puzzle_dest = ''
       @boss_lock_orig = ''
       @boss_lock_dest = ''
+      @boss_mini_orig = ''
+      @boss_mini_dest = ''
       @multi_lock_orig = ''
       @multi_lock_dest = ''
       @weak_walls_orig = ''
@@ -193,6 +196,8 @@ module Zelda
         @lock_puzzle_dest,
         @boss_lock_orig,
         @boss_lock_dest,
+        @boss_mini_orig,
+        @boss_mini_dest,
         @multi_lock_orig,
         @multi_lock_dest,
         @weak_walls_orig,
@@ -255,6 +260,8 @@ module Zelda
       add_if_not_nil(hash, 'lock_puzzle_dest')
       add_if_not_nil(hash, 'boss_lock_orig')
       add_if_not_nil(hash, 'boss_lock_dest')
+      add_if_not_nil(hash, 'boss_mini_orig')
+      add_if_not_nil(hash, 'boss_mini_dest')
       add_if_not_nil(hash, 'multi_lock_orig')
       add_if_not_nil(hash, 'multi_lock_dest')
       add_if_not_nil(hash, 'weak_walls_orig')
