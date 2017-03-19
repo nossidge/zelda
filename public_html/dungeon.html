@@ -241,6 +241,7 @@ function makeDungeon(objJSON) {
   objJSON.rooms.forEach( function(room) {
 
     var pixiTileMap = new PIXI.extras.TiledMap( room.tiled_file );
+    pixiTileMap.file = baseName(room.tiled_file);
 
 
     // Position of the room.
@@ -525,7 +526,20 @@ function displayThresholdFromDirString(pixiTileMap, dirString, spriteName) {
       } else if (pixiTileMap.layers[wall]) {
         pixiTileMap.layers[wall].visible = true;
       }
-      drawThreshold(pixiTileMap, dirString[i], spriteName)
+
+      // Don't draw the sprite if the tilemap has 'exitRequired' tag and a 'Required' layer.
+      var reqTag   = pixiTileMap.properties['exitRequired'];
+      var reqLayer = pixiTileMap.layers['Required' + dirString[i]];
+      var drawSprite = true;
+      if (typeof reqTag !== 'undefined' && typeof reqLayer !== 'undefined') {
+        if (reqTag.includes( dirString[i].toLowerCase() )) {
+          drawSprite = false;
+          reqLayer.visible = true;
+        }
+      }
+      if (drawSprite) {
+        drawThreshold(pixiTileMap, dirString[i], spriteName);
+      }
     }
   }
 }
