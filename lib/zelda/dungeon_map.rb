@@ -299,8 +299,8 @@ module Zelda
             room.boss_lock_dest += opposite_direction(moving)
 
           elsif room.letter == 'bm'
-            room_base.boss_mini_orig += opposite_direction(moving)
-            room.boss_mini_dest += moving
+            room_base.boss_mini_orig += moving
+            room.boss_mini_dest += opposite_direction(moving)
 
           elsif room_base.letter == 'lm'
             room_base.multi_lock_orig += moving
