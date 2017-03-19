@@ -21,7 +21,7 @@ module Zelda
 
       # Loop to make 'Zelda::Config.options[:number]' dungeons.
       nodes = nil
-      counter = 0
+      counter_success, counter_fail, counter_both = 0, 0, 0
       loop do
         begin
 
@@ -49,16 +49,21 @@ module Zelda
 
           # This will only run if the above did not timeout.
           save_to_file(filepath, nodes, dungeon_map)
-          counter += 1
-          Zelda::Config.seed = Zelda::Config.options[:seed] + (counter*1000000)
+          counter_success += 1
 
         # If the above timed out.
         rescue Timeout::Error => e
           Zelda::puts_verbose "Seed #{Zelda::Config.seed_dungeon} timed out..."
+          counter_fail += 1
         end
 
         # Exit the loop if we've reached the correct number of dungeons.
-        break if counter == Zelda::Config.options[:number]
+        break if counter_success == Zelda::Config.options[:number]
+
+        # New seed for the next dungeon.
+        counter_both = counter_success + counter_fail
+        new_seed = Zelda::Config.options[:seed] + (counter_both * 1000000)
+        Zelda::Config.seed = new_seed
       end
 
       # Open in default browser, if necessary.
