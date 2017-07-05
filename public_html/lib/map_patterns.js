@@ -545,9 +545,7 @@ map_patterns = [
             "exits_open": "NW"
           },
           "none_of": {
-            "exits_quest_item": "ES"
-          },
-          "none_of": {
+            "exits_quest_item": "ES",
             "observatory_dest": "NESW"
           }
         }
@@ -566,9 +564,7 @@ map_patterns = [
             "exits_open": "S"
           },
           "none_of": {
-            "exits_quest_item": "NEW"
-          },
-          "none_of": {
+            "exits_quest_item": "NEW",
             "observatory_dest": "NESW"
           }
         }
