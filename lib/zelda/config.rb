@@ -104,6 +104,11 @@ module Zelda
       @@file_map_files_info_js ||= "#{dir_output}/lib/map_files_info.js"
     end
 
+    # The file that describes the layout required for a map pattern.
+    def self.file_map_patterns_js
+      @@file_map_patterns_js ||= "#{dir_output}/lib/map_patterns.js"
+    end
+
     ############################################################################
 
     # For a given object, run all methods that match a certain regex.
@@ -197,6 +202,13 @@ module Zelda
       make_file_list_js if !File.file?(file_list_js)
       json_file_list = File.open(file_list_js, 'r').read
       eval(json_file_list)
+    end
+
+    # Get the pattern list from the JSON, and eval to read into Ruby array.
+    def self.read_map_patterns_js
+      read_all = File.open(file_map_patterns_js, 'r').read.split("\n")
+      comment_end = read_all.rindex('*/')
+      eval(read_all[comment_end + 1 .. -1].join("\n"))
     end
 
     # Ensure that '@@file_list_js' is up to date,
