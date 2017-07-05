@@ -16,6 +16,9 @@ module Zelda
     # Generate dungeons using the parameters set in 'Zelda::Config.options'
     def self.generate(dungeon_setting_dir = 'default')
 
+      # Output the generated DungeonMap objects.
+      output_dungeon_maps = []
+
       # For the moment, this is the same for all 8 dungeons.
       dungeon_settings = Zelda::DungeonSettings.new(dungeon_setting_dir)
 
@@ -48,6 +51,7 @@ module Zelda
           end
 
           # This will only run if the above did not timeout.
+          output_dungeon_maps << dungeon_map
           save_to_file(filepath, nodes, dungeon_map)
           counter_success += 1
 
@@ -67,6 +71,8 @@ module Zelda
 
       # Open in default browser, if necessary.
       Zelda::Config.open_in_default(Zelda::Config.file_html_index)
+
+      output_dungeon_maps
     end
 
     ############################################################################
