@@ -74,9 +74,10 @@ module Zelda
 
     def initialize(nodes)
       @nodes = nodes
-      @failed_attempts = 0
-      @origin = Coords.new(0, 0)
+      @rooms = nil
       @zone_info = []
+      @origin = Coords.new(0, 0)
+      @failed_attempts = 0
       self.generate
     end
 

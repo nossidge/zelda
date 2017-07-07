@@ -223,6 +223,12 @@ module Zelda
       output
     end
 
+    # This is for compatibility with the JavaScript.
+    # There should only be one letter in this array.
+    def letters
+      @letter.split(',')
+    end
+
     ############################################################################
 
     # Copy the metadata from the node to the room.
