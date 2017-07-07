@@ -313,6 +313,11 @@ module Zelda
       }
     end
 
+    # Return the full name of the dungeon.
+    def dungeon_name_full
+      "#{@dungeon_name[:line_1]} #{@dungeon_name[:line_2]}"
+    end
+
     ############################################################################
 
     # Class structure of each Room as JSON array.

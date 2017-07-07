@@ -28,16 +28,10 @@ module Zelda
       loop do
         begin
 
-          # File name is based on the current time.
-          filename = Time.now.strftime('%Y%m%d%H%M%S%L')
-          filepath = Zelda::Config.dir_output_data + '/' + filename
-
           # Initial value of the random seed.
           Zelda::Config.seed_dungeon = Zelda::Config.seed
-
-          # Output if verbose.
+          Zelda::puts_verbose "###"
           Zelda::puts_verbose "seed = #{Zelda::Config.seed_dungeon}"
-          Zelda::puts_verbose "filepath = #{filepath}"
 
           # Generate the mission nodes.
           if nodes.nil? or not Zelda::Config.options[:one_mission]
@@ -51,8 +45,10 @@ module Zelda
           end
 
           # This will only run if the above did not timeout.
+          Zelda::puts_verbose "dungeon_name = #{dungeon_map.rooms.dungeon_name_full}"
+          Zelda::puts_verbose "filepath = #{dungeon_map.filepath}"
           output_dungeon_maps << dungeon_map
-          save_to_file(filepath, nodes, dungeon_map)
+          dungeon_map.save_to_file
           counter_success += 1
 
         # If the above timed out.
@@ -100,30 +96,6 @@ module Zelda
     # Use the 'Nodes' tree to generate a 2D dungeon map.
     def self.generate_dungeon(nodes)
       DungeonMap.new(nodes)
-    end
-
-    ############################################################################
-
-    # Save the DOT and JSON to file.
-    def self.save_to_file(filepath, nodes, dungeon_map)
-
-      # Save the tree to a DOT file.
-      nodes.write_to_dot_file(filepath)
-
-      # Save the dungeon layout to JSON.
-      dungeon_map.rooms.save_json(filepath)
-
-      # Write to a static HTML file, if necessary.
-      if Zelda::Config.options[:static_html]
-        nodes.write_to_graphic_file(filepath)
-        dungeon_map.generate_html_file(filepath)
-
-        # Open in default browser, if necessary.
-        Zelda::Config.open_in_default(filepath + '.html')
-      end
-
-      # Add the file to the JavaScript list.
-      Zelda::Config.add_to_file_list_js(File.basename(filepath))
     end
 
     ############################################################################

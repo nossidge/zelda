@@ -45,6 +45,8 @@ module Zelda
     attr_reader :failed_attempts    # Number of failed map making attempts.
     attr_reader :origin             # Entrance room co-ords.
     attr_reader :zone_info          # Array of ZoneInfo instances.
+    attr_reader :filepath           # Filepath for the DOT and JSON files.
+    attr_reader :filename           # Name is based on the current time.
 
     ############################################################################
 
@@ -78,7 +80,9 @@ module Zelda
       @zone_info = []
       @origin = Coords.new(0, 0)
       @failed_attempts = 0
-      self.generate
+      @filename = Time.now.strftime('%Y%m%d%H%M%S%L')
+      @filepath = Zelda::Config.dir_output_data + '/' + @filename
+      generate
     end
 
     ############################################################################
@@ -566,6 +570,30 @@ module Zelda
           end
         end
       end
+    end
+
+    ############################################################################
+
+    # Save the DOT and JSON to file.
+    def save_to_file
+
+      # Save the tree to a DOT file.
+      @nodes.write_to_dot_file(@filepath)
+
+      # Save the dungeon layout to JSON.
+      @rooms.save_json(@filepath)
+
+      # Write to a static HTML file, if necessary.
+      if Zelda::Config.options[:static_html]
+        nodes.write_to_graphic_file(@filepath)
+        generate_html_file(@filepath)
+
+        # Open in default browser, if necessary.
+        Zelda::Config.open_in_default(@filepath + '.html')
+      end
+
+      # Add the file to the JavaScript list.
+      Zelda::Config.add_to_file_list_js(File.basename(@filepath))
     end
 
     ############################################################################
