@@ -14,7 +14,15 @@ module Zelda
     ############################################################################
 
     # Generate dungeons using the parameters set in 'Zelda::Config.options'
-    def self.generate(dungeon_setting_dir = 'default')
+    # Generate a number of dungeons, and examine them for certain features.
+    # Only save those dungeons that exibit the selected characteristics.
+    def self.generate(dungeon_setting_dir = 'default',
+        patterns: []
+      )
+
+      # Validate the inputs
+      # ToDo: Check that the pattern is valid.
+      patterns = *patterns
 
       # Output the generated DungeonMap objects.
       output_dungeon_maps = []
@@ -47,9 +55,30 @@ module Zelda
           # This will only run if the above did not timeout.
           Zelda::puts_verbose "dungeon_name = #{dungeon_map.rooms.dungeon_name_full}"
           Zelda::puts_verbose "filepath = #{dungeon_map.filepath}"
-          output_dungeon_maps << dungeon_map
-          dungeon_map.save_to_file
-          counter_success += 1
+
+          # Check for other conditions.
+          is_valid = true
+
+          # Do not keep, if the dungeon does not have the
+          # capability to output the required map pattern.
+          if patterns != []
+            all_patterns = Zelda::Patterns.patterns_available(dungeon_map)
+            is_valid = patterns.all? do |i|
+              all_patterns.include?(i)
+            end
+            if !is_valid
+              Zelda::puts_verbose "Dungeon cannot display a required pattern..."
+            end
+          end
+
+          # Only save the dungeon if it is valid.
+          if is_valid
+            output_dungeon_maps << dungeon_map
+            dungeon_map.save_to_file
+            counter_success += 1
+          else
+            counter_fail += 1
+          end
 
         # If the above timed out.
         rescue Timeout::Error => e
