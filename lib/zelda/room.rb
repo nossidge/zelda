@@ -216,7 +216,7 @@ module Zelda
 
     # These are exits which do not have any sort of barrier.
     def exits_open
-      output = @exits
+      output = @exits.dup
       exit_complication_array.each do |comp|
         output.tr!(comp, '')
       end
