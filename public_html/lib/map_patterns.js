@@ -246,7 +246,8 @@ map_patterns = [
       }
     ]
   },{
-    "name": "key_lock_s_to_n",
+    "name": "vert2_keylock1",
+    "comment_direction": "South (key) to North (lock)",
     "rooms": [
       {
         "relative": {
@@ -280,7 +281,8 @@ map_patterns = [
       }
     ]
   },{
-    "name": "lock_key_s_to_n",
+    "name": "vert2_lockkey1",
+    "comment_direction": "South (lock) to North (key)",
     "rooms": [
       {
         "relative": {
