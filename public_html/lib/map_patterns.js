@@ -257,8 +257,10 @@ map_patterns = [
           "zone": 1
         },
         "absolute": {
+          "one_of": {
+            "letters": ["k","kf","ib","iq"]
+          },
           "all_of": {
-            "letters": "k",
             "exits_open": "N"
           }
         }
@@ -281,7 +283,50 @@ map_patterns = [
       }
     ]
   },{
+    "name": "vert2_keylock2",
+    "comment_direction": "South (key) to North (lock)",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["k","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "N"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits_quest_item": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 0,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "all_of": {
+            "letters": "l",
+            "exits_open": "S"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits_quest_item": "NESW"
+          }
+        }
+      }
+    ]
+  },{
     "name": "vert2_lockkey1",
+    "comment": "This one NEEDS to be a lock and key combo",
     "comment_direction": "South (lock) to North (key)",
     "rooms": [
       {
@@ -429,6 +474,53 @@ map_patterns = [
           "none_of": {
             "exits_quest_item": "NESW",
             "observatory_dest": "NESW"
+          }
+        }
+      }
+    ]
+  },{
+    "name": "vert2_unconnected1",
+    "comment": "http://www.vgmaps.com/NewsArchives/April2008/LegendOfZelda-OracleOfHours-TempleOfLight.png",
+    "comment_direction": "Rooms are unconnected",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","l","k","kf","ib","iq"]
+          },
+          "all_of": {
+            "equipment": ["roc1"]
+          },
+          "none_of": {
+            "exits_quest_item": "NESW",
+            "observatory_dest": "NESW",
+            "exits": "N"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 0,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["k","kf","ib","iq"]
+          },
+          "all_of": {
+            "equipment": ["roc1"]
+          },
+          "none_of": {
+            "exits_quest_item": "NESW",
+            "observatory_dest": "NESW",
+            "exits": "S"
           }
         }
       }
