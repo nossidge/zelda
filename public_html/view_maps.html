@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+    <title>Zelda Room Maps</title>
+
+    <script src='lib/ext/pixi.min.js'></script>
+    <script src='lib/ext/pixi-tiledmap.min.js'></script>
+
+    <link href='lib/ext/bootstrap/css/bootstrap.min.css' rel='stylesheet'>
+    <script src='lib/ext/jquery-3.2.1.min.js'></script>
+    <script src='lib/ext/bootstrap/js/bootstrap.min.js'></script>
+
+    <!-- https://davidstutz.github.io/bootstrap-multiselect/ -->
+    <link href='lib/ext/bootstrap/css/bootstrap-multiselect.css' rel='stylesheet'>
+    <script src='lib/ext/bootstrap/js/bootstrap-multiselect.js'></script>
+
+    <script src='lib/globals.js'></script>
+    <script src='lib/map_files_info.js'></script>
+    <script src='lib/map_patterns.js'></script>
+    <link href='holy_grail.css' rel='stylesheet' type='text/css'>
+
+    <script language='javascript'>
+
+      //########################################################################
+
+      // Class to setup a Pixi.js canvas element.
+      var PixiCanvas = (function(window, undefined) {
+
+        // Store variables and methods across multiple instantiations.
+        var classVariables = {};
+
+        function PixiCanvas() {
+
+          // Dimensions of the canvas.
+          this.perRow = 5;
+          this.perCol = 4;
+          this.pixelZoom = 1;
+          this.spriteDim = 16;
+          this.roomWidth  = 15 * this.spriteDim * this.pixelZoom;
+          this.roomHeight = 11 * this.spriteDim * this.pixelZoom;
+          this.canvasWidth  = this.roomWidth  * this.perRow;
+          this.canvasHeight = this.roomHeight * this.perCol;
+
+          // Declare renderer.
+          this.renderer = PIXI.autoDetectRenderer(
+            this.canvasWidth,
+            this.canvasHeight,
+            { view: document.getElementById('canvas') }
+          );
+          this.renderer.backgroundColor = 0xDCDCDC;
+          this.renderer.autoResize = true;
+
+          // Declare stage.
+          this.stage = new PIXI.Container();
+          this.stage.interactive = true;
+          this.stage.scale.x = this.pixelZoom;
+          this.stage.scale.y = this.pixelZoom;
+
+          // Smaller variable for mouse position.
+          this.mouse = this.renderer.plugins.interaction.mouse.global;
+
+          // Array of sprites that need to be drawn to the screen.
+          // Keep them in arrays and draw at the end of the process.
+          this.spritesTilemap = new PIXI.Container();
+          this.stage.addChild(this.spritesTilemap);
+
+          // Render the stage.
+          this.render = function() {
+            this.renderer.render(this.stage);
+          };
+
+          // Scroll through the maps.
+          // Ensure you can't scroll past the first or last row.
+          this.scrollUp = function() {
+            let newY = pixiCanvas.spritesTilemap.y + pixiCanvas.roomHeight;
+            if (newY <= 0) pixiCanvas.spritesTilemap.y = newY;
+            this.render();
+          };
+          this.scrollDown = function() {
+            let newY = pixiCanvas.spritesTilemap.y - pixiCanvas.roomHeight;
+            let mapCount = pixiCanvas.spritesTilemap.children.length;
+            let maxTopRow = Math.ceil(mapCount / this.perRow) - this.perCol;
+            let maxY = pixiCanvas.roomHeight * maxTopRow;
+            if ((newY + maxY) >= 0) pixiCanvas.spritesTilemap.y = newY;
+            this.render();
+          };
+
+          // Add an array of maps, in a 2D grid.
+          this.addMaps = function(mapFilepaths, self=this) {
+            this.spritesTilemap.removeChildren();
+            let x = 0, y = 0;
+            let xDelta = this.roomWidth;
+            let yDelta = this.roomHeight;
+            let maxX = xDelta * this.perRow;
+            $.each(mapFilepaths, function(index, filepath) {
+              self.addMap(filepath, x, y);
+              x += xDelta;
+              if (x >= maxX) {
+                x = 0;
+                y += yDelta;
+              }
+            });
+            this.render();
+          };
+
+          // Add a map to the canvas.
+          this.addMap = function(filepath, x, y) {
+            this.allTilemaps[filepath].visible = true;
+            this.allTilemaps[filepath].x = x;
+            this.allTilemaps[filepath].y = y;
+            this.spritesTilemap.addChild(this.allTilemaps[filepath]);
+            this.render();
+          };
+
+          // Create a sprite collection for each tilemap file.
+          this.initialiseMaps = function(mapFilepaths, self=this) {
+            this.allTilemaps = {};
+            $.each(tilemapFilesInfo, function(index, tileMap) {
+              self.initialiseMap(tileMap.filepath);
+            });
+          };
+
+          // Add a map to 'this.allTilemaps'.
+          this.initialiseMap = function(filepath, self=this) {
+
+            // Create container for the map and the tooltip.
+            let tilemapContainer = new PIXI.Container();
+            tilemapContainer.visible = true;
+
+            // Create the map.
+            let pixiTileMap = new PIXI.extras.TiledMap(filepath);
+            pixiTileMap.interactive = true;
+            tilemapContainer.addChild(pixiTileMap);
+
+            // Add a tooltip Container.
+            // Text object, with a Graphics rect behind as background.
+            let ttText = new PIXI.Text( baseName(filepath), {
+                fontFamily: 'Arial', fontSize: 24, fill: 0xFFB531, align: 'center'
+              }
+            );
+            ttText.x = pixiTileMap.x + 12;
+            ttText.y = pixiTileMap.y + 5;
+            let ttBack = new PIXI.Graphics();
+            ttBack.beginFill(0xDE0000);
+            ttBack.lineStyle(3, 0xFFB531);
+            ttBack.drawRect(ttText.x - 6, ttText.y, ttText.width + 12, ttText.height);
+            let tooltip = new PIXI.Container();
+            tooltip.addChild(ttBack);
+            tooltip.addChild(ttText);
+            tooltip.visible = false;
+            tilemapContainer.addChild(tooltip);
+
+            // Show/hide the tooltip on hover.
+            pixiTileMap.mouseover = function(data) {
+              tooltip.visible = true;
+              self.render();
+            }
+            pixiTileMap.mouseout = function(data) {
+              tooltip.visible = false;
+              self.render();
+            }
+
+            // Add to the global hash of all the tilemaps.
+            this.allTilemaps[filepath] = tilemapContainer;
+          };
+        };
+
+        return PixiCanvas;
+      })(window);
+
+      //########################################################################
+
+      // Draw the maps based on the selected options.
+      function drawMaps() {
+        let letters = $('#letters_select').val();
+
+        // Filter the list based on the form inputs.
+        function containsLetters(i) { return findOne(i.letters, this); }
+        selectedMaps = tilemapFilesInfo.filter(containsLetters, letters);
+
+        // Extract just the file paths.
+        let selectContents = $.map(selectedMaps, function(value) {
+          return value.filepath;
+        });
+        pixiCanvas.addMaps(selectContents);
+      }
+
+      //########################################################################
+
+      // Pixi global. Sets it up for pixel art.
+      PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
+
+      // Global variables.
+      var pixiCanvas;
+
+      //########################################################################
+
+      // Wait for the document to be ready.
+      $(document).ready( function() {
+
+        // Read tilemap info from the Ruby pre-calculated object.
+        // Add a few extra attributes.
+        let letters = [], mapURIs = [];
+        $.each(tilemapFilesInfo, function(index, tileMap) {
+          tileMap.filepath = 'img/tilemaps/' + tileMap.name + '.tmx';
+          tileMap.letters  = tileMap.tags.letter.split(',');
+          tileMap.letter   = tileMap.tags.letter;
+          $.merge(letters, tileMap.letters);
+          mapURIs.push(tileMap.filepath);
+        });
+
+        // Load the maps to Pixi, and make the single PixiCanvas instance.
+        PIXI.loader
+          .add( mapURIs )
+          .load( function() {
+            pixiCanvas = new PixiCanvas();
+            pixiCanvas.initialiseMaps();
+            pixiCanvas.render();
+          }
+        );
+
+        // Add the letters to the 'multiselect' element.
+        // ToDo: These values should probably be hard-coded.
+        letters = $.unique( letters.sort() );
+        let selectContents = $.map(letters, function(value) {
+           return `<option value="${value}">${value}</option>`;
+        });
+        $('#letters_select').html(selectContents);
+        $('#letters_select').multiselect({
+          nonSelectedText: 'Choose letters',
+          buttonWidth: '170px',
+          numberDisplayed: 5,
+          delimiterText: ' ',
+          includeSelectAllOption: true,
+          selectAllText: 'ALL',
+          selectAllNumber: false,
+          onChange: drawMaps,
+          onSelectAll: drawMaps,
+          onDeselectAll: drawMaps
+        });
+      });
+
+      //########################################################################
+
+      // Listen for key events.
+      // Used to scroll through maps.
+      $(window).keypress( function(e) {
+        let char = String.fromCharCode(e.which);
+        switch( char.toUpperCase() ) {
+          case 'W':
+          case 'K': pixiCanvas.scrollUp(); break;
+          case 'S':
+          case 'J': pixiCanvas.scrollDown(); break;
+        }
+      });
+
+      //########################################################################
+
+    </script>
+  </head>
+  <body class='border'>
+    <header class='border'>
+      <div class='header_div'>
+        <div class='header_title'>
+          <h1>Zelda Room Maps</h1>
+        </div>
+        <div class='header_left'></div>
+        <div class='header_right'></div>
+      </div>
+    </header>
+    <div class='contents'>
+      <div id='col_left' class='col_left border'>
+        <div id='col_left_content'>
+          <select id='letters_select' multiple='multiple'></select>
+        </div>
+      </div>
+      <div id='col_right' class='col_right border'>
+        <div id='col_right_content'>
+          <canvas id='canvas' width='1200' height='704'>
+            For some reason, your browser is having trouble loading this JavaScript content. If you are not using any addons that might interfere with JavaScript, try using the latest versions of Chrome or Firefox.
+          </canvas>
+        </div>
+      </div>
+    </div>
+    <footer class='border'>
+      <div class='footer_div'>
+        <div class='footer_title'></div>
+        <div class='footer_left'></div>
+        <div class='footer_right'></div>
+      </div>
+    </footer>
+  </body>
+</html>
