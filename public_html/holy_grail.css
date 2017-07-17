@@ -12,13 +12,13 @@ body {
   display: flex;
   flex-direction: column;
 }
-.col_right {
-  flex: 1;
-}
 .col_left {
   flex: 0 0 16em;
   order: -1;
   overflow: auto;
+}
+.col_middle, .col_right {
+  flex: 1;
 }
 
 .border {
@@ -30,11 +30,11 @@ body {
     flex-direction: row;
     flex: 1;
   }
-  .col_right {
-    flex: 1;
-  }
   .col_left {
     flex: 0 0 14em;
+  }
+  .col_middle, .col_right {
+    flex: 1;
   }
 }
 
@@ -44,10 +44,10 @@ body {
   text-align: center;
   color: #000000;
 }
-.col_left, .col_right, footer {
+.col_left, .col_middle, .col_right, footer {
   padding: 10px;
 }
-.col_left, .col_right {
+.col_left, .col_middle, .col_right {
   text-align: left;
 }
 
@@ -116,45 +116,6 @@ summary {
 table.centre {
   margin-left: auto;
   margin-right: auto;
-}
-
-/*############################################################################*/
-/* This section is application specific. */
-
-div.graph {
-  background-color: #fff;
-  text-align: center;
-  border: 2px solid;
-  margin: 10px 10px 0px 0px;
-  padding: 10px;
-  -webkit-column-break-inside: avoid; /* Chrome, Safari */
-  page-break-inside: avoid;           /* Theoretically FF 20+ */
-  break-inside: avoid-column;         /* IE 11 */
-  display:table;                      /* Actually FF 20+ */
-  display:inline-block;
-}
-.highlight {
-  transition: all 0.18s;
-  box-shadow: inset 0 0 0 6px rgba(205,0,0,0.8);
-}
-.nohighlight {
-  transition: all 0.18s;
-  box-shadow: inset 0 0 0 0;
-}
-#col_right_content {
-  margin: 10px;
-  padding: 10px;
-}
-#col_right_content h2 {
-  margin: 4px 0px 4px 0px;
-  padding: 0px;
-}
-#col_right_content textarea, #new_setting_name {
-  font-family: 'Lucida Console', Monaco, monospace;
-  font-size: 110%;
-  width: 90%;
-  margin: 4px 0px 4px 0px;
-  padding: 10px;
 }
 
 /*############################################################################*/
