@@ -68,10 +68,12 @@
           // Render the stage.
           this.render = function() {
             this.renderer.render(this.stage);
+            this.toggleScrollButtons();
           };
 
           // Scroll through the maps.
           // Ensure you can't scroll past the first or last row.
+          // ToDo: Make this more DRY.
           this.scrollUp = function() {
             let newY = pixiCanvas.spritesTilemap.y + pixiCanvas.roomHeight;
             if (newY <= 0) pixiCanvas.spritesTilemap.y = newY;
@@ -84,6 +86,29 @@
             let maxY = pixiCanvas.roomHeight * maxTopRow;
             if ((newY + maxY) >= 0) pixiCanvas.spritesTilemap.y = newY;
             this.render();
+          };
+          this.canScrollUp = function() {
+            let newY = pixiCanvas.spritesTilemap.y + pixiCanvas.roomHeight;
+            return (newY <= 0);
+          };
+          this.canScrollDown = function() {
+            let newY = pixiCanvas.spritesTilemap.y - pixiCanvas.roomHeight;
+            let mapCount = pixiCanvas.spritesTilemap.children.length;
+            let maxTopRow = Math.ceil(mapCount / this.perRow) - this.perCol;
+            let maxY = pixiCanvas.roomHeight * maxTopRow;
+            return ((newY + maxY) >= 0);
+          };
+          this.toggleScrollButtons = function() {
+            if (this.canScrollUp()) {
+              $('#button_scrollUp').removeClass('disabled');
+            } else {
+              $('#button_scrollUp').addClass('disabled');
+            }
+            if (this.canScrollDown()) {
+              $('#button_scrollDown').removeClass('disabled');
+            } else {
+              $('#button_scrollDown').addClass('disabled');
+            }
           };
 
           // Add an array of maps, in a 2D grid.
@@ -275,11 +300,27 @@
           <select id='letters_select' multiple='multiple'></select>
         </div>
       </div>
-      <div id='col_right' class='col_right border'>
-        <div id='col_right_content'>
+      <div id='col_middle' class='col_middle border'>
+        <div id='col_middle_content'>
           <canvas id='canvas' width='1200' height='704'>
             For some reason, your browser is having trouble loading this JavaScript content. If you are not using any addons that might interfere with JavaScript, try using the latest versions of Chrome or Firefox.
           </canvas>
+        </div>
+      </div>
+      <div id='col_right' class='col_right border'>
+        <div id='col_right_content'>
+          <div class='btn-group-vertical'>
+            <button id='button_scrollUp'
+                    type='button' class='btn btn-default btn-lg'
+                    onclick='pixiCanvas.scrollUp()'>
+              <span class='glyphicon glyphicon-arrow-up'></span>
+            </button>
+            <button id='button_scrollDown'
+                    type='button' class='btn btn-default btn-lg'
+                    onclick='pixiCanvas.scrollDown()'>
+              <span class='glyphicon glyphicon-arrow-down'></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
