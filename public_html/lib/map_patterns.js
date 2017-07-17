@@ -801,5 +801,122 @@ map_patterns = [
         }
       }
     ]
+  },{
+    "name": "6horiz_darkpalace",
+    "comment": "http://www.finalfantasykingdom.net/z3/darkpalace.png ~ first room is bottom left",
+    "rooms": [
+      {
+        "relative": {
+          "id": 1,
+          "x": 0,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "NE"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 2,
+          "x": 1,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "NEW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 3,
+          "x": 2,
+          "y": 0,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "NW"
+          },
+          "none_of": {
+            "observatory_dest": "NESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 4,
+          "x": 0,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "S"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits": "W"
+          }
+        }
+      },{
+        "relative": {
+          "id": 5,
+          "x": 1,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "N"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits": "ESW"
+          }
+        }
+      },{
+        "relative": {
+          "id": 6,
+          "x": 2,
+          "y": -1,
+          "zone": 1
+        },
+        "absolute": {
+          "one_of": {
+            "letters": ["n","t","k","l","kf","ib","iq"]
+          },
+          "all_of": {
+            "exits_open": "S"
+          },
+          "none_of": {
+            "observatory_dest": "NESW",
+            "exits": "E"
+          }
+        }
+      }
+    ]
   }
 ];
