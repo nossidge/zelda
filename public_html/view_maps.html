@@ -54,8 +54,6 @@
           // Declare stage.
           this.stage = new PIXI.Container();
           this.stage.interactive = true;
-          this.stage.scale.x = this.pixelZoom;
-          this.stage.scale.y = this.pixelZoom;
 
           // Smaller variable for mouse position.
           this.mouse = this.renderer.plugins.interaction.mouse.global;
@@ -67,6 +65,8 @@
 
           // Render the stage.
           this.render = function() {
+            this.stage.scale.x = this.pixelZoom;
+            this.stage.scale.y = this.pixelZoom;
             this.renderer.render(this.stage);
             this.toggleScrollButtons();
           };
@@ -178,7 +178,7 @@
 
             // Show/hide the tooltip on hover.
             pixiTileMap.mouseover = function(data) {
-              tooltip.visible = true;
+              if (view.isIndex()) tooltip.visible = true;
               self.render();
             }
             pixiTileMap.mouseout = function(data) {
@@ -186,9 +186,30 @@
               self.render();
             }
 
+            // Set the view to show.
+            pixiTileMap.on('click', function() {
+              view.setView(view.SHOW);
+              view.mapFilepath = filepath;
+              tooltip.visible = false;
+              self.showMap(filepath, 30);
+            });
+
             // Add to the global hash of all the tilemaps.
             this.allTilemaps[filepath] = tilemapContainer;
           };
+
+          // Show one specific map.
+          this.showMap = function(filepath, x = 0, y = 0) {
+            this.spritesTilemap.removeChildren();
+            this.spritesTilemap.x = 0;
+            this.spritesTilemap.y = 0;
+            this.spritesTilemap.addChild(this.allTilemaps[filepath]);
+            this.allTilemaps[filepath].visible = true;
+            this.allTilemaps[filepath].x = x;
+            this.allTilemaps[filepath].y = y;
+            this.render();
+          };
+
         };
 
         return PixiCanvas;
@@ -196,9 +217,58 @@
 
       //########################################################################
 
+      // What view is being used.
+      var View = (function(window, undefined) {
+        function View() {
+          this.INDEX = 0;
+          this.SHOW = 1;
+          this.current = null;
+          this.mapFilepath = null;
+
+          // Booleans for the current state.
+          this.isIndex = function() {
+            return (this.current == this.INDEX);
+          }
+          this.isShow = function() {
+            return (this.current == this.SHOW);
+          }
+
+          // Show/hide the relevant classes.
+          // Change the zoom level of the canvas.
+          this.setView = function(newView) {
+            if (this.current == newView) return;
+            switch( newView ) {
+
+              case this.INDEX:
+                $('.view_index').show();
+                $('.view_show').hide();
+                this.mapFilepath = null;
+                this.current = newView;
+                pixiCanvas.pixelZoom = 1;
+                drawMaps();
+                break;
+
+              case this.SHOW:
+                $('.view_index').hide();
+                $('.view_show').show();
+                this.current = newView;
+                pixiCanvas.pixelZoom = 4;
+                break;
+            }
+          };
+        };
+
+        return View;
+      })(window);
+
+      //########################################################################
+
       // Draw the maps based on the selected options.
       function drawMaps() {
         let letters = $('#letters_select').val();
+
+        // Set the view to index.
+        view.setView(view.INDEX);
 
         // Filter the list based on the form inputs.
         function containsLetters(i) { return findOne(i.letters, this); }
@@ -218,6 +288,7 @@
 
       // Global variables.
       var pixiCanvas;
+      var view = new View();
 
       //########################################################################
 
@@ -240,6 +311,7 @@
           .add( mapURIs )
           .load( function() {
             pixiCanvas = new PixiCanvas();
+            view.setView(view.INDEX);
             pixiCanvas.initialiseMaps();
             pixiCanvas.render();
           }
@@ -277,6 +349,8 @@
           case 'K': pixiCanvas.scrollUp(); break;
           case 'S':
           case 'J': pixiCanvas.scrollDown(); break;
+          case 'A':
+          case 'H': view.setView(view.INDEX); break;
         }
       });
 
@@ -309,17 +383,28 @@
       </div>
       <div id='col_right' class='col_right border'>
         <div id='col_right_content'>
-          <div class='btn-group-vertical'>
-            <button id='button_scrollUp'
-                    type='button' class='btn btn-default btn-lg'
-                    onclick='pixiCanvas.scrollUp()'>
-              <span class='glyphicon glyphicon-arrow-up'></span>
-            </button>
-            <button id='button_scrollDown'
-                    type='button' class='btn btn-default btn-lg'
-                    onclick='pixiCanvas.scrollDown()'>
-              <span class='glyphicon glyphicon-arrow-down'></span>
-            </button>
+          <div class='view_index'>
+            <div class='btn-group-vertical'>
+              <button id='button_scrollUp'
+                      type='button' class='btn btn-default btn-lg'
+                      onclick='pixiCanvas.scrollUp()'>
+                <span class='glyphicon glyphicon-arrow-up'></span>
+              </button>
+              <button id='button_scrollDown'
+                      type='button' class='btn btn-default btn-lg'
+                      onclick='pixiCanvas.scrollDown()'>
+                <span class='glyphicon glyphicon-arrow-down'></span>
+              </button>
+            </div>
+          </div>
+          <div hidden class='view_show'>
+            <div class='btn-group'>
+              <button id='button_backToIndex'
+                      type='button' class='btn btn-default btn-lg'
+                      onclick='view.setView(view.INDEX)'>
+                <span class='glyphicon glyphicon-arrow-left'></span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
