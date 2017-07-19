@@ -89,13 +89,17 @@ input[type=button]{
 }
 .header_left, .footer_left {
   text-align: left;
-  margin-left: 8px;
+  margin-left: 10px;
   flex: 0 0 260px;
   order: -1;
 }
+.header_left {
+  margin-top: 10px;
+
+}
 .header_right, .footer_right {
   text-align: right;
-  margin-right: 8px;
+  margin-right: 10px;
   flex: 0 0 260px;
   order: 1;
 }

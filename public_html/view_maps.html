@@ -421,7 +421,13 @@
         <div class='header_title'>
           <h1>Zelda Room Maps</h1>
         </div>
-        <div class='header_left'></div>
+        <div class='header_left'>
+          <a href='index.html'
+              title='Back to index.html'
+              class='btn btn-default btn-lg'>
+            <span class='glyphicon glyphicon-arrow-left'></span>
+          </a>
+        </div>
         <div class='header_right'></div>
       </div>
     </header>
@@ -443,11 +449,13 @@
           <div class='view_index'>
             <div class='btn-group-vertical'>
               <button id='button_scrollUp'
+                      title='Scroll maps upward'
                       type='button' class='btn btn-default btn-lg'
                       onclick='pixiCanvas.scrollUp()'>
                 <span class='glyphicon glyphicon-arrow-up'></span>
               </button>
               <button id='button_scrollDown'
+                      title='Scroll maps downward'
                       type='button' class='btn btn-default btn-lg'
                       onclick='pixiCanvas.scrollDown()'>
                 <span class='glyphicon glyphicon-arrow-down'></span>
@@ -456,12 +464,14 @@
           </div>
           <div hidden class='view_show'>
             <div class='btn-group'>
-              <button id='button_backToIndex'
+              <button id='button_backToIndexView'
+                      title='Back to map selection'
                       type='button' class='btn btn-default btn-lg'
                       onclick='view.setView(view.INDEX)'>
                 <span class='glyphicon glyphicon-arrow-left'></span>
               </button>
               <button id='button_resetLayers'
+                      title='Reset layers to initial visibility'
                       type='button' class='btn btn-default btn-lg'
                       onclick='pixiCanvas.resetLayers(view.mapFilepath)'>
                 Reset
@@ -474,9 +484,7 @@
     </div>
     <footer class='border'>
       <div class='footer_div'>
-        <div class='footer_title'></div>
-        <div class='footer_left'></div>
-        <div class='footer_right'></div>
+        Optimised for a 1920x1080 monitor
       </div>
     </footer>
   </body>
