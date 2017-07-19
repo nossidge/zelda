@@ -190,6 +190,7 @@
             pixiTileMap.on('click', function() {
               view.setView(view.SHOW);
               view.mapFilepath = filepath;
+              self.showMapLayers(filepath);
               tooltip.visible = false;
               self.showMap(filepath, 30);
             });
@@ -207,9 +208,43 @@
             this.allTilemaps[filepath].visible = true;
             this.allTilemaps[filepath].x = x;
             this.allTilemaps[filepath].y = y;
+            this.showMapLayers(filepath);
             this.render();
           };
 
+          // Show the layers of a map in the 'map_layers' div.
+          this.showMapLayers = function(filepath) {
+            let map = this.allTilemaps[filepath].children[0];
+            $('#map_layers').empty();
+
+            // Create a layer button group.
+            let buttonGroup = document.createElement('div');
+            $(buttonGroup).css('padding-top', '10px');
+            $(buttonGroup).addClass('btn-group-vertical');
+            $('#map_layers').append(buttonGroup);
+
+            // Add a new button for each layer.
+            for(let layer in map.layers) {
+              if (layer != 'hasMin') {
+                var newButton = document.createElement('button');
+                newButton.type = 'button';
+                $(newButton).addClass('btn btn-default btn-lg');
+                $(newButton).text(layer);
+                if (map.layers[layer].visible) {
+                  $(newButton).addClass('active');
+                }
+                $(newButton).on('click', function() {
+                  $(this).toggleClass('active');
+                  $(this).blur();
+                  let layer = map.layers[$(this).text()];
+                  let active = $(this).hasClass('active');
+                  layer.visible = active;
+                  pixiCanvas.render();
+                });
+                buttonGroup.appendChild(newButton);
+              }
+            }
+          };
         };
 
         return PixiCanvas;
@@ -405,6 +440,7 @@
                 <span class='glyphicon glyphicon-arrow-left'></span>
               </button>
             </div>
+            <div id='map_layers'></div>
           </div>
         </div>
       </div>
