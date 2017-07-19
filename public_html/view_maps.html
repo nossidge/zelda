@@ -197,6 +197,7 @@
 
             // Add to the global hash of all the tilemaps.
             this.allTilemaps[filepath] = tilemapContainer;
+            this.saveLayers(filepath);
           };
 
           // Show one specific map.
@@ -244,6 +245,27 @@
                 buttonGroup.appendChild(newButton);
               }
             }
+          };
+
+          // Save the initial visibility of layers.
+          this.saveLayers = function(filepath) {
+            let map = this.allTilemaps[filepath].children[0];
+            map.layersInit = {};
+            for(let layer in map.layers) {
+              if (layer != 'hasMin') {
+                map.layersInit[layer] = map.layers[layer].visible;
+              }
+            }
+          };
+
+          // Reset layers to their saved setup.
+          this.resetLayers = function(filepath) {
+            let map = this.allTilemaps[filepath].children[0];
+            for(let layer in map.layersInit) {
+              map.layers[layer].visible = map.layersInit[layer];
+            }
+            this.showMapLayers(filepath);
+            this.render();
           };
         };
 
@@ -438,6 +460,11 @@
                       type='button' class='btn btn-default btn-lg'
                       onclick='view.setView(view.INDEX)'>
                 <span class='glyphicon glyphicon-arrow-left'></span>
+              </button>
+              <button id='button_resetLayers'
+                      type='button' class='btn btn-default btn-lg'
+                      onclick='pixiCanvas.resetLayers(view.mapFilepath)'>
+                Reset
               </button>
             </div>
             <div id='map_layers'></div>
