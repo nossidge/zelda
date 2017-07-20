@@ -33,7 +33,7 @@
         function PixiCanvas() {
 
           // Dimensions of the canvas.
-          this.perRow = 5;
+          this.perRow = 4;
           this.perCol = 4;
           this.pixelZoom = 1;
           this.spriteDim = 16;
@@ -109,6 +109,13 @@
             } else {
               $('#button_scrollDown').addClass('disabled');
             }
+          };
+
+          // Return all maps as Pixi Tilemaps.
+          this.allMaps = function() {
+            return $.map(this.allTilemaps, function(val, key) {
+              return val.children[0];
+            });
           };
 
           // Add an array of maps, in a 2D grid.
@@ -192,7 +199,8 @@
               view.mapFilepath = filepath;
               self.showMapLayers(filepath);
               tooltip.visible = false;
-              self.showMap(filepath, 30);
+              let xValue = (self.perRow == 5) ? 30 : 0;
+              self.showMap(filepath, xValue);
             });
 
             // Add to the global hash of all the tilemaps.
@@ -210,7 +218,32 @@
             this.allTilemaps[filepath].x = x;
             this.allTilemaps[filepath].y = y;
             this.showMapLayers(filepath);
+            this.showMapTags(filepath);
             this.render();
+          };
+
+          // Show the tags of a map in the 'map_tags' div.
+          this.showMapTags = function(filepath) {
+            let map = this.allTilemaps[filepath].children[0];
+            let tags = map.properties;
+            $('#map_tags').empty();
+
+            for(let tag in tags) {
+              let objInputGroup = document.createElement('div');
+              $(objInputGroup).addClass('input-group');
+              $('#map_tags').append(objInputGroup);
+
+              let objAddon = document.createElement('span');
+              $(objAddon).addClass('input-group-addon map_tag_label');
+              $(objAddon).text( tag );
+              objInputGroup.appendChild(objAddon);
+
+              let objText = document.createElement('input');
+              objText.type = 'text';
+              $(objText).addClass('form-control');
+              $(objText).attr('value', tags[tag]);
+              objInputGroup.appendChild(objText);
+            }
           };
 
           // Show the layers of a map in the 'map_layers' div.
@@ -220,16 +253,15 @@
 
             // Create a layer button group.
             let buttonGroup = document.createElement('div');
-            $(buttonGroup).css('padding-top', '10px');
-            $(buttonGroup).addClass('btn-group-vertical');
+            $(buttonGroup).addClass('btn-group-vertical map_layers_buttons');
             $('#map_layers').append(buttonGroup);
 
             // Add a new button for each layer.
             for(let layer in map.layers) {
               if (layer != 'hasMin') {
-                var newButton = document.createElement('button');
+                let newButton = document.createElement('button');
                 newButton.type = 'button';
-                $(newButton).addClass('btn btn-default btn-lg');
+                $(newButton).addClass('btn btn-default button_layer');
                 $(newButton).text(layer);
                 if (map.layers[layer].visible) {
                   $(newButton).addClass('active');
@@ -247,6 +279,65 @@
             }
           };
 
+          // Show all layers in the '#maps_layers' element.
+          // Very similar to 'pixiCanvas.showMapLayers()'
+          this.showAllMapLayers = function(layers, self=this) {
+            $('#maps_layers').empty();
+
+            // Create 2 layer button groups.
+            // These will be side-by-side, to prevent it being too tall.
+            let buttonGroup1 = document.createElement('div');
+            $(buttonGroup1).addClass('btn-group-vertical map_layers_buttons');
+            $(buttonGroup1).attr('id', 'maps_layer_left');
+            $('#maps_layers').append(buttonGroup1);
+            let buttonGroup2 = document.createElement('div');
+            $(buttonGroup2).addClass('btn-group-vertical map_layers_buttons');
+            $(buttonGroup2).attr('id', 'maps_layer_right');
+            $('#maps_layers').append(buttonGroup2);
+            let halfway = Math.ceil(layers.length / 2);
+
+            // Top Layers. These must be at the top of the list.
+            let topLayers = [
+              'Base',
+              'Walls',
+              'Collision',
+              'Enemies',
+              'Decoration',
+              'Chest',
+              'Crystal',
+              'WallE',
+              'WallN',
+              'WallS',
+              'WallW',
+            ];
+            layers = $(layers).not(topLayers).get();
+            layers = topLayers.concat(layers);
+
+            // Add a new button for each layer.
+            $.each(layers, function(index, layer) {
+              let buttonGroup = (index < halfway) ? buttonGroup1 : buttonGroup2;
+              let newButton = document.createElement('button');
+              newButton.type = 'button';
+              $(newButton).addClass('btn btn-default button_layer');
+              $(newButton).text(layer);
+              $(newButton).addClass('active');
+              $(newButton).on('click', function() {
+                $(this).toggleClass('active');
+                $(this).blur();
+                let layerName = $(this).text();
+                let active = $(this).hasClass('active');
+
+                // Loop through all maps and change their layer visibilities.
+                $.each(self.allMaps(), function(index, map) {
+                  let layer = map.layers[layerName];
+                  if (layer) layer.visible = active;
+                });
+                pixiCanvas.render();
+              });
+              buttonGroup.appendChild(newButton);
+            });
+          };
+
           // Save the initial visibility of layers.
           this.saveLayers = function(filepath) {
             let map = this.allTilemaps[filepath].children[0];
@@ -260,6 +351,7 @@
 
           // Reset layers to their saved setup.
           this.resetLayers = function(filepath) {
+            $('#button_resetLayers').blur();
             let map = this.allTilemaps[filepath].children[0];
             for(let layer in map.layersInit) {
               map.layers[layer].visible = map.layersInit[layer];
@@ -299,6 +391,9 @@
               case this.INDEX:
                 $('.view_index').show();
                 $('.view_show').hide();
+                $('#map_layers').empty();
+                $('#map_tags').empty();
+                $('#button_backToIndexView').blur();
                 this.mapFilepath = null;
                 this.current = newView;
                 pixiCanvas.pixelZoom = 1;
@@ -354,14 +449,21 @@
 
         // Read tilemap info from the Ruby pre-calculated object.
         // Add a few extra attributes.
-        let letters = [], mapURIs = [];
+        let mapURIs = [], letters = [], layers = [], tags = [];
         $.each(tilemapFilesInfo, function(index, tileMap) {
           tileMap.filepath = 'img/tilemaps/' + tileMap.name + '.tmx';
           tileMap.letters  = tileMap.tags.letter.split(',');
           tileMap.letter   = tileMap.tags.letter;
           $.merge(letters, tileMap.letters);
+          $.merge(layers, tileMap.layers);
+          $.merge(tags, Object.keys(tileMap.tags));
           mapURIs.push(tileMap.filepath);
         });
+
+        // Sort and dedupe the arrays.
+        letters = $.unique( letters.sort() );
+        layers  = $.unique( layers.sort() );
+        tags    = $.unique( tags.sort() );
 
         // Load the maps to Pixi, and make the single PixiCanvas instance.
         PIXI.loader
@@ -371,12 +473,12 @@
             view.setView(view.INDEX);
             pixiCanvas.initialiseMaps();
             pixiCanvas.render();
+            pixiCanvas.showAllMapLayers(layers);
           }
         );
 
         // Add the letters to the 'multiselect' element.
         // ToDo: These values should probably be hard-coded.
-        letters = $.unique( letters.sort() );
         let selectContents = $.map(letters, function(value) {
            return `<option value="${value}">${value}</option>`;
         });
@@ -414,6 +516,40 @@
       //########################################################################
 
     </script>
+    <style type='text/css'>
+      body {
+        min-height: 100vh;
+      }
+      #view_index_scroll_buttons {
+        padding-bottom: 10px;
+      }
+      #view_show_buttons {
+        padding-bottom: 10px;
+      }
+      .button_layer {
+        text-align: left;
+      }
+      .map_tag_label {
+        min-width: 180px;
+        text-align: left;
+      }
+      #map_details {
+        display: flex;
+        flex-direction: row;
+      }
+      .map_layers_buttons {
+        vertical-align: top;
+        width: 12em;
+      }
+      #map_layers {
+        flex: 0 0 13em;
+        order: -1;
+        overflow: auto;
+      }
+      #map_tags {
+        flex: 1;
+      }
+    </style>
   </head>
   <body class='border'>
     <header class='border'>
@@ -447,7 +583,7 @@
       <div id='col_right' class='col_right border'>
         <div id='col_right_content'>
           <div class='view_index'>
-            <div class='btn-group-vertical'>
+            <div id='view_index_scroll_buttons' class='btn-group-vertical'>
               <button id='button_scrollUp'
                       title='Scroll maps upward'
                       type='button' class='btn btn-default btn-lg'
@@ -461,9 +597,13 @@
                 <span class='glyphicon glyphicon-arrow-down'></span>
               </button>
             </div>
+            <div id='maps_details'>
+              <div id='maps_layers'></div>
+              <div id='maps_tags'></div>
+            </div>
           </div>
           <div hidden class='view_show'>
-            <div class='btn-group'>
+            <div id='view_show_buttons' class='btn-group'>
               <button id='button_backToIndexView'
                       title='Back to map selection'
                       type='button' class='btn btn-default btn-lg'
@@ -477,7 +617,10 @@
                 Reset
               </button>
             </div>
-            <div id='map_layers'></div>
+            <div id='map_details'>
+              <div id='map_layers'></div>
+              <div id='map_tags'></div>
+            </div>
           </div>
         </div>
       </div>
