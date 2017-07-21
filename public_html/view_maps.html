@@ -308,10 +308,19 @@
               'WallE',
               'WallN',
               'WallS',
-              'WallW',
+              'WallW'
             ];
             layers = $(layers).not(topLayers).get();
             layers = topLayers.concat(layers);
+
+            // Active layers. These will already be selected.
+            let activeLayers = [
+              'Base',
+              'Walls',
+              'Collision',
+              'Enemies',
+              'Decoration'
+            ];
 
             // Add a new button for each layer.
             $.each(layers, function(index, layer) {
@@ -320,7 +329,9 @@
               newButton.type = 'button';
               $(newButton).addClass('btn btn-default button_layer');
               $(newButton).text(layer);
-              $(newButton).addClass('active');
+              if (activeLayers.includes(layer)) {
+                $(newButton).addClass('active');
+              }
               $(newButton).on('click', function() {
                 $(this).toggleClass('active');
                 $(this).blur();
