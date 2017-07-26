@@ -444,14 +444,19 @@
 
       // Draw the maps based on the selected options.
       function drawMaps() {
-        let letters = $('#letters_select').val();
 
         // Set the view to index.
         view.setView(view.INDEX);
 
+        // Get the DOM elements.
+        let letters = $('#letters_select').val();
+        let layers  = $('#layers_select').val();
+
         // Filter the list based on the form inputs.
         function containsLetters(i) { return findOne(i.letters, this); }
-        selectedMaps = tilemapFilesInfo.filter(containsLetters, letters);
+        let selectedMaps = tilemapFilesInfo.filter(containsLetters, letters);
+        function containsLayers(i) { return findOne(i.layers, this); }
+        selectedMaps = selectedMaps.filter(containsLayers, layers);
 
         // Extract just the file paths.
         let selectContents = $.map(selectedMaps, function(value) {
@@ -487,64 +492,92 @@
           mapURIs.push(tileMap.filepath);
         });
 
-        // Sort and dedupe the arrays.
-        letters = $.unique( letters.sort() );
-        layers  = $.unique( layers.sort() );
-        tags    = $.unique( tags.sort() );
+        // Create an object to store the sorted and deduped arrays.
+        let mapArrays = {};
+        mapArrays.letters = $.unique( letters.sort() );
+        mapArrays.layers  = $.unique( layers.sort() );
+        mapArrays.tags    = $.unique( tags.sort() );
 
         // Load the maps to Pixi, and make the single PixiCanvas instance.
         PIXI.loader
           .add( mapURIs )
           .load( function() {
-            pixiCanvas = new PixiCanvas();
-            view.setView(view.INDEX);
-            pixiCanvas.initialiseMaps();
-            pixiCanvas.render();
-
-            // Add the above arrays to the PixiCanvas instance.
-            pixiCanvas.mapArrays = {};
-            pixiCanvas.mapArrays.letters = letters;
-            pixiCanvas.mapArrays.layers  = layers;
-            pixiCanvas.mapArrays.tags    = tags;
-
-            pixiCanvas.showAllMapLayers();
+            whenPixiLoaded(mapArrays);
           }
         );
-
-        // Add the letters to the 'multiselect' element.
-        // ToDo: These values should probably be hard-coded.
-        let selectContents = $.map(letters, function(value) {
-           return `<option value="${value}">${value}</option>`;
-        });
-        $('#letters_select').html(selectContents);
-        $('#letters_select').multiselect({
-          nonSelectedText: 'Choose letters',
-          buttonWidth: '170px',
-          numberDisplayed: 5,
-          delimiterText: ' ',
-          includeSelectAllOption: true,
-          selectAllText: 'ALL',
-          selectAllNumber: false,
-          onChange: drawMaps,
-          onSelectAll: drawMaps,
-          onDeselectAll: drawMaps
-        });
       });
+
+      //########################################################################
+
+      // This will be called after all the tiledmaps are loaded.
+      function whenPixiLoaded(mapArrays) {
+
+        // Create the global PixiCanvas instance.
+        pixiCanvas = new PixiCanvas();
+        pixiCanvas.initialiseMaps();
+        pixiCanvas.render();
+
+        // Set the page view to index.
+        view.setView(view.INDEX);
+
+        // Add the agument arrays to the PixiCanvas instance.
+        pixiCanvas.mapArrays = mapArrays;
+
+        // Show layers as buttons.
+        pixiCanvas.showAllMapLayers();
+
+        // Add the letters and layers to the 'multiselect' element.
+        function createMultiselect(array, domID, nonSelectedText) {
+          let selectContents = $.map(array, function(value) {
+            return `<option value="${value}">${value}</option>`;
+          });
+          $(domID).html(selectContents);
+          $(domID).multiselect({
+            nonSelectedText: nonSelectedText,
+            buttonWidth: '200px',
+            numberDisplayed: 5,
+            delimiterText: ' ',
+            includeSelectAllOption: true,
+            selectAllText: 'ALL',
+            selectAllNumber: false,
+            onChange: drawMaps,
+            onSelectAll: drawMaps,
+            onDeselectAll: drawMaps
+          });
+        }
+        createMultiselect(mapArrays.letters, '#letters_select', 'Choose letters');
+        createMultiselect(mapArrays.layers,  '#layers_select',  'Choose layers');
+
+        // Select default values.
+        $('#letters_select [value="e"], #letters_select [value="g"]').each( function() {
+          this.selected = true;
+        });
+        $('#letters_select').multiselect('refresh');
+        $('#layers_select option').each( function() {
+          this.selected = true;
+        });
+        $('#layers_select').multiselect('refresh');
+        drawMaps();
+
+        // Show the left pane.
+        $('#col_left_content').removeAttr('hidden');
+        $('#col_right_content').removeAttr('hidden');
+
+        // Hide the loading gif.
+        $('#loading').remove();
+      }
 
       //########################################################################
 
       // Listen for key events.
       // Used to scroll through maps.
-      $(window).keypress( function(e) {
-        let char = String.fromCharCode(e.which);
-        switch( char.toUpperCase() ) {
-          case 'W':
-          case 'K': pixiCanvas.scrollUp(); break;
-          case 'S':
-          case 'J': pixiCanvas.scrollDown(); break;
-          case 'A':
-          case 'H': view.setView(view.INDEX); break;
-        }
+      $(window).keydown( function(e) {
+        let up_wk   = [38, 87, 75];
+        let down_sj = [40, 83, 74];
+        let left_ah = [37, 65, 72];
+        if (up_wk  .includes(e.keyCode))   pixiCanvas.scrollUp();
+        if (down_sj.includes(e.keyCode)) pixiCanvas.scrollDown();
+        if (left_ah.includes(e.keyCode)) view.setView(view.INDEX);
       });
 
       //########################################################################
@@ -553,6 +586,20 @@
     <style type='text/css'>
       body {
         min-height: 100vh;
+      }
+      #loading {
+        width: 960px;
+        height: 670px;
+        text-align: center;
+      }
+      #col_left_content p {
+        margin: 0;
+      }
+      #col_left_content button {
+        margin: 0px 0px 12px 0px;
+      }
+      .col_left {
+        flex: 0 0 16em;
       }
       #view_index_controls {
         padding-bottom: 10px;
@@ -606,19 +653,29 @@
     </header>
     <div class='contents'>
       <div id='col_left' class='col_left border'>
-        <div id='col_left_content'>
-          <select id='letters_select' multiple='multiple'></select>
+        <div id='col_left_content' hidden>
+          <p>Filter by letter</p>
+          <select id='letters_select' multiple='multiple' hidden></select>
+          <p>Filter by layer</p>
+          <select id='layers_select' multiple='multiple' hidden></select>
         </div>
       </div>
       <div id='col_middle' class='col_middle border'>
         <div id='col_middle_content'>
-          <canvas id='canvas' width='960' height='704'>
+          <table id='loading'>
+            <tr>
+              <td>
+                <img src='img/loading.gif'>
+              </td>
+            </tr>
+          </table>
+          <canvas id='canvas'>
             For some reason, your browser is having trouble loading this JavaScript content. If you are not using any addons that might interfere with JavaScript, try using the latest versions of Chrome or Firefox.
           </canvas>
         </div>
       </div>
       <div id='col_right' class='col_right border'>
-        <div id='col_right_content'>
+        <div id='col_right_content' hidden>
           <div class='view_index'>
             <div id='view_index_controls'>
               <div id='view_index_scroll_buttons' class='btn-group-vertical'>
