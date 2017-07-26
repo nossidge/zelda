@@ -25,11 +25,7 @@
       //########################################################################
 
       // Class to setup a Pixi.js canvas element.
-      var PixiCanvas = (function(window, undefined) {
-
-        // Store variables and methods across multiple instantiations.
-        var classVariables = {};
-
+      let PixiCanvas = (function(window, undefined) {
         function PixiCanvas() {
 
           // Dimensions of the canvas.
@@ -361,13 +357,28 @@
           };
 
           // Reset layers to their saved setup.
-          this.resetLayers = function(filepath) {
-            $('#button_resetLayers').blur();
-            let map = this.allTilemaps[filepath].children[0];
-            for(let layer in map.layersInit) {
-              map.layers[layer].visible = map.layersInit[layer];
+          this.resetLayers = function(button, filepath, self=this) {
+            button.blur();
+
+            // Create a list of all maps to reset.
+            // If a filepath is passed, then that will be the only element.
+            let filepaths = [];
+            if (filepath == undefined) {
+              filepaths = Object.keys(this.allTilemaps);
+            } else {
+              filepaths.push(filepath);
             }
-            this.showMapLayers(filepath);
+
+            // Reset all layers for all chosen maps.
+            $.each(filepaths, function(index, fp) {
+              let map = self.allTilemaps[fp].children[0];
+              for(let layer in map.layersInit) {
+                map.layers[layer].visible = map.layersInit[layer];
+              }
+            });
+
+            // If we are looking at a specific map, then update the layers buttons.
+            if (filepath != undefined) this.showMapLayers(filepath);
             this.render();
           };
         };
@@ -378,7 +389,7 @@
       //########################################################################
 
       // What view is being used.
-      var View = (function(window, undefined) {
+      let View = (function(window, undefined) {
         function View() {
           this.INDEX = 0;
           this.SHOW = 1;
@@ -450,8 +461,8 @@
       PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 
       // Global variables.
-      var pixiCanvas;
-      var view = new View();
+      let pixiCanvas;
+      let view = new View();
 
       //########################################################################
 
@@ -531,11 +542,14 @@
       body {
         min-height: 100vh;
       }
-      #view_index_scroll_buttons {
+      #view_index_controls {
         padding-bottom: 10px;
       }
       #view_show_buttons {
         padding-bottom: 10px;
+      }
+      #button_index_resetLayers {
+        padding: 33px 26px 33px 25px;
       }
       .button_layer {
         text-align: left;
@@ -586,7 +600,7 @@
       </div>
       <div id='col_middle' class='col_middle border'>
         <div id='col_middle_content'>
-          <canvas id='canvas' width='1200' height='704'>
+          <canvas id='canvas' width='960' height='704'>
             For some reason, your browser is having trouble loading this JavaScript content. If you are not using any addons that might interfere with JavaScript, try using the latest versions of Chrome or Firefox.
           </canvas>
         </div>
@@ -594,19 +608,29 @@
       <div id='col_right' class='col_right border'>
         <div id='col_right_content'>
           <div class='view_index'>
-            <div id='view_index_scroll_buttons' class='btn-group-vertical'>
-              <button id='button_scrollUp'
-                      title='Scroll maps upward'
-                      type='button' class='btn btn-default btn-lg'
-                      onclick='pixiCanvas.scrollUp()'>
-                <span class='glyphicon glyphicon-arrow-up'></span>
-              </button>
-              <button id='button_scrollDown'
-                      title='Scroll maps downward'
-                      type='button' class='btn btn-default btn-lg'
-                      onclick='pixiCanvas.scrollDown()'>
-                <span class='glyphicon glyphicon-arrow-down'></span>
-              </button>
+            <div id='view_index_controls'>
+              <div id='view_index_scroll_buttons' class='btn-group-vertical'>
+                <button id='button_scrollUp'
+                        title='Scroll maps upward'
+                        type='button' class='btn btn-default btn-lg disabled'
+                        onclick='pixiCanvas.scrollUp()'>
+                  <span class='glyphicon glyphicon-arrow-up'></span>
+                </button>
+                <button id='button_scrollDown'
+                        title='Scroll maps downward'
+                        type='button' class='btn btn-default btn-lg disabled'
+                        onclick='pixiCanvas.scrollDown()'>
+                  <span class='glyphicon glyphicon-arrow-down'></span>
+                </button>
+              </div>
+              <div id='view_index_reset_button' class='btn-group'>
+                <button id='button_index_resetLayers'
+                        title='Reset layers to initial visibility'
+                        type='button' class='btn btn-default btn-lg'
+                        onclick='pixiCanvas.resetLayers(this, view.mapFilepath)'>
+                  Reset
+                </button>
+              </div>
             </div>
             <div id='maps_details'>
               <div id='maps_layers'></div>
@@ -624,7 +648,7 @@
               <button id='button_resetLayers'
                       title='Reset layers to initial visibility'
                       type='button' class='btn btn-default btn-lg'
-                      onclick='pixiCanvas.resetLayers(view.mapFilepath)'>
+                      onclick='pixiCanvas.resetLayers(this, view.mapFilepath)'>
                 Reset
               </button>
             </div>
