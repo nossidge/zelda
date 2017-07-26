@@ -277,8 +277,9 @@
 
           // Show all layers in the '#maps_layers' element.
           // Very similar to 'pixiCanvas.showMapLayers()'
-          this.showAllMapLayers = function(layers, self=this) {
+          this.showAllMapLayers = function(self=this) {
             $('#maps_layers').empty();
+            layers = this.mapArrays.layers;
 
             // Create 2 layer button groups.
             // These will be side-by-side, to prevent it being too tall.
@@ -378,7 +379,11 @@
             });
 
             // If we are looking at a specific map, then update the layers buttons.
-            if (filepath != undefined) this.showMapLayers(filepath);
+            if (filepath != undefined) {
+              this.showMapLayers(filepath);
+            } else {
+              this.showAllMapLayers();
+            }
             this.render();
           };
         };
@@ -495,7 +500,14 @@
             view.setView(view.INDEX);
             pixiCanvas.initialiseMaps();
             pixiCanvas.render();
-            pixiCanvas.showAllMapLayers(layers);
+
+            // Add the above arrays to the PixiCanvas instance.
+            pixiCanvas.mapArrays = {};
+            pixiCanvas.mapArrays.letters = letters;
+            pixiCanvas.mapArrays.layers  = layers;
+            pixiCanvas.mapArrays.tags    = tags;
+
+            pixiCanvas.showAllMapLayers();
           }
         );
 
