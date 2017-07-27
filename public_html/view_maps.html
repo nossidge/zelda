@@ -462,7 +462,7 @@
         let selectContents = $.map(selectedMaps, function(value) {
           return value.filepath;
         });
-        pixiCanvas.addMaps(selectContents);
+        pixiCanvas.addMaps(selectContents.sort());
       }
 
       //########################################################################
