@@ -193,6 +193,7 @@
             pixiTileMap.on('click', function() {
               view.setView(view.SHOW);
               view.mapFilepath = filepath;
+              $('#map_filepath').attr('value', filepath);
               self.showMapLayers(filepath);
               tooltip.visible = false;
               let xValue = (self.perRow == 5) ? 30 : 0;
@@ -421,6 +422,7 @@
                 $('#map_layers').empty();
                 $('#map_tags').empty();
                 $('#button_backToIndexView').blur();
+                $('#map_filepath').attr('value', '');
                 this.mapFilepath = null;
                 this.current = newView;
                 pixiCanvas.pixelZoom = 1;
@@ -610,6 +612,9 @@
       #button_index_resetLayers {
         padding: 33px 26px 33px 25px;
       }
+      #button_view_resetLayers {
+        padding: 10px 31px 10px 30px;
+      }
       .button_layer {
         text-align: left;
       }
@@ -632,6 +637,22 @@
       }
       #map_tags {
         flex: 1;
+      }
+      #view_show_controls {
+        display: flex;
+        flex-direction: row;
+      }
+      #view_show_buttons {
+        flex: 0 0 13em;
+        order: -1;
+        overflow: auto;
+      }
+      #map_filepath {
+        flex: 1;
+        font-size: large;
+        height: 46px;
+        line-height: 46px;
+        white-space: nowrap;
       }
     </style>
   </head>
@@ -707,19 +728,27 @@
             </div>
           </div>
           <div hidden class='view_show'>
-            <div id='view_show_buttons' class='btn-group'>
-              <button id='button_backToIndexView'
-                      title='Back to map selection'
-                      type='button' class='btn btn-default btn-lg'
-                      onclick='view.setView(view.INDEX)'>
-                <span class='glyphicon glyphicon-arrow-left'></span>
-              </button>
-              <button id='button_resetLayers'
-                      title='Reset layers to initial visibility'
-                      type='button' class='btn btn-default btn-lg'
-                      onclick='pixiCanvas.resetLayers(this, view.mapFilepath)'>
-                Reset
-              </button>
+            <div id='view_show_controls'>
+              <div id='view_show_buttons' class='btn-group'>
+                <button id='button_backToIndexView'
+                        title='Back to map selection'
+                        type='button' class='btn btn-default btn-lg'
+                        onclick='view.setView(view.INDEX)'>
+                  <span class='glyphicon glyphicon-arrow-left'></span>
+                </button>
+                <button id='button_view_resetLayers'
+                        title='Reset layers to initial visibility'
+                        type='button' class='btn btn-default btn-lg'
+                        onclick='pixiCanvas.resetLayers(this, view.mapFilepath)'>
+                  Reset
+                </button>
+              </div>
+              <input id='map_filepath'
+                     type='text'
+                     class='form-control'
+                     readonly='readonly'
+                     onfocus='this.focus();this.select()'>
+              </input>
             </div>
             <div id='map_details'>
               <div id='map_layers'></div>
