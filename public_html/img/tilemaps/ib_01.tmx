@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="11" tilewidth="16" tileheight="16" nextobjectid="1">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="15" height="11" tilewidth="16" tileheight="16" nextobjectid="1">
  <properties>
   <property name="fromE" value="ew"/>
   <property name="fromN" value=""/>
@@ -7,10 +7,10 @@
   <property name="fromW" value="ew"/>
   <property name="letter" value="ib"/>
  </properties>
- <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="279" columns="9">
-  <image source="../dungeon.png" width="164" height="560"/>
+ <tileset firstgid="1" name="dungeon" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="288" columns="9">
+  <image source="../dungeon.png" width="164" height="578"/>
  </tileset>
- <tileset firstgid="280" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
+ <tileset firstgid="289" name="enemies" tilewidth="16" tileheight="16" spacing="2" margin="2" tilecount="90" columns="10">
   <image source="../enemies.png" width="182" height="164"/>
  </tileset>
  <layer name="Base" width="15" height="11">
@@ -31,7 +31,7 @@
  <layer name="Walls" width="15" height="11">
   <data encoding="csv">
 0,0,0,113,110,114,0,0,0,113,110,114,0,0,0,
-0,0,0,112,35,109,0,0,0,112,35,109,0,0,0,
+0,0,0,112,0,109,0,0,0,112,0,109,0,0,0,
 0,113,110,118,0,117,110,110,110,118,0,117,110,114,0,
 113,118,0,0,0,0,0,0,0,0,0,0,0,117,114,
 118,0,0,0,119,111,120,0,119,111,120,0,0,0,117,
@@ -39,14 +39,14 @@
 120,0,0,0,117,110,118,0,117,110,118,0,0,0,119,
 116,120,0,0,0,0,0,0,0,0,0,0,0,119,115,
 0,116,111,120,0,119,111,111,111,120,0,119,111,115,0,
-0,0,0,112,35,109,0,0,0,112,35,109,0,0,0,
+0,0,0,112,0,109,0,0,0,112,0,109,0,0,0,
 0,0,0,116,111,115,0,0,0,116,111,115,0,0,0
 </data>
  </layer>
  <layer name="Collision" width="15" height="11">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,35,0,0,0,0,0,35,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,
 0,9,0,0,0,0,0,0,0,0,0,0,0,9,0,
@@ -54,7 +54,7 @@
 0,9,0,0,0,0,0,0,0,0,0,0,0,9,0,
 0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,35,0,0,0,0,0,35,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
@@ -63,11 +63,11 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,304,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,313,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,304,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,313,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
